@@ -1,4 +1,4 @@
-float gravity = 0.25;
+float gravity = 0.35;
 
 void zht(int x, int y) {
   if (x >= 0) {
@@ -151,6 +151,8 @@ class player {
         ys = -gravity*15;
         jump_cooldown = 15;
         ctr = true;
+        sound_jmp.stop();
+        sound_jmp.play();
       }
       dash = keys['f'];
       if (keys['f'])ctr = true;
@@ -254,13 +256,16 @@ class player {
             }
           }
           if (
-            col(ex, ey, w, h, int(x-(pw/3)), int(y-ph))||
-            col(ex, ey, w, h, int(x), int(y-ph))||
-            col(ex, ey, w, h, int(x+(pw/3)), int(y-ph))
+            col(ex, ey, w, h, int(x-(pw/3)), int(y-ph+2))||
+            col(ex, ey, w, h, int(x), int(y-ph+2))||
+            col(ex, ey, w, h, int(x+(pw/3)), int(y-ph+2))
             ) {
             if (map.data[X][Y] != 0) {
               head_break = (ys < 0?-ys:ys) > 5;
               ys = ys < 0?-ys:ys;
+              sound_dom.stop();
+              sound_jmp.stop();
+              sound_dom.play();
             }
           }
           if (

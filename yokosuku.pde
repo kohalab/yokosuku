@@ -1,12 +1,12 @@
 boolean debug = false;
 
-int WIDTH = 64;
+int WIDTH = 32;
 int HEIGH = 16;
 
 int dw;
 int dh;
 
-int SCALE = 1;
+int SCALE = 2;
 
 int yofs = 32;
 
@@ -126,6 +126,8 @@ void new_obj(obj p) {
 }
 
 void draw() {
+
+  surface.setSize(WIDTH*16*SCALE, HEIGH*16*SCALE+yofs);
 
   speed = frameRate/30.0;
 
@@ -285,7 +287,11 @@ void draw() {
   if (rpchg > -1)rpchg--;
   //baketu
 
-  image(get(0, 0, dw, dh), 0, 0, dw*SCALE, dh*SCALE);//スケーリング
+  try {
+    image(get(0, 0, dw, dh+16), 0, 0, dw*SCALE, (dh+16)*SCALE);//スケーリング
+  }
+  catch(ArrayIndexOutOfBoundsException ex) {
+  }
 }
 
 void keyPressed() {
@@ -304,12 +310,24 @@ void keyPressed() {
     map.update();
   }
 
+  //if (key == 'l')HEIGH++;
+  //if (key == 'p')WIDTH++;
+  //if (key == 'o')HEIGH--;
+  //if (key == 'i')WIDTH--;
+
   //if (key == 'z') {
   //  new_obj(new obj(13, 16, 16, mouseX, mouseY, 0, 0));
   //}
 
   keycode[keyCode] = true;
   keys[key] = true;
+
+  if (key == 'R') {
+    for (int i = 0; i < 256*256; i++) {
+      keycode[i] = false;
+      keys[i] = false;
+    }
+  }
 
   if (key == 'R') {
     int mx = mouseX/SCALE/16;
