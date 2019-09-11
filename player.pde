@@ -281,10 +281,10 @@ class player {
             }
           }
           if (
-            col(ex, ey, w, h, int(x), int(y-ph+4)) || 
-            col(ex, ey, w, h, int(x), int(y   -4)) ||
-            col(ex, ey, w, h, int(x-(pw/2)+4), int(y)) || 
-            col(ex, ey, w, h, int(x+(pw/2)-4), int(y))
+            col(ex, ey, w, h, int(x), int(y-ph)) || 
+            col(ex, ey, w, h, int(x), int(y   )) ||
+            col(ex, ey, w, h, int(x-(pw/2)), int(y)) || 
+            col(ex, ey, w, h, int(x+(pw/2)), int(y))
             ) {
             ifblock(map.data[X][Y], X, Y);
           }

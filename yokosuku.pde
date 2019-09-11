@@ -1,6 +1,6 @@
 boolean debug = false;
 
-int WIDTH = 48;
+int WIDTH = 64;
 int HEIGH = 16;
 
 int dw;
