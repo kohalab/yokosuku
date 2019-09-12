@@ -12,6 +12,7 @@ void zht(int x, int y) {
 }
 
 class player {
+  boolean bubo = true;
   boolean lr;
   boolean ark;
   boolean ctr;
@@ -48,6 +49,8 @@ class player {
 
   boolean first = true;
 
+  boolean otjm = false;
+
   void draw() {
     if (first) {
       dead_alway(true);
@@ -64,15 +67,6 @@ class player {
     if (non_ctr_count > 60) {
       t = 1;
     }
-    if (xs > 0.01 || xs < -0.01) {
-      if (int(ark_sc) == 0)t = 0;
-      if (int(ark_sc) == 1)t = 3;
-      if (int(ark_sc) == 2)t = 0;
-      if (int(ark_sc) == 3)t = 4;
-    }
-    if (ys < -0.1) {
-      t = 5;
-    }
     if (non_ctr_count > 120) {
       t = (non_ctr_count/40)%2 == 0?2:3;
       if ((non_ctr_count/20)%2 == 0) {
@@ -83,6 +77,26 @@ class player {
         if (non_ctr_count%10 == 0) {
           lr = true;
         }
+      }
+    }
+    if (xs > 0.01 || xs < -0.01) {
+      if (int(ark_sc) == 0)t = 0;
+      if (int(ark_sc) == 1)t = 3;
+      if (int(ark_sc) == 2)t = 0;
+      if (int(ark_sc) == 3)t = 4;
+    }
+    if (ys < -0.1) {
+      t = 5;
+    }
+    if (bubo) {
+      if (keys['b'] || keys['B']) {
+        t = 7;
+      }
+      if (xs > 0.03 || xs < -0.03) {
+        if (int(ark_sc) == 0)t = 0;
+        if (int(ark_sc) == 1)t = 3;
+        if (int(ark_sc) == 2)t = 0;
+        if (int(ark_sc) == 3)t = 4;
       }
     }
     if (atamaitai_time > 0) {
@@ -153,11 +167,19 @@ class player {
         ctr = true;
         sound_jmp.stop();
         sound_jmp.play();
+        otjm = true;
       }
       dash = keys['f'];
       if (keys['f'])ctr = true;
       if (tiniasiwotuketeiruka > 0) {
         tiniasiwotuketeiruka -= 1;
+      }
+    }
+
+    if (bubo) {
+      if (keys['b'] || keys['B']) {
+        y -= 1;
+        ys -= gravity*1.042;
       }
     }
 
@@ -173,8 +195,11 @@ class player {
     if (jump_cooldown > 0)jump_cooldown--;
     dead_alway(false);
   }
-  /////////////////////
+  //////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////
   void ifblock(int a, int x, int y) {
+    //pow(2.0, (notenumber - 69.0) / 12.0)
     if (a == 12) {
       dead();
       sound_ping.rate(random(0.95, 1.05));
@@ -187,8 +212,28 @@ class player {
       ys -= 6;
       setblock(x, y, 14, false);
     }
+    if (blocks_no[a] && frameCount%5 == 0) {
+      sound_boh.stop();
+      sound_boh.amp(0.25);
+      sound_boh.play();
+      //println("stt"+s);    
+      //otjm = false;
+    }
+    if (a == 16) {
+      float tx = xs;
+      if (tx < 0) {
+        xs = (tx > 0?-tx:tx)*1.05;
+      } else {
+        xs = (tx < 0?-tx:tx)*1.05;
+      }
+      ark_sc += (xs > 0?xs:-xs)/20;
+      ark_sc %= 4;
+    }
+    //sound_pyn
   }
-  /////////////////////
+  //////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////
   void dead() {
     //y = 0;
     //x = 0;
@@ -288,7 +333,7 @@ class player {
           if (
             col(ex, ey, w, h, int(x), int(y-ph)) || 
             col(ex, ey, w, h, int(x), int(y   )) ||
-            col(ex, ey, w, h, int(x-(pw/2)), int(y)) || 
+            col(ex, ey, w, h, int(x-(pw/2)-1), int(y)) || 
             col(ex, ey, w, h, int(x+(pw/2)), int(y))
             ) {
             ifblock(map.data[X][Y], X, Y);

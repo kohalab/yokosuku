@@ -1,12 +1,12 @@
 boolean debug = false;
 
-int WIDTH = 32;
-int HEIGH = 16;
+int WIDTH = 35;
+int HEIGH = 20;
 
 int dw;
 int dh;
 
-int SCALE = 2;
+int SCALE = 1;
 
 int yofs = 32;
 
@@ -22,11 +22,12 @@ player player;
 PGraphics grd;
 
 PImage[] blocks = new PImage[256];
+boolean[] blocks_no = new boolean[256];
 
 boolean grd_en = true;
 
 void settings() {
-  size(WIDTH*16*SCALE, HEIGH*16*SCALE+yofs);
+  size(WIDTH*16*SCALE, (HEIGH+1)*16*SCALE+yofs);
   dw = WIDTH*16;
   dh = HEIGH*16;
   noSmooth();
@@ -69,8 +70,14 @@ void setup() {
       ha.text(hex(i, 2), 1, 16);
       ha.endDraw();
       cha.set((i%16)*16, (i/16)*16, ha);
+      blocks_no[i] = true;
+    } else {
+      blocks_no[i] = false;
     }
   }
+
+  //println(blocks_no);
+
   ;
   block_box = loadImage("block_box.png");
   block_box_n = loadImage("block_box_n.png");
@@ -127,7 +134,7 @@ void new_obj(obj p) {
 
 void draw() {
 
-  surface.setSize(WIDTH*16*SCALE, HEIGH*16*SCALE+yofs);
+  surface.setSize(WIDTH*16*SCALE, (HEIGH+1)*16*SCALE+yofs);
 
   speed = frameRate/30.0;
 
@@ -192,18 +199,23 @@ void draw() {
   for (int i = 0; i < 256; i++) {
     int n = (i- ((dw/32)/2) )+tsp;
     if (n >= 0 && n < 256) {
-      int scrx = i*32;
+      int scrx = i*32+16;
       if (scrx >= -32 && scrx < dw) {
-        image(block_box_n, scrx, 0);
-        noStroke();
-        if ((dw/2) == scrx) {
-          fill(255, 128);
-          rect((dw/2), 0, 32, 32);
+        if (n != tsp) {
+          image(block_box_n, scrx, 0);
+          noStroke();
+          image(blocks[n], scrx+8+2, 0+8+2,12,12);
         }
-        image(blocks[n], scrx+8, 0+8);
       }
     }
   }
+  int scrx = ((dw/32)/2)*32+16;
+  image(block_box, scrx, 0);
+  noStroke();
+  image(blocks[tsp], scrx+8, 0+8);
+  //println(tsp);
+  //fill(255, 128);
+  //rect((dw/2)-24, 0, 32, 32);
   if (debug) {
     textFont(r10);
     fill(0);
@@ -288,7 +300,7 @@ void draw() {
   //baketu
 
   try {
-    image(get(0, 0, dw, dh+16), 0, 0, dw*SCALE, (dh+16)*SCALE);//スケーリング
+    image(get(0, 0, dw, dh+(16*SCALE)), 0, 0, dw*SCALE, (dh+(16*SCALE))*SCALE);//スケーリング
   }
   catch(ArrayIndexOutOfBoundsException ex) {
   }
@@ -322,7 +334,7 @@ void keyPressed() {
   keycode[keyCode] = true;
   keys[key] = true;
 
-  if (key == 'R') {
+  if (key == 'K') {
     for (int i = 0; i < 256*256; i++) {
       keycode[i] = false;
       keys[i] = false;
@@ -330,8 +342,8 @@ void keyPressed() {
   }
 
   if (key == 'R') {
-    int mx = mouseX/SCALE/16;
-    int my = (mouseY-32)/SCALE/16;
+    int mx = (mouseX/SCALE)/16;
+    int my = ((mouseY-yofs)/SCALE)/16;
     repsp = getblock(mx, my);
     setblock(mx, my, 254, true);
   }
