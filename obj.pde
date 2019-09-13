@@ -35,7 +35,7 @@ class obj {
       x += xs/speed;
       y += ys/speed;
       ys += gravity;
-      if(y > HEIGH*16+ph){
+      if (y > HEIGH*16+ph) {
         type = 0;
       }
     }

@@ -198,19 +198,20 @@ class player {
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
-  void ifblock(int a, int x, int y) {
+  void ifblock(int a, int xx, int yy) {
     //pow(2.0, (notenumber - 69.0) / 12.0)
-    if (a == 12) {
+    if (a == 0x21) {
       dead();
       sound_ping.rate(random(0.95, 1.05));
       sound_ping.play();
       sound_ping.amp(random(0.75, 0.8));
     }
-    if (a == 13) {
+    if (a == 0x22) {
       sound_jon.rate(random(0.9, 1.1));
       sound_jon.play();
       ys -= 6;
-      setblock(x, y, 14, false);
+      y -= 7;
+      setblock(xx, yy, 0x23, false);
     }
     if (blocks_no[a] && frameCount%5 == 0) {
       sound_boh.stop();
@@ -219,7 +220,7 @@ class player {
       //println("stt"+s);    
       //otjm = false;
     }
-    if (a == 16) {
+    if (a == 0x25) {
       float tx = xs;
       if (tx < 0) {
         xs = (tx > 0?-tx:tx)*1.05;
@@ -287,15 +288,30 @@ class player {
           int h = 16;
           //
           noStroke();
-
-          if (col(ex, ey, w, h, int(x-(pw/2)), int(y-(ph-8))) || col(ex, ey, w, h, int(x-(pw/2)), int(y-12))) {
+          boolean iya = true;
+          if (col(ex, ey, w, h, int(x), int(y-8)) || col(ex, ey, w, h, int(x), int(y-(ph-8)))) {
             if (map.data[X][Y] != 0) {
+              iya = false;
+              //dead();
+            }
+          }
+          if (
+            col(ex, ey, w, h, int(x), int(y-ph+1)) || 
+            col(ex, ey, w, h, int(x), int(y   +1.5)) ||
+            col(ex, ey, w, h, int(x-(pw/2)-1-0), int(y)) || 
+            col(ex, ey, w, h, int(x+(pw/2)  +0), int(y))
+            ) {
+            ifblock(map.data[X][Y], X, Y);
+            //println(map.data[X][Y]);
+          }
+          if (col(ex, ey, w, h, int(x-(pw/2)), int(y-(ph-8))) || col(ex, ey, w, h, int(x-(pw/2)), int(y-12))) {
+            if (map.data[X][Y] != 0 && iya) {
               x = ex+w+(pw/2);
               xs = 0;
             }
           }
           if (col(ex, ey, w, h, int(x+(pw/2)), int(y-(ph-8))) || col(ex, ey, w, h, int(x+(pw/2)), int(y-12))) {
-            if (map.data[X][Y] != 0) {
+            if (map.data[X][Y] != 0 && iya) {
               x = ex-(pw/2);
               xs = 0;
             }
@@ -305,7 +321,7 @@ class player {
             col(ex, ey, w, h, int(x), int(y-ph+2))||
             col(ex, ey, w, h, int(x+(pw/3)), int(y-ph+2))
             ) {
-            if (map.data[X][Y] != 0) {
+            if (map.data[X][Y] != 0 && iya) {
               head_break = (ys < 0?-ys:ys) > 5;
               ys = ys < 0?-ys:ys;
               sound_dom.stop();
@@ -330,14 +346,6 @@ class player {
               tiniasiwotuketeiruka = 4;
             }
           }
-          if (
-            col(ex, ey, w, h, int(x), int(y-ph)) || 
-            col(ex, ey, w, h, int(x), int(y   )) ||
-            col(ex, ey, w, h, int(x-(pw/2)-1), int(y)) || 
-            col(ex, ey, w, h, int(x+(pw/2)), int(y))
-            ) {
-            ifblock(map.data[X][Y], X, Y);
-          }
           //
         }
       }
@@ -349,43 +357,5 @@ void wakattawakatta() {
   if (sound_pow.isPlaying() || sound_pop.isPlaying()) {
     sound_pow.stop();
     sound_pop.stop();
-  }
-}
-
-void setblock(int mx, int my, int tsp, boolean s) {
-  if (mx >= 0 && mx < WIDTH && my >= 0 && my < HEIGH) {
-    if (s) {
-      if (tsp != map.data[mx][my]) {
-        if (sound_pow.isPlaying() || sound_pop.isPlaying()) {
-          //sound_pow.amp(0);
-          //sound_pop.amp(0);
-        } else {
-          if (tsp == 0) {
-            sound_pop.rate(random(0.9, 1.1)-((map.data[mx][my])/500.0));
-            sound_pop.play();
-            sound_pop.amp(random(0.8, 1));
-          } else {
-            if (map.data[mx][my] != 0) {
-              sound_pow.amp(random(0.5, 1));
-              sound_pow.rate(random(0.5, 0.6));
-              sound_pow.play();
-            } else {
-              sound_pow.amp(random(0.5, 1));
-              sound_pow.rate(random(0.95, 1.05));
-              sound_pow.play();
-            }
-          }
-        }
-      }
-    }
-    map.data[mx][my] = tsp;
-  }
-}
-
-int getblock(int mx, int my) {
-  if (mx >= 0 && mx < WIDTH && my >= 0 && my < HEIGH) {
-    return map.data[mx][my];
-  } else {
-    return -1;
   }
 }

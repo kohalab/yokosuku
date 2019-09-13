@@ -1,12 +1,12 @@
 boolean debug = false;
 
-int WIDTH = 35;
-int HEIGH = 20;
+int WIDTH = 24;
+int HEIGH = 12;
 
 int dw;
 int dh;
 
-int SCALE = 1;
+int SCALE = 2;
 
 int yofs = 32;
 
@@ -48,6 +48,10 @@ PImage block_box_n;
 
 obj[] obj = new obj[16];
 
+int[] item_list;
+
+PImage sel_t;
+
 void setup() {
   loadSound();
   r10 = loadFont("10r.vlw");
@@ -75,8 +79,30 @@ void setup() {
       blocks_no[i] = false;
     }
   }
+  ha = createGraphics(cha.width+16, cha.height+16);
+  ha.beginDraw();
+  ha.image(cha, 16, 16);
+  ha.textFont(b12);
+  for (int x = 0; x < 16; x++) {
+    ha.fill(0);
+    ha.text(hex(x, 1), x*16+24, 16);
+  }
+  for (int y = 0; y < 16; y++) {
+    ha.fill(0);
+    ha.text(hex(y, 1), 8, y*16+32);
+  }
+  ha.endDraw();
+  sel_t = ha.get();
+  sel_t.save("sel_t.png");
 
   //println(blocks_no);
+
+  String[] il = loadStrings("item_list.txt");
+
+  item_list = new int[il.length];
+  for (int i = 0; i < il.length; i++) {
+    item_list[i] = unhex(il[i]);
+  }
 
   ;
   block_box = loadImage("block_box.png");
@@ -98,14 +124,16 @@ void setup() {
     blocks[n] = cha.get((n%16)*16, (n/16)*16, 16, 16);
     ;
   }
-  for (int x = 0; x < 4; x++) {
-    for (int y = 0; y < 2; y++) {
-      map.data[x][map.data[0].length-1-y-1] = 1;
-      map.data[x][map.data[0].length-1-y] = 3;
-      map.data[x+1][map.data[0].length-1-y] = 5;
+  if (true) {
+    for (int x = 0; x < 4; x++) {
+      for (int y = 0; y < 2; y++) {
+        map.data[x][map.data[0].length-1-y-1] = 1;
+        map.data[x][map.data[0].length-1-y] = 3;
+        map.data[x+1][map.data[0].length-1-y] = 5;
+      }
     }
+    map.data[4][map.data[0].length-1-2] = 7;
   }
-  map.data[4][map.data[0].length-1-2] = 7;
   player = new player();
   player.map = map;
   for (int i = 0; i < obj.length; i++) {
@@ -134,7 +162,7 @@ void new_obj(obj p) {
 
 void draw() {
 
-  surface.setSize(WIDTH*16*SCALE, (HEIGH+1)*16*SCALE+yofs);
+  surface.setSize(WIDTH*16*SCALE, (HEIGH*16+yofs)*SCALE);
 
   speed = frameRate/30.0;
 
@@ -143,7 +171,7 @@ void draw() {
   background(#83d5ff);
 
   if (sp < 0)sp = 0;
-  if (sp > 255)sp = 255;
+  if (sp > item_list.length-1)sp = item_list.length-1;
 
   int mx = mouseX/SCALE/16;
   int my = (mouseY-(32*SCALE))/SCALE/16;
@@ -153,8 +181,10 @@ void draw() {
   if (mousePressed) {
     if (mouseButton == RIGHT)
       tsp = 0;
-    setblock(mx, my, tsp, true);
+    setblock(mx, my, item_list[tsp], true);
   }
+
+  map();
 
 
   /*
@@ -169,14 +199,14 @@ void draw() {
    
    */
 
-  if (frameCount%2 == 0) {
+  if (frameCount%4 == 0) {
 
     for (int Y = 0; Y < HEIGH; Y++) {
       for (int X = 0; X < WIDTH; X++) {
-        if (getblock(X, Y) == 15)
-          setblock(X, Y, 13, false);
-        if (getblock(X, Y) == 14)
-          setblock(X, Y, 15, false);
+        if (getblock(X, Y) == 0x24)
+          setblock(X, Y, 0x22, false);
+        if (getblock(X, Y) == 0x23)
+          setblock(X, Y, 0x24, false);
       }
     }
   }
@@ -198,21 +228,21 @@ void draw() {
 
   for (int i = 0; i < 256; i++) {
     int n = (i- ((dw/32)/2) )+tsp;
-    if (n >= 0 && n < 256) {
-      int scrx = i*32+16;
+    if (n >= 0 && n < item_list.length) {
+      int scrx = i*32;
       if (scrx >= -32 && scrx < dw) {
         if (n != tsp) {
           image(block_box_n, scrx, 0);
           noStroke();
-          image(blocks[n], scrx+8+2, 0+8+2,12,12);
+          image(blocks[item_list[n]], scrx+8+2, 0+8+2, 12, 12);
         }
       }
     }
   }
-  int scrx = ((dw/32)/2)*32+16;
+  int scrx = ((dw/32)/2)*32;
   image(block_box, scrx, 0);
   noStroke();
-  image(blocks[tsp], scrx+8, 0+8);
+  image(blocks[item_list[tsp]], scrx+8, 0+8);
   //println(tsp);
   //fill(255, 128);
   //rect((dw/2)-24, 0, 32, 32);
@@ -300,17 +330,22 @@ void draw() {
   //baketu
 
   try {
-    image(get(0, 0, dw, dh+(16*SCALE)), 0, 0, dw*SCALE, (dh+(16*SCALE))*SCALE);//スケーリング
+    image(get(0, 0, dw, dh+yofs), 0, 0, dw*SCALE, (dh+yofs)*SCALE);//スケーリング
   }
   catch(ArrayIndexOutOfBoundsException ex) {
+  }
+  if (debug) {
+    tint(255, 128);
+    image(sel_t, 0, 0);
+    noTint();
   }
 }
 
 void keyPressed() {
   if (keyCode == LEFT  || key == '1')sp -= 1;
   if (keyCode == RIGHT || key == '3')sp += 1;
-  if (keyCode == DOWN)sp -= 16;
-  if (keyCode == UP  )sp += 16;
+  if (keyCode == DOWN)sp -= 4;
+  if (keyCode == UP  )sp += 4;
   if (key == '_')sp = 0;
 
   if (key == '9') {
@@ -342,9 +377,9 @@ void keyPressed() {
   }
 
   if (key == 'R') {
-    int mx = (mouseX/SCALE)/16;
-    int my = ((mouseY-yofs)/SCALE)/16;
-    repsp = getblock(mx, my);
+    int mx = mouseX/SCALE/16;
+    int my = (mouseY-(32*SCALE))/SCALE/16;
+    repsp = item_list[getblock(mx, my)];
     setblock(mx, my, 254, true);
   }
 }
