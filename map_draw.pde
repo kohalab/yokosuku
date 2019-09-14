@@ -13,7 +13,9 @@ class map {
   int[][] data;
   int[][] data_old;
   PGraphics map_buf;
+  PGraphics g;
   map() {
+    g = createGraphics(dw, dh);
     data = new int[WIDTH][HEIGH];
     data_old = new int[WIDTH][HEIGH];
     for (int y = 0; y < HEIGH; y++) {
@@ -45,7 +47,7 @@ class map {
           map_buf.noStroke();
           map_buf.fill(bg_color);
           map_buf.rect(x*16, y*16, 16, 16);
-          if (data[x][y] >= 1) {
+          if (data[x][y] >= 1 && data[x][y] < 128) {
             map_buf.image(get_cha(cha, data[x][y]), x*16, y*16);
           } else {
             if (grd_en) {
@@ -58,6 +60,39 @@ class map {
       }
     }
     map_buf.endDraw();
+  }
+
+
+  void mob_draw() {
+    g.beginDraw();
+    g.clear();
+    for (int y = 0; y < HEIGH; y++) {
+      for (int x = 0; x < WIDTH; x++) {
+        if (data[x][y] == 0x80) {
+          float i = (((float)x/WIDTH)+((float)((float)y/HEIGH)*WIDTH))*TWO_PI;
+          float xt = sin(frameCount/60.0*TWO_PI+i)*3;
+          image(frp(get_cha(cha, data[x][y]), xt >= 0, false), x*16+xt, (y*16)
+            +int(sin(frameCount/30.0*TWO_PI+i)*3)
+            +yofs);
+        }
+        if (data[x][y] == 0x81) {
+          float i = (((float)x/WIDTH)+((float)((float)y/HEIGH)*WIDTH))*TWO_PI;
+          float xt = sin(frameCount/60.0*TWO_PI+i)*3;
+          g.image(get_cha(cha, data[x][y]), x*16+xt-8, (y*16-8)
+            +int(sin(frameCount/30.0*TWO_PI+i)*3)
+            +0);
+          g.image(get_cha(cha, data[x][y]), x*16+xt+8, (y*16-8)
+            +int(sin(frameCount/30.0*TWO_PI+i)*3)
+            +0);
+          g.image(get_cha(cha, data[x][y]+1), x*16+xt-8, (y*16)+16-8
+            +int(sin(frameCount/30.0*TWO_PI+i)*3)
+            +0, 
+            32, (HEIGH-1)*16);
+        }
+      }
+    }
+    g.endDraw();
+    image(dis(g.get(), frameCount%2 == 0), 0, yofs);
   }
 
   void update() {

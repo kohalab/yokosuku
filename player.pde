@@ -32,15 +32,6 @@ class player {
   int tiniasiwotuketeiruka = 0;
   map map;
   int non_ctr_count;
-  PImage frp(PImage in, boolean h, boolean v) {
-    PImage out = createImage(in.width, in.height, ARGB);
-    for (int y = 0; y < in.height; y++) {
-      for (int x = 0; x < in.width; x++) {
-        out.set(h?in.width-1-x:x, v?in.height-1-y:y, in.get(x, y));
-      }
-    }
-    return out;
-  }
   player() {
     cha = loadImage("kari.png");
   }
@@ -202,16 +193,30 @@ class player {
     //pow(2.0, (notenumber - 69.0) / 12.0)
     if (a == 0x21) {
       dead();
-      sound_ping.rate(random(0.95, 1.05));
+      //sound_ping.rate(random(0.95, 1.05));
       sound_ping.play();
       sound_ping.amp(random(0.75, 0.8));
     }
     if (a == 0x22) {
-      sound_jon.rate(random(0.9, 1.1));
+      //sound_jon.rate(random(0.9, 1.1));
       sound_jon.play();
-      ys -= 6;
-      y -= 7;
+      ys -= 8;
+      y -= 3;
       setblock(xx, yy, 0x23, false);
+    }
+    if (a == 0x25) {
+      //sound_jon.rate(random(0.9, 1.1));
+      sound_jon.play();
+      xs += 8;
+      x += 3;
+      setblock(xx, yy, 0x26, false);
+    }
+    if (a == 0x28) {
+      //sound_jon.rate(random(0.9, 1.1));
+      sound_jon.play();
+      xs -= 8;
+      x -= 3;
+      setblock(xx, yy, 0x29, false);
     }
     if (blocks_no[a] && frameCount%5 == 0) {
       sound_boh.stop();
@@ -220,12 +225,20 @@ class player {
       //println("stt"+s);    
       //otjm = false;
     }
-    if (a == 0x25) {
+    if (a == 0x80) {
+      sound_jon.play();
+      dead();
+    }
+    if (a == 0x81) {
+      ys -= 0.3;
+      y -= 0.3;
+    }
+    if (a == 0x2b) {
       float tx = xs;
       if (tx < 0) {
-        xs = (tx > 0?-tx:tx)*1.05;
+        xs = (tx > 0?-tx:tx)*1.09;
       } else {
-        xs = (tx < 0?-tx:tx)*1.05;
+        xs = (tx < 0?-tx:tx)*1.09;
       }
       ark_sc += (xs > 0?xs:-xs)/20;
       ark_sc %= 4;
@@ -254,10 +267,10 @@ class player {
       deadnow = false;
       for (int yy = 0; yy < map.data[0].length; yy++) {
         if (
-        map.data[1][map.data[0].length-1-yy] == 0x00||
-        map.data[1][map.data[0].length-1-yy] == 0x06||
-        map.data[1][map.data[0].length-1-yy] == 0x07
-        ) {
+          map.data[1][map.data[0].length-1-yy] == 0x00||
+          map.data[1][map.data[0].length-1-yy] == 0x06||
+          map.data[1][map.data[0].length-1-yy] == 0x07
+          ) {
           y = (map.data[1].length-1-yy)*16;
           break;
         }
@@ -294,19 +307,19 @@ class player {
           noStroke();
           boolean iya = true;
           if (col(ex, ey, w, h, int(x), int(y-8)) || col(ex, ey, w, h, int(x), int(y-(ph-8)))) {
-            if (map.data[X][Y] != 0) {
+            if (map.data[X][Y] != 0 && col_list[map.data[X][Y]]) {
               iya = false;
               //dead();
             }
           }
           if (col(ex, ey, w, h, int(x-(pw/2)), int(y-(ph-8))) || col(ex, ey, w, h, int(x-(pw/2)), int(y-12))) {
-            if (map.data[X][Y] != 0 && iya) {
+            if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]]) {
               x = ex+w+(pw/2);
               xs = 0;
             }
           }
           if (col(ex, ey, w, h, int(x+(pw/2)), int(y-(ph-8))) || col(ex, ey, w, h, int(x+(pw/2)), int(y-12))) {
-            if (map.data[X][Y] != 0 && iya) {
+            if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]]) {
               x = ex-(pw/2);
               xs = 0;
             }
@@ -316,7 +329,7 @@ class player {
             col(ex, ey, w, h, int(x), int(y-ph+2))||
             col(ex, ey, w, h, int(x+(pw/3)), int(y-ph+2))
             ) {
-            if (map.data[X][Y] != 0 && iya) {
+            if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]]) {
               head_break = (ys < 0?-ys:ys) > 5;
               ys = ys < 0?-ys:ys;
               sound_dom.stop();
@@ -338,7 +351,7 @@ class player {
             col(ex, ey, w, h, int(x), int(y+1))||
             col(ex, ey, w, h, int(x+(pw/3)), int(y+1))
             ) {
-            if (map.data[X][Y] != 0) {
+            if (map.data[X][Y] != 0 && col_list[map.data[X][Y]]) {
               if (debug) {
                 fill(255, 128);
                 rect(ex, ey+yofs, w-1, h-1);

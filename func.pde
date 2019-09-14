@@ -72,3 +72,35 @@ boolean now_rep() {
   }
   return e;
 }
+
+void ik(PImage data, float x, float y, float k) {
+  //x -= (data.width/2);
+  //y -= (data.height/2);
+  pushMatrix();
+  translate(x + (data.width/2), y + (data.height/2));
+  rotate(radians(k));
+  image(data, 0-data.width/2, 0-data.height/2);  
+  popMatrix();
+}
+
+PImage frp(PImage in, boolean h, boolean v) {
+  PImage out = createImage(in.width, in.height, ARGB);
+  for (int y = 0; y < in.height; y++) {
+    for (int x = 0; x < in.width; x++) {
+      out.set(h?in.width-1-x:x, v?in.height-1-y:y, in.get(x, y));
+    }
+  }
+  return out;
+}
+
+PImage dis(PImage in, boolean f) {
+  PImage out = createImage(in.width, in.height, ARGB);
+  for (int y = 0; y < in.height; y++) {
+    for (int x = 0; x < in.width; x++) {
+      if (((x+y)%2 == 0)^f) {
+        out.set(x,y,in.get(x,y));
+      }
+    }
+  }
+  return out;
+}

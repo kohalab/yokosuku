@@ -52,6 +52,8 @@ int[] item_list;
 
 PImage sel_t;
 
+boolean[] col_list = new boolean[256];
+
 void setup() {
   loadSound();
   r10 = loadFont("10r.vlw");
@@ -139,6 +141,10 @@ void setup() {
   for (int i = 0; i < obj.length; i++) {
     obj[i] = new obj(0, 0, 0, 0, 0, 0, 0);
   }
+  for (int i = 0; i < 256; i++) {
+    col_list[i] = true;
+  }
+  col_list[0x81] = false;
 }
 
 float speed;
@@ -209,22 +215,39 @@ void draw() {
           setblock(X, Y, 0x22, false);
         if (getblock(X, Y) == 0x23)
           setblock(X, Y, 0x24, false);
+
+        if (getblock(X, Y) == 0x27)
+          setblock(X, Y, 0x25, false);
+        if (getblock(X, Y) == 0x26)
+          setblock(X, Y, 0x27, false);
+
+        if (getblock(X, Y) == 0x2a)
+          setblock(X, Y, 0x28, false);
+        if (getblock(X, Y) == 0x29)
+          setblock(X, Y, 0x2a, false);
       }
     }
   }
+
+  /*--------------------表示表示表示表示---------------------*/
 
   map.draw();
   map.backup();
   image(map.get(), 0, yofs);
 
+  if (player.deadnow) {
+    map.mob_draw();
+  }
+
   player.map = map;
   player.draw();
   player.proc();
 
-  for (int i = 0; i < obj.length; i++) {
-    obj[i].draw();
-    obj[i].proc();
+  if (!player.deadnow) {
+    map.mob_draw();
   }
+
+  /*--------------------表示表示表示表示---------------------*/
 
   /*------------------------------------------------------*/
 
@@ -244,7 +267,7 @@ void draw() {
   int scrx = ((dw/32)/2)*32;
   image(block_box, scrx, 0);
   noStroke();
-  image(blocks[item_list[tsp]], scrx+8, 0+8);
+  ik(blocks[item_list[tsp]], scrx+8, 0+8, sin(frameCount/32.0*TWO_PI)*(item_list[tsp] >= 0x80?8:0));
   //println(tsp);
   //fill(255, 128);
   //rect((dw/2)-24, 0, 32, 32);
