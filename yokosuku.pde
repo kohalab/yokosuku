@@ -184,7 +184,9 @@ void draw() {
     setblock(mx, my, item_list[tsp], true);
   }
 
-  map();
+  if (!now_rep()) {
+    map();
+  }
 
 
   /*
@@ -312,7 +314,7 @@ void draw() {
     for (int i = 0; i < tmp.length; i++) {
       for (int f = 0; f < tmp[0].length; f++) {
         if (tmp[i][f] == 254) {
-          setblock(i, f, sp, true);
+          setblock(i, f, item_list[sp], true);
           //map.data[i][f] = sp;
           r = true;
           break;
@@ -379,7 +381,7 @@ void keyPressed() {
   if (key == 'R') {
     int mx = mouseX/SCALE/16;
     int my = (mouseY-(32*SCALE))/SCALE/16;
-    repsp = item_list[getblock(mx, my)];
+    repsp = getblock(mx, my);
     setblock(mx, my, 254, true);
   }
 }

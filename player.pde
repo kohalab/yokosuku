@@ -247,14 +247,18 @@ class player {
   void dead_alway(boolean anyway) {
     if ((no_col && y > dh+ph && deadnow) || anyway) {
       y = 0;
-      x = 0;
+      x = 16;
       xs = 0;
       ys = 0;
       no_col = false;
       deadnow = false;
       for (int yy = 0; yy < map.data[0].length; yy++) {
-        if (map.data[0][map.data[0].length-1-yy] == 1) {
-          y = (map.data[0].length-1-yy)*16;
+        if (
+        map.data[1][map.data[0].length-1-yy] == 0x00||
+        map.data[1][map.data[0].length-1-yy] == 0x06||
+        map.data[1][map.data[0].length-1-yy] == 0x07
+        ) {
+          y = (map.data[1].length-1-yy)*16;
           break;
         }
       }
@@ -295,15 +299,6 @@ class player {
               //dead();
             }
           }
-          if (
-            col(ex, ey, w, h, int(x), int(y-ph+1)) || 
-            col(ex, ey, w, h, int(x), int(y   +1.5)) ||
-            col(ex, ey, w, h, int(x-(pw/2)-1-0), int(y)) || 
-            col(ex, ey, w, h, int(x+(pw/2)  +0), int(y))
-            ) {
-            ifblock(map.data[X][Y], X, Y);
-            //println(map.data[X][Y]);
-          }
           if (col(ex, ey, w, h, int(x-(pw/2)), int(y-(ph-8))) || col(ex, ey, w, h, int(x-(pw/2)), int(y-12))) {
             if (map.data[X][Y] != 0 && iya) {
               x = ex+w+(pw/2);
@@ -328,6 +323,15 @@ class player {
               sound_jmp.stop();
               sound_dom.play();
             }
+          }
+          if (
+            col(ex, ey, w, h, int(x), int(y-ph+1)) || 
+            col(ex, ey, w, h, int(x), int(y   +1.5)) ||
+            col(ex, ey, w, h, int(x-(pw/2)-1-0), int(y)) || 
+            col(ex, ey, w, h, int(x+(pw/2)  +0), int(y))
+            ) {
+            ifblock(map.data[X][Y], X, Y);
+            //println(map.data[X][Y]);
           }
           if (
             col(ex, ey, w, h, int(x-(pw/3)), int(y+1))||

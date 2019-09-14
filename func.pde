@@ -26,25 +26,25 @@ char smal(char in) {
 void setblock(int mx, int my, int tsp, boolean s) {
   if (mx >= 0 && mx < WIDTH && my >= 0 && my < HEIGH) {
     if (s) {
-      if (tsp != map.data[mx][my]) {
-        if (sound_pow.isPlaying() || sound_pop.isPlaying()) {
-          //sound_pow.amp(0);
-          //sound_pop.amp(0);
-        } else {
-          if (tsp == 0) {
+      if (sound_pow.isPlaying() || sound_pop.isPlaying()) {
+        //sound_pow.amp(0);
+        //sound_pop.amp(0);
+      } else {
+        if (tsp == 0) {
+          if (tsp != map.data[mx][my]) {
             sound_pop.rate(random(0.9, 1.1)-((map.data[mx][my])/500.0));
             sound_pop.play();
             sound_pop.amp(random(0.8, 1));
+          }
+        } else {
+          if (map.data[mx][my] != 0) {
+            sound_pow.amp(random(0.5, 1));
+            sound_pow.rate(random(0.5, 0.6));
+            sound_pow.play();
           } else {
-            if (map.data[mx][my] != 0) {
-              sound_pow.amp(random(0.5, 1));
-              sound_pow.rate(random(0.5, 0.6));
-              sound_pow.play();
-            } else {
-              sound_pow.amp(random(0.5, 1));
-              sound_pow.rate(random(0.95, 1.05));
-              sound_pow.play();
-            }
+            sound_pow.amp(random(0.5, 1));
+            sound_pow.rate(random(0.95, 1.05));
+            sound_pow.play();
           }
         }
       }
@@ -59,4 +59,16 @@ int getblock(int mx, int my) {
   } else {
     return -1;
   }
+}
+
+boolean now_rep() {
+  boolean e = false;
+  for (int i = 0; i < map.data.length; i++) {
+    for (int f = 0; f < map.data[0].length; f++) {
+      if (getblock(i, f) == 254) {
+        e = true;
+      }
+    }
+  }
+  return e;
 }
