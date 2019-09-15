@@ -50,7 +50,7 @@ class map_saver {
         //println(w, h);
         for (int y = 0; y < h; y++) {
           for (int x = 0; x < w; x++) {
-            out.data[x][y] = in[x+(y*w)+data_offset];
+            out.data[x][y] = in[x+(y*w)+data_offset]&0xff;
           }
         }
         //
