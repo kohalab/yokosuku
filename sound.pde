@@ -11,6 +11,9 @@ AudioSample sound_dom;
 AudioSample sound_boh;
 AudioSample sound_pyn;
 AudioSample sound_dho;
+AudioSample sound_son;
+AudioSample sound_err;
+AudioSample sound_kya;
 
 void loadSound() {
   minim = new Minim(this);
@@ -26,6 +29,9 @@ void loadSound() {
   sound_boh = minim.loadSample( "sound/boh.wav", buffer_size);
   sound_pyn = minim.loadSample( "sound/pyn.wav", buffer_size);
   sound_dho = minim.loadSample( "sound/dho.wav", buffer_size);
+  sound_son = minim.loadSample( "sound/son.wav", buffer_size);
+  sound_err = minim.loadSample( "sound/err.wav", buffer_size);
+  sound_kya = minim.loadSample( "sound/kya.wav", buffer_size);
 }
 
 void super_sound() {
@@ -42,6 +48,9 @@ void all_stop() {
   sound_boh.stop();
   sound_pyn.stop();
   sound_dho.stop();
+  sound_son.stop();
+  sound_err.stop();
+  sound_kya.stop();
   /*
   sound_pow.amp(0);
    sound_pop.amp(0);

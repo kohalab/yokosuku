@@ -6,15 +6,15 @@ class map_saver {
     int w = data.length;
     int h = data[0].length;
     byte[] header = {
-      'Y', 'K', 'S', 'K', 
-      's', 'M', 'a', 'p', 
-      'D', 'a', 't', 'a', 
-      ' ', 'V', '1', ' ', 
+      'Y', 'K', 'S', 'K', //00
+      '-', 'M', 'a', 'p', //04
+      'D', 'a', 't', 'a', //08
+      ' ', 'V', '1', ' ', //0c
 
-      'W', byte(w&0xff), 'H', byte(h&0xff), 
-      '.', '.', '.', '.', 
-      '.', '.', '.', '.', 
-      '.', '.', '.', '.'
+      byte(w&0xff), byte(h&0xff), '.', '.', //10
+      '.', '.', '.', '.', //14
+      '.', '.', '.', '.', //18
+      '.', '.', '.', '.'  //1c
     };
     byte[] out = new byte[header.length+(w*h)];
     for (int i = 0; i < header.length; i++) {
@@ -27,9 +27,41 @@ class map_saver {
     }
     saveBytes(path, out);
   }
-  map load(String path){
-    map out = new map();
-    
-    return out;
+  map load(String path) {
+    int data_offset = 32;
+    byte[] in = loadBytes(path);
+    byte[] header = {'Y', 'K', 'S', 'K'};
+    boolean yes = true;
+    if (in == null)
+      return null;
+    if (in .length < data_offset)
+      return null;
+    for (int i = 0; i < header.length; i++) {
+      if (in[i] != header[i]) {
+        yes = false;
+      }
+    }
+    if (yes) {
+      map out;
+      out = new map(WIDTH, HEIGH);
+      int w = in[0x10]&0xff;
+      int h = in[0x11]&0xff;
+      if (w == WIDTH && h == HEIGH) {
+        //println(w, h);
+        for (int y = 0; y < h; y++) {
+          for (int x = 0; x < w; x++) {
+            out.data[x][y] = in[x+(y*w)+data_offset];
+          }
+        }
+        //
+      } else {
+        println("dif size");
+        return null;
+      }
+      return out;
+    } else {
+      println("not yokosuku map data file");
+      return null;
+    }
   }
 }

@@ -15,6 +15,8 @@ PImage cha;
 boolean[] keycode = new boolean[256*256];
 boolean[] keys = new boolean[256*256];
 
+String map_save_path = "map_saves/";
+
 map map;
 
 player player;
@@ -54,7 +56,10 @@ PImage sel_t;
 
 boolean[] col_list = new boolean[256];
 
+map_saver map_saver;
+
 void setup() {
+  map_saver = new map_saver();
   loadSound();
   r10 = loadFont("10r.vlw");
   b10 = loadFont("10b.vlw");
@@ -154,6 +159,12 @@ void setup() {
   col_list[0xe5] = false;
   col_list[0xe6] = false;
   col_list[0xe7] = false;
+  ;
+  ;
+  ;
+  ;
+  //map_saver.save("test.yksm", map);
+  //map_saver.load("test.yksm");
 }
 
 float speed;
@@ -192,15 +203,17 @@ void draw() {
   if (sp < 0)sp = 0;
   if (sp > item_list.length-1)sp = item_list.length-1;
 
-  int mx = mouseX/SCALE/16;
-  int my = (mouseY-(32*SCALE))/SCALE/16;
+  if (mouseY/SCALE >= yofs) {  
+    int mx = mouseX/SCALE/16;
+    int my = (mouseY-(32*SCALE))/SCALE/16;
 
-  tsp = sp;
+    tsp = sp;
 
-  if (mousePressed) {
-    if (mouseButton == RIGHT)
-      tsp = 0;
-    setblock(mx, my, item_list[tsp], true);
+    if (mousePressed) {
+      if (mouseButton == RIGHT)
+        tsp = 0;
+      setblock(mx, my, item_list[tsp], true);
+    }
   }
 
   if (!now_rep()) {
@@ -398,7 +411,53 @@ void draw() {
     noTint();
   }
   super_sound();
+  if (sl_e) {
+    for (int i = 0; i < 10; i++) {
+      int alw = width/10;
+      int btw = alw-4;
+      textFont(r10);
+      if (button("SAVE"+i, i*alw+2, 0, btw, ((yofs*SCALE)/3)-4, load_en[i])) {
+        sound_son.stop();
+        sound_son.trigger();
+        map_saver.save(map_save_path+i+".yksm", map);
+        loadcheck();
+        delay(100);
+      }
+      if (button("LOAD"+i, i*alw+2, 0+((yofs*SCALE)/3), btw, (yofs*SCALE/3)-4, load_en[i])) {
+        sound_son.stop();
+        sound_son.trigger();
+        map load = map_saver.load(map_save_path+i+".yksm");
+        if (load != null) {
+          map = load;
+          player.dead_alway(true);
+        } else {
+          sound_son.stop();
+          sound_err.stop();
+          sound_err.trigger();
+        }
+        loadcheck();
+        delay(100);
+      }
+      if (button("X", i*alw+2, 0+((yofs*SCALE)/3*2), 10, 12, load_en[i])) {
+        map load = map_saver.load(map_save_path+i+".yksm");
+        if (load != null) {
+          sound_kya.stop();
+          sound_kya.trigger();
+          saveBytes(map_save_path+i+".yksm", new byte[] {});
+        } else {
+          sound_err.stop();
+          sound_err.trigger();
+        }
+        loadcheck();
+        delay(100);
+      }
+
+      //
+    }
+  }
 }
+
+boolean sl_e;
 
 void keyPressed() {
   if (keyCode == LEFT  || key == '1')sp -= 1;
@@ -443,9 +502,26 @@ void keyPressed() {
   }
   if (key == 'm')
     all_stop();
+  if (key == 'q') {
+    sl_e = !sl_e;
+    loadcheck();
+  }
 }
 
 void keyReleased() {
   keycode[keyCode] = false;
   keys[key] = false;
 }
+
+void loadcheck() {
+  for (int i = 0; i < 10; i++) {
+    map load = map_saver.load(map_save_path+i+".yksm");
+    if (load != null) {
+      load_en[i] = true;
+    } else {
+      load_en[i] = false;
+    }
+  }
+}
+
+boolean[] load_en = new boolean[10];

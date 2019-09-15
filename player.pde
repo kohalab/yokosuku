@@ -242,7 +242,7 @@ class player {
     }
     if (a == 0x80) {
       //sound_jon.amp(1);
-      sound_jon.trigger();
+      sound_woo.trigger();
       dead();
     }
     if (a == 0x81) {

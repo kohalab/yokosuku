@@ -15,33 +15,39 @@ class map {
   PGraphics map_buf;
   PGraphics g;
   map() {
-    g = createGraphics(dw, dh);
-    data = new int[WIDTH][HEIGH];
-    data_old = new int[WIDTH][HEIGH];
-    for (int y = 0; y < HEIGH; y++) {
-      for (int x = 0; x < WIDTH; x++) {
+    map(WIDTH, HEIGH);
+  }
+  map(int w, int h) {
+    map(w, h);
+  }
+  void map(int w, int h) {
+    g = createGraphics(w*16, h*16);
+    data = new int[w][h];
+    data_old = new int[w][h];
+    for (int y = 0; y < data[0].length; y++) {
+      for (int x = 0; x < data.length; x++) {
         data[x][y] = 0;
       }
     }
-    for (int y = 0; y < HEIGH; y++) {
-      for (int x = 0; x < WIDTH; x++) {
+    for (int y = 0; y < data[0].length; y++) {
+      for (int x = 0; x < data.length; x++) {
         data_old[x][y] = -1;
       }
     }
-    map_buf = createGraphics(WIDTH*16, HEIGH*16);
+    map_buf = createGraphics(w*16, h*16);
     map_buf.beginDraw();
   }
   void backup() {
-    for (int y = 0; y < HEIGH; y++) {
-      for (int x = 0; x < WIDTH; x++) {
+    for (int y = 0; y < data[0].length; y++) {
+      for (int x = 0; x < data.length; x++) {
         data_old[x][y] = data[x][y];
       }
     }
   }
   void draw() {
     map_buf.beginDraw();
-    for (int y = 0; y < HEIGH; y++) {
-      for (int x = 0; x < WIDTH; x++) {
+    for (int y = 0; y < data[0].length; y++) {
+      for (int x = 0; x < data.length; x++) {
         ;
         if (data_old[x][y] != data[x][y]) {
           map_buf.noStroke();
@@ -66,8 +72,8 @@ class map {
   void mob_draw() {
     g.beginDraw();
     g.clear();
-    for (int y = 0; y < HEIGH; y++) {
-      for (int x = 0; x < WIDTH; x++) {
+    for (int y = 0; y < data[0].length; y++) {
+      for (int x = 0; x < data.length; x++) {
         if (data[x][y] == 0x80) {
           float i = (((float)x/WIDTH)+((float)((float)y/HEIGH)*WIDTH))*TWO_PI;
           float xt = sin(frameCount/60.0*TWO_PI+i)*3;
@@ -101,8 +107,8 @@ class map {
   }
 
   void update() {
-    for (int y = 0; y < HEIGH; y++) {
-      for (int x = 0; x < WIDTH; x++) {
+    for (int y = 0; y < data[0].length; y++) {
+      for (int x = 0; x < data.length; x++) {
         data_old[x][y] = -1;
       }
     }

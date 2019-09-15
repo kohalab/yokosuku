@@ -99,3 +99,29 @@ PImage dis(PImage in, boolean f) {
   }
   return out;
 }
+
+boolean button(String t, int x, int y, int w, int h, boolean e) {
+  boolean p = 
+    x < mouseX && y < mouseY &&
+    mouseX < x+w && mouseY < y+h
+    ;
+  fill(255, 128);
+  if (e)fill(128, 255, 128, 128);
+  if (p) {
+    fill(0, 128);
+    if (e)fill(0, 128, 0, 128);
+  }
+  stroke(0);
+  if (e)stroke(0, 128, 0);
+  if (p) {
+    stroke(255);
+    if (e)stroke(128, 256, 128);
+  }
+  rect(x, y, w, h);
+  fill(0);
+  if (p) {
+    fill(255);
+  }
+  text(t, (x+(w/2))-(textWidth(t)/2), (y+(h/2)+5));
+  return p&&mousePressed;
+}
