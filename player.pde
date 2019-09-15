@@ -42,6 +42,8 @@ class player {
 
   boolean otjm = false;
 
+  boolean asl = false;
+
   void draw() {
     if (first) {
       dead_alway(true);
@@ -76,6 +78,7 @@ class player {
       if (int(ark_sc) == 2)t = 0;
       if (int(ark_sc) == 3)t = 4;
     }
+
     if (ys < -0.1) {
       t = 5;
     }
@@ -112,8 +115,10 @@ class player {
   }
   void proc() {
     //
+    float yys = ys/speed;
+    if (yys < -15)yys = -15;
     x += xs/speed;
-    y += ys/speed;
+    y += yys;
     ys += gravity;
 
     if (x < pw/2)x = pw/2;
@@ -123,8 +128,10 @@ class player {
 
     //---------------dead---------------
     if (y > HEIGH*16+ph) {
-      if (!deadnow)
-        sound_woo.play();
+      if (!deadnow) {
+        //sound_woo.amp(1);
+        sound_woo.trigger();
+      }
       dead();
       //y = HEIGH*16+ph-10;
     }
@@ -157,7 +164,8 @@ class player {
         jump_cooldown = 15;
         ctr = true;
         sound_jmp.stop();
-        sound_jmp.play();
+        sound_jmp.trigger();
+        //sound_jmp.amp(1);
         otjm = true;
       }
       dash = keys['f'];
@@ -194,39 +202,47 @@ class player {
     if (a == 0x21) {
       dead();
       //sound_ping.rate(random(0.95, 1.05));
-      sound_ping.play();
-      sound_ping.amp(random(0.75, 0.8));
+      //sound_ping.amp(1);
+      sound_ping.trigger();
+      //sound_ping.amp(random(0.75, 0.8));
     }
     if (a == 0x22) {
       //sound_jon.rate(random(0.9, 1.1));
-      sound_jon.play();
+      sound_jon.stop();
+      sound_jon.trigger();
+      //sound_jon.amp(0.3);
       ys -= 8;
       y -= 3;
       setblock(xx, yy, 0x23, false);
     }
     if (a == 0x25) {
       //sound_jon.rate(random(0.9, 1.1));
-      sound_jon.play();
+      sound_jon.stop();
+      sound_jon.trigger();
+      //sound_jon.amp(0.3);
       xs += 8;
       x += 3;
       setblock(xx, yy, 0x26, false);
     }
     if (a == 0x28) {
       //sound_jon.rate(random(0.9, 1.1));
-      sound_jon.play();
+      sound_jon.stop();
+      sound_jon.trigger();
+      //sound_jon.amp(0.3);
       xs -= 8;
       x -= 3;
       setblock(xx, yy, 0x29, false);
     }
     if (blocks_no[a] && frameCount%5 == 0) {
       sound_boh.stop();
-      sound_boh.amp(0.25);
-      sound_boh.play();
+      //sound_boh.amp(0.25);
+      sound_boh.trigger();
       //println("stt"+s);    
       //otjm = false;
     }
     if (a == 0x80) {
-      sound_jon.play();
+      //sound_jon.amp(1);
+      sound_jon.trigger();
       dead();
     }
     if (a == 0x81) {
@@ -334,7 +350,8 @@ class player {
               ys = ys < 0?-ys:ys;
               sound_dom.stop();
               sound_jmp.stop();
-              sound_dom.play();
+              //sound_dom.amp(1);
+              sound_dom.trigger();
             }
           }
           if (
@@ -371,7 +388,7 @@ class player {
 }
 
 void wakattawakatta() {
-  if (sound_pow.isPlaying() || sound_pop.isPlaying()) {
+  if (true) {
     sound_pow.stop();
     sound_pop.stop();
   }

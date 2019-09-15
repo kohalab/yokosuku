@@ -26,26 +26,21 @@ char smal(char in) {
 void setblock(int mx, int my, int tsp, boolean s) {
   if (mx >= 0 && mx < WIDTH && my >= 0 && my < HEIGH) {
     if (s) {
-      if (sound_pow.isPlaying() || sound_pop.isPlaying()) {
-        //sound_pow.amp(0);
-        //sound_pop.amp(0);
+      if (tsp == 0) {
+        if (tsp != map.data[mx][my]) {
+          //sound_pop.rate(random(0.9, 1.1)-((map.data[mx][my])/500.0));
+          sound_pop.trigger();
+          //sound_pop.amp(random(0.8, 1));
+        }
       } else {
-        if (tsp == 0) {
-          if (tsp != map.data[mx][my]) {
-            sound_pop.rate(random(0.9, 1.1)-((map.data[mx][my])/500.0));
-            sound_pop.play();
-            sound_pop.amp(random(0.8, 1));
-          }
+        if (map.data[mx][my] != 0) {
+          //sound_pow.amp(random(0.5, 1));
+          //sound_pow.rate(random(0.5, 0.6));
+          sound_pow.trigger();
         } else {
-          if (map.data[mx][my] != 0) {
-            sound_pow.amp(random(0.5, 1));
-            sound_pow.rate(random(0.5, 0.6));
-            sound_pow.play();
-          } else {
-            sound_pow.amp(random(0.5, 1));
-            sound_pow.rate(random(0.95, 1.05));
-            sound_pow.play();
-          }
+          //sound_pow.amp(random(0.5, 1));
+          //sound_pow.rate(random(0.95, 1.05));
+          sound_pow.trigger();
         }
       }
     }
@@ -98,7 +93,7 @@ PImage dis(PImage in, boolean f) {
   for (int y = 0; y < in.height; y++) {
     for (int x = 0; x < in.width; x++) {
       if (((x+y)%2 == 0)^f) {
-        out.set(x,y,in.get(x,y));
+        out.set(x, y, in.get(x, y));
       }
     }
   }

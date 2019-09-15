@@ -74,21 +74,26 @@ class map {
           image(frp(get_cha(cha, data[x][y]), xt >= 0, false), x*16+xt, (y*16)
             +int(sin(frameCount/30.0*TWO_PI+i)*3)
             +yofs);
-        }
-        if (data[x][y] == 0x81) {
-          float i = (((float)x/WIDTH)+((float)((float)y/HEIGH)*WIDTH))*TWO_PI;
-          float xt = sin(frameCount/60.0*TWO_PI+i)*3;
-          g.image(get_cha(cha, data[x][y]), x*16+xt-8, (y*16-8)
-            +int(sin(frameCount/30.0*TWO_PI+i)*3)
-            +0);
-          g.image(get_cha(cha, data[x][y]), x*16+xt+8, (y*16-8)
-            +int(sin(frameCount/30.0*TWO_PI+i)*3)
-            +0);
-          g.image(get_cha(cha, data[x][y]+1), x*16+xt-8, (y*16)+16-8
-            +int(sin(frameCount/30.0*TWO_PI+i)*3)
-            +0, 
-            32, (HEIGH-1)*16);
-        }
+        } else
+          if (data[x][y] == 0x81) {
+            float i = (((float)x/WIDTH)+((float)((float)y/HEIGH)*WIDTH))*TWO_PI;
+            float xt = sin(frameCount/60.0*TWO_PI+i)*3;
+            g.image(get_cha(cha, data[x][y]), x*16+xt-8, (y*16-8)
+              +int(sin(frameCount/30.0*TWO_PI+i)*3)
+              +0);
+            g.image(get_cha(cha, data[x][y]), x*16+xt+8, (y*16-8)
+              +int(sin(frameCount/30.0*TWO_PI+i)*3)
+              +0);
+            g.image(get_cha(cha, data[x][y]+1), x*16+xt-8, (y*16)+16-8
+              +int(sin(frameCount/30.0*TWO_PI+i)*3)
+              +0, 
+              32, (HEIGH-1)*16);
+          } else {
+            if (data[x][y] > 0x80) {
+              //else
+              image(get_cha(cha, data[x][y]), x*16, y*16+yofs);
+            }
+          }
       }
     }
     g.endDraw();

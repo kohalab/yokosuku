@@ -145,6 +145,15 @@ void setup() {
     col_list[i] = true;
   }
   col_list[0x81] = false;
+
+  col_list[0xe0] = false;
+  col_list[0xe1] = false;
+  col_list[0xe2] = false;
+  col_list[0xe3] = false;
+  col_list[0xe4] = false;
+  col_list[0xe5] = false;
+  col_list[0xe6] = false;
+  col_list[0xe7] = false;
 }
 
 float speed;
@@ -166,7 +175,11 @@ void new_obj(obj p) {
   obj[o] = p;
 }
 
+boolean deadnow = false;
+
 void draw() {
+
+  deadnow = player.deadnow;
 
   surface.setSize(WIDTH*16*SCALE, (HEIGH*16+yofs)*SCALE);
 
@@ -211,6 +224,26 @@ void draw() {
 
     for (int Y = 0; Y < HEIGH; Y++) {
       for (int X = 0; X < WIDTH; X++) {
+        if (getblock(X, Y) == 0xe7)
+          setblock(X, Y, 0xe0, false);
+        if (getblock(X, Y) == 0xe6)
+          setblock(X, Y, 0xe7, false);
+        if (getblock(X, Y) == 0xe5)
+          setblock(X, Y, 0xe6, false);
+        if (getblock(X, Y) == 0xe4)
+          setblock(X, Y, 0xe5, false);
+
+        if (getblock(X, Y) == 0xe3)
+          setblock(X, Y, 0xe4, false);
+        if (getblock(X, Y) == 0xe2)
+          setblock(X, Y, 0xe3, false);
+        if (getblock(X, Y) == 0xe1)
+          setblock(X, Y, 0xe2, false);
+        if (getblock(X, Y) == 0xe0)
+          setblock(X, Y, 0xe1, false);
+
+
+
         if (getblock(X, Y) == 0x24)
           setblock(X, Y, 0x22, false);
         if (getblock(X, Y) == 0x23)
@@ -235,7 +268,7 @@ void draw() {
   map.backup();
   image(map.get(), 0, yofs);
 
-  if (player.deadnow) {
+  if (deadnow) {
     map.mob_draw();
   }
 
@@ -243,7 +276,7 @@ void draw() {
   player.draw();
   player.proc();
 
-  if (!player.deadnow) {
+  if (!deadnow) {
     map.mob_draw();
   }
 
@@ -364,6 +397,7 @@ void draw() {
     image(sel_t, 0, 0);
     noTint();
   }
+  super_sound();
 }
 
 void keyPressed() {
@@ -407,6 +441,8 @@ void keyPressed() {
     repsp = getblock(mx, my);
     setblock(mx, my, 254, true);
   }
+  if (key == 'm')
+    all_stop();
 }
 
 void keyReleased() {
