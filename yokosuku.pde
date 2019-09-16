@@ -151,14 +151,9 @@ void setup() {
   }
   col_list[0x81] = false;
 
-  col_list[0xe0] = false;
-  col_list[0xe1] = false;
-  col_list[0xe2] = false;
-  col_list[0xe3] = false;
-  col_list[0xe4] = false;
-  col_list[0xe5] = false;
-  col_list[0xe6] = false;
-  col_list[0xe7] = false;
+  for (int i = 0; i < 16; i++) {
+    col_list[0xe0+i] = false;
+  }
   ;
   ;
   ;
@@ -245,7 +240,6 @@ void draw() {
           setblock(X, Y, 0xe6, false);
         if (getblock(X, Y) == 0xe4)
           setblock(X, Y, 0xe5, false);
-
         if (getblock(X, Y) == 0xe3)
           setblock(X, Y, 0xe4, false);
         if (getblock(X, Y) == 0xe2)
@@ -255,6 +249,24 @@ void draw() {
         if (getblock(X, Y) == 0xe0)
           setblock(X, Y, 0xe1, false);
 
+
+        if (getblock(X, Y) == 0xef)
+          setblock(X, Y, 0xe8, false);
+        if (getblock(X, Y) == 0xee)
+          setblock(X, Y, 0xef, false);
+        if (getblock(X, Y) == 0xed)
+          setblock(X, Y, 0xee, false);
+        if (getblock(X, Y) == 0xec)
+          setblock(X, Y, 0xed, false);
+
+        if (getblock(X, Y) == 0xeb)
+          setblock(X, Y, 0xec, false);
+        if (getblock(X, Y) == 0xea)
+          setblock(X, Y, 0xeb, false);
+        if (getblock(X, Y) == 0xe9)
+          setblock(X, Y, 0xea, false);
+        if (getblock(X, Y) == 0xe8)
+          setblock(X, Y, 0xe9, false);
 
 
         if (getblock(X, Y) == 0x24)
