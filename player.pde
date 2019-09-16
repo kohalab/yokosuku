@@ -101,7 +101,7 @@ class player {
     }
     boolean hf = !lr;
     boolean vf = false;
-    image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2), y-ph+yofs+1, pw, ph);
+    image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs+1, pw, ph);
     if (!ctr) {
       non_ctr_count++;
     } else {
@@ -122,18 +122,18 @@ class player {
     ys += gravity;
 
     if (x < pw/2)x = pw/2;
-    if (x > dw-(pw/2))x = dw-(pw/2);
+    if (x > (map.data.length*16)-(pw/2))x = (map.data.length*16)-(pw/2);
 
     head_break = false;
 
     //---------------dead---------------
-    if (y > HEIGH*16+ph) {
+    if (y > map.data[0].length*16+ph) {
       if (!deadnow) {
         //sound_woo.amp(1);
         sound_woo.trigger();
       }
       dead();
-      //y = HEIGH*16+ph-10;
+      //y = map.data[0].length*16+ph-10;
     }
 
 
@@ -292,6 +292,7 @@ class player {
         }
       }
       deaddeadtime = 0;
+      direct_scr();
     }
     //println(deaddeadtime);
     deaddeadtime++;
@@ -313,8 +314,8 @@ class player {
        }
        }
        */
-      for (int Y = 0; Y < HEIGH; Y++) {
-        for (int X = 0; X < WIDTH; X++) {
+      for (int Y = 0; Y < map.data[0].length; Y++) {
+        for (int X = 0; X < map.data.length; X++) {
           int ex = X*16;
           int ey = Y*16;
           int w = 16;

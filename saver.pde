@@ -43,10 +43,10 @@ class map_saver {
     }
     if (yes) {
       map out;
-      out = new map(WIDTH, HEIGH);
+      out = new map(map.data.length, map.data[0].length);
       int w = in[0x10]&0xff;
       int h = in[0x11]&0xff;
-      if (w == WIDTH && h == HEIGH) {
+      if (w == map.data.length && h == map.data[0].length) {
         //println(w, h);
         for (int y = 0; y < h; y++) {
           for (int x = 0; x < w; x++) {

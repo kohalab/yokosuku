@@ -24,7 +24,7 @@ char smal(char in) {
 }
 
 void setblock(int mx, int my, int tsp, boolean s) {
-  if (mx >= 0 && mx < WIDTH && my >= 0 && my < HEIGH) {
+  if (mx >= 0 && mx < map.data.length && my >= 0 && my < map.data[0].length) {
     if (s) {
       if (tsp == 0) {
         if (tsp != map.data[mx][my]) {
@@ -49,7 +49,7 @@ void setblock(int mx, int my, int tsp, boolean s) {
 }
 
 int getblock(int mx, int my) {
-  if (mx >= 0 && mx < WIDTH && my >= 0 && my < HEIGH) {
+  if (mx >= 0 && mx < map.data.length && my >= 0 && my < map.data[0].length) {
     return map.data[mx][my];
   } else {
     return -1;

@@ -15,7 +15,7 @@ class map {
   PGraphics map_buf;
   PGraphics g;
   map() {
-    map(WIDTH, HEIGH);
+    map(map.data.length, map.data[0].length);
   }
   map(int w, int h) {
     map(w, h);
@@ -74,32 +74,36 @@ class map {
     g.clear();
     for (int y = 0; y < data[0].length; y++) {
       for (int x = 0; x < data.length; x++) {
-        if (data[x][y] == 0x80) {
-          float i = (((float)x/WIDTH)+((float)((float)y/HEIGH)*WIDTH))*TWO_PI;
-          float xt = sin(frameCount/60.0*TWO_PI+i)*3;
-          image(frp(get_cha(cha, data[x][y]), xt >= 0, false), x*16+xt, (y*16)
-            +int(sin(frameCount/30.0*TWO_PI+i)*3)
-            +yofs);
-        } else
-          if (data[x][y] == 0x81) {
-            float i = (((float)x/WIDTH)+((float)((float)y/HEIGH)*WIDTH))*TWO_PI;
+        ;
+        if (x*16-scrx >= -32 && x*16-scrx < (WIDTH+1)*16) {
+          if (data[x][y] == 0x80) {
+            float i = (((float)x/map.data.length)+((float)((float)y/map.data.length)*map.data.length))*TWO_PI;
             float xt = sin(frameCount/60.0*TWO_PI+i)*3;
-            g.image(get_cha(cha, data[x][y]), x*16+xt-8, (y*16-8)
+            image(frp(get_cha(cha, data[x][y]), xt >= 0, false), x*16+xt-scrx, (y*16)
               +int(sin(frameCount/30.0*TWO_PI+i)*3)
-              +0);
-            g.image(get_cha(cha, data[x][y]), x*16+xt+8, (y*16-8)
-              +int(sin(frameCount/30.0*TWO_PI+i)*3)
-              +0);
-            g.image(get_cha(cha, data[x][y]+1), x*16+xt-8, (y*16)+16-8
-              +int(sin(frameCount/30.0*TWO_PI+i)*3)
-              +0, 
-              32, (HEIGH-1)*16);
-          } else {
-            if (data[x][y] > 0x80) {
-              //else
-              image(get_cha(cha, data[x][y]), x*16, y*16+yofs);
+              +yofs);
+          } else
+            if (data[x][y] == 0x81) {
+              float i = (((float)x/map.data.length)+((float)((float)y/map.data[0].length)*map.data.length))*TWO_PI;
+              float xt = sin(frameCount/60.0*TWO_PI+i)*3;
+              g.image(get_cha(cha, data[x][y]), x*16+xt-8-scrx, (y*16-8)
+                +int(sin(frameCount/30.0*TWO_PI+i)*3)
+                +0);
+              g.image(get_cha(cha, data[x][y]), x*16+xt+8-scrx, (y*16-8)
+                +int(sin(frameCount/30.0*TWO_PI+i)*3)
+                +0);
+              g.image(get_cha(cha, data[x][y]+1), x*16+xt-8-scrx, (y*16)+16-8
+                +int(sin(frameCount/30.0*TWO_PI+i)*3)
+                +0, 
+                32, (map.data[0].length-1)*16);
+            } else {
+              if (data[x][y] > 0x80) {
+                //else
+                image(get_cha(cha, data[x][y]), x*16-scrx, y*16+yofs);
+              }
             }
-          }
+        }
+        ;
       }
     }
     g.endDraw();

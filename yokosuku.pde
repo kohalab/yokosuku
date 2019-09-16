@@ -2,6 +2,7 @@ boolean debug = false;
 
 int WIDTH = 24;
 int HEIGH = 12;
+int SWIDT = WIDTH*6;
 
 int dw;
 int dh;
@@ -9,6 +10,8 @@ int dh;
 int SCALE = 2;
 
 int yofs = 32;
+
+int scrx = 0;
 
 PImage cha;
 
@@ -48,8 +51,6 @@ float jx, jy;
 PImage block_box;
 PImage block_box_n;
 
-obj[] obj = new obj[16];
-
 int[] item_list;
 
 PImage sel_t;
@@ -65,7 +66,7 @@ void setup() {
   b10 = loadFont("10b.vlw");
   r12 = loadFont("12r.vlw");
   b12 = loadFont("12b.vlw");
-  map = new map();
+  map = new map(SWIDT, HEIGH);
   cha = loadImage("data.png");
   ;
   PImage hac = cha.get((255%16)*16, (255/16)*16, 16, 16);
@@ -143,9 +144,6 @@ void setup() {
   }
   player = new player();
   player.map = map;
-  for (int i = 0; i < obj.length; i++) {
-    obj[i] = new obj(0, 0, 0, 0, 0, 0, 0);
-  }
   for (int i = 0; i < 256; i++) {
     col_list[i] = true;
   }
@@ -170,17 +168,6 @@ int rpchg = -1;
 
 boolean nowrep;
 
-void new_obj(obj p) {
-  int o = int(random(obj.length));
-  for (int i = 0; i < obj.length; i++) {
-    if (obj[i].type == 0) {
-      o = i;
-      break;
-    }
-  }
-  obj[o] = p;
-}
-
 boolean deadnow = false;
 
 void draw() {
@@ -199,7 +186,7 @@ void draw() {
   if (sp > item_list.length-1)sp = item_list.length-1;
 
   if (mouseY/SCALE >= yofs) {  
-    int mx = mouseX/SCALE/16;
+    int mx = ((mouseX/SCALE)+scrx)/16;
     int my = (mouseY-(32*SCALE))/SCALE/16;
 
     tsp = sp;
@@ -230,8 +217,8 @@ void draw() {
 
   if (frameCount%4 == 0) {
 
-    for (int Y = 0; Y < HEIGH; Y++) {
-      for (int X = 0; X < WIDTH; X++) {
+    for (int Y = 0; Y < map.data[0].length; Y++) {
+      for (int X = 0; X < map.data.length; X++) {
         if (getblock(X, Y) == 0xe7)
           setblock(X, Y, 0xe0, false);
         if (getblock(X, Y) == 0xe6)
@@ -291,7 +278,7 @@ void draw() {
 
   map.draw();
   map.backup();
-  image(map.get(), 0, yofs);
+  image(map.get().get(scrx, 0, dw, dh), 0, yofs);
 
   if (deadnow) {
     map.mob_draw();
@@ -467,6 +454,7 @@ void draw() {
       //
     }
   }
+  scrproc();
 }
 
 boolean sl_e;
