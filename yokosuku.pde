@@ -3,6 +3,7 @@ boolean debug = false;
 int WIDTH = 24;
 int HEIGH = 12;
 int SWIDT = WIDTH*6;
+int SHEIG = HEIGH*4;
 
 int dw;
 int dh;
@@ -10,8 +11,6 @@ int dh;
 int SCALE = 2;
 
 int yofs = 32;
-
-int scrx = 0;
 
 PImage cha;
 
@@ -32,7 +31,7 @@ boolean[] blocks_no = new boolean[256];
 boolean grd_en = true;
 
 void settings() {
-  size(WIDTH*16*SCALE, (HEIGH+1)*16*SCALE+yofs);
+  //size(WIDTH*16*SCALE, (HEIGH+1)*16*SCALE+yofs);
   dw = WIDTH*16;
   dh = HEIGH*16;
   noSmooth();
@@ -66,7 +65,7 @@ void setup() {
   b10 = loadFont("10b.vlw");
   r12 = loadFont("12r.vlw");
   b12 = loadFont("12b.vlw");
-  map = new map(SWIDT, HEIGH);
+  map = new map(SWIDT, SHEIG);
   cha = loadImage("data.png");
   ;
   PImage hac = cha.get((255%16)*16, (255/16)*16, 16, 16);
@@ -185,12 +184,12 @@ void draw() {
   if (sp < 0)sp = 0;
   if (sp > item_list.length-1)sp = item_list.length-1;
 
+  int mx = ((mouseX/SCALE)+scrx)/16;
+  int my = (mouseY+(scry*SCALE)-(32*SCALE))/SCALE/16;
+
+  tsp = sp;
+
   if (mouseY/SCALE >= yofs) {  
-    int mx = ((mouseX/SCALE)+scrx)/16;
-    int my = (mouseY-(32*SCALE))/SCALE/16;
-
-    tsp = sp;
-
     if (mousePressed) {
       if (mouseButton == RIGHT)
         tsp = 0;
@@ -278,7 +277,7 @@ void draw() {
 
   map.draw();
   map.backup();
-  image(map.get().get(scrx, 0, dw, dh), 0, yofs);
+  image(map.get().get(scrx, scry, dw, dh), 0, yofs);
 
   if (deadnow) {
     map.mob_draw();
@@ -415,7 +414,7 @@ void draw() {
       int alw = width/10;
       int btw = alw-4;
       textFont(r10);
-      if (button("SAVE"+i, i*alw+2, 0, btw, ((yofs*SCALE)/3)-4, load_en[i])) {
+      if (button("SAVE"+i, i*alw+2, 0, btw, ((yofs*SCALE)/3)/2, load_en[i])) {
         sound_son.stop();
         sound_son.trigger();
         map_saver.save(map_save_path+i+".yksm", map);
@@ -494,9 +493,9 @@ void keyPressed() {
     }
   }
 
-  if (key == 'R') {
-    int mx = mouseX/SCALE/16;
-    int my = (mouseY-(32*SCALE))/SCALE/16;
+  if (key == '`') {
+    int mx = ((mouseX/SCALE)+scrx)/16;
+    int my = (mouseY-(32*SCALE)+scry)/SCALE/16;
     repsp = getblock(mx, my);
     setblock(mx, my, 254, true);
   }

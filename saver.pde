@@ -46,11 +46,11 @@ class map_saver {
       out = new map(map.data.length, map.data[0].length);
       int w = in[0x10]&0xff;
       int h = in[0x11]&0xff;
-      if (w == map.data.length && h == map.data[0].length) {
+      if (w <= map.data.length && h <= map.data[0].length) {
         //println(w, h);
         for (int y = 0; y < h; y++) {
           for (int x = 0; x < w; x++) {
-            out.data[x][y] = in[x+(y*w)+data_offset]&0xff;
+            out.data[x][y+(map.data[0].length-h)] = in[x+(y*w)+data_offset]&0xff;
           }
         }
         //

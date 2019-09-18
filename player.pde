@@ -1,4 +1,5 @@
 float gravity = 0.35;
+float jump_level = 20;
 
 void zht(int x, int y) {
   if (x >= 0) {
@@ -101,7 +102,7 @@ class player {
     }
     boolean hf = !lr;
     boolean vf = false;
-    image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs+1, pw, ph);
+    image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs+1-scry, pw, ph);
     if (!ctr) {
       non_ctr_count++;
     } else {
@@ -206,33 +207,35 @@ class player {
       sound_ping.trigger();
       //sound_ping.amp(random(0.75, 0.8));
     }
+    /*
     if (a == 0x22) {
-      //sound_jon.rate(random(0.9, 1.1));
-      sound_jon.stop();
-      sound_jon.trigger();
-      //sound_jon.amp(0.3);
-      ys -= 8;
-      y -= 3;
-      setblock(xx, yy, 0x23, false);
-    }
-    if (a == 0x25) {
-      //sound_jon.rate(random(0.9, 1.1));
-      sound_jon.stop();
-      sound_jon.trigger();
-      //sound_jon.amp(0.3);
-      xs += 8;
-      x += 3;
-      setblock(xx, yy, 0x26, false);
-    }
-    if (a == 0x28) {
-      //sound_jon.rate(random(0.9, 1.1));
-      sound_jon.stop();
-      sound_jon.trigger();
-      //sound_jon.amp(0.3);
-      xs -= 8;
-      x -= 3;
-      setblock(xx, yy, 0x29, false);
-    }
+     //sound_jon.rate(random(0.9, 1.1));
+     sound_jon.stop();
+     sound_jon.trigger();
+     //sound_jon.amp(0.3);
+     ys -= 8;
+     y -= 3;
+     setblock(xx, yy, 0x23, false);
+     }
+     if (a == 0x25) {
+     //sound_jon.rate(random(0.9, 1.1));
+     sound_jon.stop();
+     sound_jon.trigger();
+     //sound_jon.amp(0.3);
+     xs += 8;
+     x += 3;
+     setblock(xx, yy, 0x26, false);
+     }
+     if (a == 0x28) {
+     //sound_jon.rate(random(0.9, 1.1));
+     sound_jon.stop();
+     sound_jon.trigger();
+     //sound_jon.amp(0.3);
+     xs -= 8;
+     x -= 3;
+     setblock(xx, yy, 0x29, false);
+     }
+     */
     if (blocks_no[a] && frameCount%5 == 0) {
       sound_boh.stop();
       //sound_boh.amp(0.25);
@@ -333,12 +336,24 @@ class player {
             if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]]) {
               x = ex+w+(pw/2);
               xs = 0;
+              if (map.data[X][Y] == 0x25) {
+                sound_jon.stop();
+                sound_jon.trigger();
+                map.data[X][Y] = 0x26;
+                xs += jump_level*gravity;
+              }
             }
           }
           if (col(ex, ey, w, h, int(x+(pw/2)), int(y-(ph-8))) || col(ex, ey, w, h, int(x+(pw/2)), int(y-12))) {
             if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]]) {
               x = ex-(pw/2);
               xs = 0;
+              if (map.data[X][Y] == 0x28) {
+                sound_jon.stop();
+                sound_jon.trigger();
+                map.data[X][Y] = 0x29;
+                xs -= jump_level*gravity;
+              }
             }
           }
           if (
@@ -377,6 +392,12 @@ class player {
               ys = -0.01;
               if (y < ey+15) {
                 y = ey;
+              }
+              if (map.data[X][Y] == 0x22) {
+                sound_jon.stop();
+                sound_jon.trigger();
+                map.data[X][Y] = 0x23;
+                ys -= jump_level*gravity;
               }
               tiniasiwotuketeiruka = 4;
             }
