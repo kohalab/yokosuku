@@ -1,5 +1,8 @@
 float gravity = 0.35;
 float jump_level = 20;
+float side_jump_level = 10;
+float friction = 1.4;
+float nowfriction = 1.3;
 
 void zht(int x, int y) {
   if (x >= 0) {
@@ -31,6 +34,7 @@ class player {
   boolean head_break;
   int atamaitai_time;
   int tiniasiwotuketeiruka = 0;
+  int now_col;
   map map;
   int non_ctr_count;
   player() {
@@ -144,18 +148,18 @@ class player {
     ark_sc = ark_sc%4;
 
     //----------------------------------
-    xs /= 1.3;
+    xs /= nowfriction;
     if (ugokeen && !deadnow) {
       ark = false;
       ctr = false;
       if (keys['a'] || keys['A']) {
-        xs -= 0.6*(dash?2:1);
+        xs -= 0.6*(dash?2:1)*nowfriction/1.3;
         lr = false;
         ark = true;
         ctr = true;
       }
       if (keys['d'] || keys['D']) {
-        xs += 0.6*(dash?2:1);
+        xs += 0.6*(dash?2:1)*nowfriction/1.3;
         lr = true;
         ark = true;
         ctr = true;
@@ -262,6 +266,12 @@ class player {
       ark_sc += (xs > 0?xs:-xs)/20;
       ark_sc %= 4;
     }
+    if (a == 0x90) {
+      xs += 0.35;
+    }
+    if (a == 0x91) {
+      xs -= 0.35;
+    }
     //sound_pyn
   }
   //////////////////////////////////////////////////////////////
@@ -277,7 +287,7 @@ class player {
     deadnow = true;
   }
   void dead_alway(boolean anyway) {
-    if ((no_col && y > dh+ph && deadnow) || anyway) {
+    if ((no_col && y > map.data[0].length*16+ph && deadnow) || anyway) {
       y = 0;
       x = 16;
       xs = 0;
@@ -302,6 +312,7 @@ class player {
     if (deaddeadtime > 65536)deaddeadtime = 65536;
   }
   void colp() {
+    nowfriction = friction;
     if (!no_col) {
       /*
       for (int i = 0; i < obj.length; i++) {
@@ -333,26 +344,26 @@ class player {
             }
           }
           if (col(ex, ey, w, h, int(x-(pw/2)), int(y-(ph-8))) || col(ex, ey, w, h, int(x-(pw/2)), int(y-12))) {
-            if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]]) {
+            if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && left_col_list[map.data[X][Y]]) {
               x = ex+w+(pw/2);
               xs = 0;
               if (map.data[X][Y] == 0x25) {
                 sound_jon.stop();
                 sound_jon.trigger();
                 map.data[X][Y] = 0x26;
-                xs += jump_level*gravity;
+                xs += side_jump_level;
               }
             }
           }
           if (col(ex, ey, w, h, int(x+(pw/2)), int(y-(ph-8))) || col(ex, ey, w, h, int(x+(pw/2)), int(y-12))) {
-            if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]]) {
+            if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && right_col_list[map.data[X][Y]]) {
               x = ex-(pw/2);
               xs = 0;
               if (map.data[X][Y] == 0x28) {
                 sound_jon.stop();
                 sound_jon.trigger();
                 map.data[X][Y] = 0x29;
-                xs -= jump_level*gravity;
+                xs -= side_jump_level;
               }
             }
           }
@@ -361,7 +372,7 @@ class player {
             col(ex, ey, w, h, int(x), int(y-ph+2))||
             col(ex, ey, w, h, int(x+(pw/3)), int(y-ph+2))
             ) {
-            if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]]) {
+            if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && up_col_list[map.data[X][Y]]) {
               head_break = (ys < 0?-ys:ys) > 5;
               ys = ys < 0?-ys:ys;
               sound_dom.stop();
@@ -373,10 +384,17 @@ class player {
           if (
             col(ex, ey, w, h, int(x), int(y-ph+1)) || 
             col(ex, ey, w, h, int(x), int(y   +1.5)) ||
+            col(ex, ey, w, h, int(x-(pw/2)), int(y-ph+1)) || 
+            col(ex, ey, w, h, int(x-(pw/2)), int(y   +1.5)) ||
+            col(ex, ey, w, h, int(x+(pw/2)), int(y-ph+1)) || 
+            col(ex, ey, w, h, int(x+(pw/2)), int(y   +1.5)) ||
             col(ex, ey, w, h, int(x-(pw/2)-1-0), int(y)) || 
             col(ex, ey, w, h, int(x+(pw/2)  +0), int(y))
             ) {
             ifblock(map.data[X][Y], X, Y);
+            if (map.data[X][Y] != 0 && col_list[map.data[X][Y]]) {
+              now_col = 3;
+            }
             //println(map.data[X][Y]);
           }
           if (
@@ -384,7 +402,7 @@ class player {
             col(ex, ey, w, h, int(x), int(y+1))||
             col(ex, ey, w, h, int(x+(pw/3)), int(y+1))
             ) {
-            if (map.data[X][Y] != 0 && col_list[map.data[X][Y]]) {
+            if (map.data[X][Y] != 0 && col_list[map.data[X][Y]] && down_col_list[map.data[X][Y]]) {
               if (debug) {
                 fill(255, 128);
                 rect(ex, ey+yofs, w-1, h-1);
@@ -401,9 +419,18 @@ class player {
               }
               tiniasiwotuketeiruka = 4;
             }
+            if (!down_col_list[map.data[X][Y]]) {
+              sound_ohn.stop();
+              sound_ohn.trigger();
+            }
           }
           //
         }
+      }
+      if (now_col > -3)now_col--;
+      if (now_col <= 0) {
+        //println(frameCount+"now");
+        nowfriction = 1.2;
       }
     }
   }

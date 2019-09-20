@@ -53,12 +53,12 @@ class map {
           map_buf.noStroke();
           map_buf.fill(bg_color);
           map_buf.rect(x*16, y*16, 16, 16);
+          if (grd_en) {
+            map_buf.image(grd.get(0, 0, 16, 16), x*16, y*16);
+          }
           if (data[x][y] >= 1 && data[x][y] < 128) {
             map_buf.image(get_cha(cha, data[x][y]), x*16, y*16);
           } else {
-            if (grd_en) {
-              map_buf.image(grd.get(0, 0, 16, 16), x*16, y*16);
-            }
           }
           //println("change "+x+" "+y);
         }
@@ -96,12 +96,16 @@ class map {
                 +int(sin(frameCount/30.0*TWO_PI+i)*3)
                 +0, 
                 32, (map.data[0].length-1)*16);
-            } else {
-              if (data[x][y] > 0x80) {
-                //else
-                image(get_cha(cha, data[x][y]), x*16-scrx, y*16+yofs);
-              }
-            }
+            } else
+              if (data[x][y] == 0x90 || data[x][y] == 0x91) {
+                float nb = (sin(frameCount/20.0*TWO_PI))*4;
+                image(get_cha(cha, data[x][y]), x*16-scrx, y*16+yofs-scry);
+                image(get_cha(cha, data[x][y]).get(int(nb/2), 0, 16-int(nb), 16), x*16-scrx, y*16+yofs-scry, 16, 16);
+              } else
+                if (data[x][y] > 0x80) {
+                  //else
+                  image(get_cha(cha, data[x][y]), x*16-scrx, y*16+yofs-scry);
+                }
         }
         ;
       }

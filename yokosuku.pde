@@ -55,6 +55,11 @@ int[] item_list;
 PImage sel_t;
 
 boolean[] col_list = new boolean[256];
+boolean[] up_col_list = new boolean[256];
+boolean[] down_col_list = new boolean[256];
+
+boolean[] right_col_list = new boolean[256];
+boolean[] left_col_list = new boolean[256];
 
 map_saver map_saver;
 
@@ -153,7 +158,35 @@ void setup() {
   }
   ;
   ;
+  for (int i = 0; i < 256; i++) {
+    up_col_list[i] = true;
+  }
+  up_col_list[0x40] = false;
+  up_col_list[0x41] = false;
+  up_col_list[0x42] = false;
   ;
+  for (int i = 0; i < 256; i++) {
+    down_col_list[i] = true;
+  }
+  down_col_list[0x4c] = false;
+  down_col_list[0x4d] = false;
+  down_col_list[0x4e] = false;
+  ;
+  ;
+  ;
+  for (int i = 0; i < 256; i++) {
+    right_col_list[i] = true;
+  }
+  right_col_list[0x44] = false;
+  right_col_list[0x45] = false;
+  right_col_list[0x46] = false;
+  ;
+  for (int i = 0; i < 256; i++) {
+    left_col_list[i] = true;
+  }
+  left_col_list[0x48] = false;
+  left_col_list[0x49] = false;
+  left_col_list[0x4a] = false;
   ;
   //map_saver.save("test.yksm", map);
   //map_saver.load("test.yksm");
@@ -337,14 +370,14 @@ void draw() {
           ;
           if (i > 0) {
             if (tmp[i-1][f] == repsp) {
-              setblock(i-1, f, 254, true);
+              setblock(i-1, f, 254, false);
               //map.data[i-1][f] = 254;
               rpchg = 5;
             }
           }
           if (f > 0) {
             if (tmp[i][f-1] == repsp) {
-              setblock(i, f-1, 254, true);
+              setblock(i, f-1, 254, false);
               //map.data[i][f-1] = 254;
               rpchg = 5;
             }
@@ -352,7 +385,7 @@ void draw() {
 
           if (i < tmp.length-1 && f >= 0) {
             if (tmp[i+1][f] == repsp) {
-              setblock(i+1, f, 254, true);
+              setblock(i+1, f, 254, false);
               //map.data[i+1][f] = 254;
               rpchg = 5;
             }
@@ -360,7 +393,7 @@ void draw() {
 
           if (f < tmp[0].length-1) {
             if (tmp[i][f+1] == repsp) {
-              setblock(i, f+1, 254, true);
+              setblock(i, f+1, 254, false);
               //map.data[i][f+1] = 254;
               rpchg = 5;
             }
@@ -381,7 +414,7 @@ void draw() {
     for (int i = 0; i < tmp.length; i++) {
       for (int f = 0; f < tmp[0].length; f++) {
         if (tmp[i][f] == 254) {
-          setblock(i, f, item_list[sp], true);
+          setblock(i, f, item_list[sp], false);
           //map.data[i][f] = sp;
           r = true;
           break;

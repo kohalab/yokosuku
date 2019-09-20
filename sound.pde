@@ -14,6 +14,7 @@ AudioSample sound_dho;
 AudioSample sound_son;
 AudioSample sound_err;
 AudioSample sound_kya;
+AudioSample sound_ohn;
 
 void loadSound() {
   minim = new Minim(this);
@@ -32,6 +33,7 @@ void loadSound() {
   sound_son = minim.loadSample( "sound/son.wav", buffer_size);
   sound_err = minim.loadSample( "sound/err.wav", buffer_size);
   sound_kya = minim.loadSample( "sound/kya.wav", buffer_size);
+  sound_ohn = minim.loadSample( "sound/ohn.wav", buffer_size);
 }
 
 void super_sound() {
