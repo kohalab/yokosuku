@@ -13,6 +13,7 @@ int SCALE = 2;
 int yofs = 32;
 
 PImage cha;
+PImage map_cha;
 
 boolean[] keycode = new boolean[256*256];
 boolean[] keys = new boolean[256*256];
@@ -190,6 +191,7 @@ void setup() {
   ;
   //map_saver.save("test.yksm", map);
   //map_saver.load("test.yksm");
+  map_cha = cha;
 }
 
 float speed;
@@ -487,6 +489,11 @@ void draw() {
     }
   }
   scrproc();
+  /*
+  setblock(int(player.x/16)-1, int(player.y/16), 14, false);
+   setblock(int(player.x/16), int(player.y/16), 14, false);
+   setblock(int(player.x/16)+1, int(player.y/16), 14, false);
+   */
 }
 
 boolean sl_e;
@@ -528,7 +535,7 @@ void keyPressed() {
 
   if (key == '`') {
     int mx = ((mouseX/SCALE)+scrx)/16;
-    int my = (mouseY-(32*SCALE)+scry)/SCALE/16;
+    int my = (mouseY+(scry*SCALE)-(32*SCALE))/SCALE/16;
     repsp = getblock(mx, my);
     setblock(mx, my, 254, true);
   }

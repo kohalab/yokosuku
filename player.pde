@@ -34,9 +34,12 @@ class player {
   boolean head_break;
   int atamaitai_time;
   int tiniasiwotuketeiruka = 0;
+  int tiniasiwotuketeiruka_max = 2;
   int now_col;
   map map;
   int non_ctr_count;
+  int jump_count;
+  int jump_counter;
   player() {
     cha = loadImage("kari.png");
   }
@@ -107,6 +110,12 @@ class player {
     boolean hf = !lr;
     boolean vf = false;
     image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs+1-scry, pw, ph);
+    if (bubo) {
+      if (keys['b'] || keys['B']) {
+        image(frp(get_cha(map_cha, 0xf0+(frameCount%2)), frameCount/2%2 == 0, false), x-(pw/2)-scrx, y+yofs+1-scry-(frameCount%2), 16, 8+(frameCount*3%7*1));
+        println("bbb");
+      }
+    }
     if (!ctr) {
       non_ctr_count++;
     } else {
@@ -148,6 +157,13 @@ class player {
     ark_sc = ark_sc%4;
 
     //----------------------------------
+    if (keys['¥']) {
+      deadnow = false;
+      no_col = false;
+    }
+    if (keys['*']) {
+      dead();
+    }
     xs /= nowfriction;
     if (ugokeen && !deadnow) {
       ark = false;
@@ -164,15 +180,40 @@ class player {
         ark = true;
         ctr = true;
       }
-      if ((keys['w'] || keys[' ']) && tiniasiwotuketeiruka > 0 && jump_cooldown == 0) {
-        ys = -gravity*15;
-        jump_cooldown = 15;
+      if ((keys['w'] || keys[' ']) && (tiniasiwotuketeiruka > 0 || keys['_']) && jump_cooldown == 0) {
+        jump_count++;
+        if (jump_counter == 0) {
+          jump_counter = 4;
+        }
+        ;
+      }
+      if (jump_counter > 0)jump_counter--;
+      if (jump_counter == 0) {
+        jump_count = 0;
+      }
+      if (jump_counter == 1) {
+        ys = -gravity*(jump_count+2)*3.5;
+        //jump_cooldown = 15;
         ctr = true;
-        sound_jmp.stop();
-        sound_jmp.trigger();
+        if (jump_count == 1) {
+          sound_ujp.stop();
+          sound_ujp.trigger();
+        }
+        if (jump_count == 2) {
+          sound_mjp.stop();
+          sound_mjp.trigger();
+        }
+        if (jump_count >= 3) {
+          sound_jmp.stop();
+          sound_jmp.trigger();
+        }
         //sound_jmp.amp(1);
         otjm = true;
+        jump_count = 0;
       }
+
+      //println(tiniasiwotuketeiruka);
+
       dash = keys['f'];
       if (keys['f'])ctr = true;
       if (tiniasiwotuketeiruka > 0) {
@@ -180,12 +221,16 @@ class player {
       }
     }
 
+    ///////////////////////////////
+
     if (bubo) {
       if (keys['b'] || keys['B']) {
-        y -= 1;
-        ys -= gravity*1.042;
+        y -= 2;
+        ys -= gravity*1.045;
       }
     }
+
+    ///////////////////////////////
 
     if (tiniasiwotuketeiruka > 0 && debug) {
       textFont(b12);
@@ -384,12 +429,12 @@ class player {
           if (
             col(ex, ey, w, h, int(x), int(y-ph+1)) || 
             col(ex, ey, w, h, int(x), int(y   +1.5)) ||
-            col(ex, ey, w, h, int(x-(pw/2)), int(y-ph+1)) || 
-            col(ex, ey, w, h, int(x-(pw/2)), int(y   +1.5)) ||
-            col(ex, ey, w, h, int(x+(pw/2)), int(y-ph+1)) || 
-            col(ex, ey, w, h, int(x+(pw/2)), int(y   +1.5)) ||
-            col(ex, ey, w, h, int(x-(pw/2)-1-0), int(y)) || 
-            col(ex, ey, w, h, int(x+(pw/2)  +0), int(y))
+            col(ex, ey, w, h, int(x-(pw/2)  +0), int(y-ph+1)) || 
+            col(ex, ey, w, h, int(x-(pw/2)  +0), int(y   +1.5)) ||
+            col(ex, ey, w, h, int(x+(pw/2)  -0), int(y-ph+1)) || 
+            col(ex, ey, w, h, int(x+(pw/2)  -0), int(y   +1.5)) ||
+            col(ex, ey, w, h, int(x-(pw/2)  +0), int(y)) || 
+            col(ex, ey, w, h, int(x+(pw/2)  -0), int(y))
             ) {
             ifblock(map.data[X][Y], X, Y);
             if (map.data[X][Y] != 0 && col_list[map.data[X][Y]]) {
@@ -417,7 +462,7 @@ class player {
                 map.data[X][Y] = 0x23;
                 ys -= jump_level*gravity;
               }
-              tiniasiwotuketeiruka = 4;
+              tiniasiwotuketeiruka = tiniasiwotuketeiruka_max;
             }
             if (!down_col_list[map.data[X][Y]]) {
               sound_ohn.stop();

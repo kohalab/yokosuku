@@ -6,7 +6,12 @@ AudioSample sound_pop;
 AudioSample sound_ping;
 AudioSample sound_woo;
 AudioSample sound_jon;
+
+
 AudioSample sound_jmp;
+AudioSample sound_mjp;
+AudioSample sound_ujp;
+
 AudioSample sound_dom;
 AudioSample sound_boh;
 AudioSample sound_pyn;
@@ -26,6 +31,8 @@ void loadSound() {
   sound_woo = minim.loadSample( "sound/woo.wav", buffer_size);
   sound_jon = minim.loadSample( "sound/jon.wav", buffer_size);
   sound_jmp = minim.loadSample( "sound/jmp.wav", buffer_size);
+  sound_mjp = minim.loadSample( "sound/mjp.wav", buffer_size);
+  sound_ujp = minim.loadSample( "sound/ujp.wav", buffer_size);
   sound_dom = minim.loadSample( "sound/dom.wav", buffer_size);
   sound_boh = minim.loadSample( "sound/boh.wav", buffer_size);
   sound_pyn = minim.loadSample( "sound/pyn.wav", buffer_size);
