@@ -545,6 +545,8 @@ void keyPressed() {
     sl_e = !sl_e;
     loadcheck();
   }
+  if (key == '-')frameRate(30);
+  if (key == '^')frameRate(60);
 }
 
 void keyReleased() {

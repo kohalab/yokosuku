@@ -4,6 +4,8 @@ float side_jump_level = 10;
 float friction = 1.4;
 float nowfriction = 1.3;
 
+boolean speed_fix = true;
+
 void zht(int x, int y) {
   if (x >= 0) {
     stroke(255, 0, 0, 128);
@@ -129,9 +131,9 @@ class player {
   }
   void proc() {
     //
-    float yys = ys/speed;
+    float yys = ys;
     if (yys < -15)yys = -15;
-    x += xs/speed;
+    x += xs;
     y += yys;
     ys += gravity;
 
@@ -180,8 +182,8 @@ class player {
         ark = true;
         ctr = true;
       }
-      if ((keys['w'] || keys[' ']) && (tiniasiwotuketeiruka > 0 || keys['_']) && jump_cooldown == 0) {
-        jump_count++;
+      if ((keys['w'] || keys[' ']) && (tiniasiwotuketeiruka > 0 || keys['_'])) {
+        jump_count += 1;
         if (jump_counter == 0) {
           jump_counter = 4;
         }
@@ -192,7 +194,8 @@ class player {
         jump_count = 0;
       }
       if (jump_counter == 1) {
-        ys = -gravity*(jump_count+2)*3.5;
+        println(frameCount +" "+ jump_count);
+        ys = -gravity*((jump_count/1)+2)*3.5;
         //jump_cooldown = 15;
         ctr = true;
         if (jump_count == 1) {
