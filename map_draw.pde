@@ -12,7 +12,9 @@ class prf {
   int x, y;
   boolean hf, vf;
   int xscr;
+  float r;
   void reset() {
+    r = 0;
     x = 0;
     y = 0;
     hf = false;
@@ -100,14 +102,28 @@ class map {
   void mob_draw() {
     for (int y = 0; y < data[0].length; y++) {
       for (int x = 0; x < data.length; x++) {
-        pos_ofs[x][y].reset();
-        switch(data[x][y]) {
-        case 0x81:
-        case 0x82:
-        case 0x83:
-        case 0x84:
+        int b = data[x][y];
+        pos_ofs[x][y].x = 0;
+        pos_ofs[x][y].y = 0;
+        pos_ofs[x][y].hf = false;
+        pos_ofs[x][y].vf = false;
+        pos_ofs[x][y].r = 0;
+        pos_ofs[x][y].xscr = 0;
+        if (water_list[b]) {
           pos_ofs[x][y].xscr = int(sin(frameCount/10.0)*4);
-          break;
+        } else if (hata_list[b]) {
+          pos_ofs[x][y].xscr = 0;
+          pos_ofs[x][y].r = sin((float)(millis()+(x*36))/(1000+(y*4)/2)*TWO_PI)*5;
+        } else if (obake_list[b]) {
+          pos_ofs[x][y].r = sin((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/1)*5.1;
+          pos_ofs[x][y].hf = sin((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/2) > 0;
+          pos_ofs[x][y].x = int(sin((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/2)*8);
+          pos_ofs[x][y].y = int(cos((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/2)*4);
+        } else if (super_obake_list[b]) {
+          pos_ofs[x][y].r = sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/2)*8;
+          pos_ofs[x][y].hf = sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4) > 0;
+          pos_ofs[x][y].x = int(sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
+          pos_ofs[x][y].y = int(cos((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
         }
       }
     }
@@ -122,13 +138,16 @@ class map {
             if (pos_ofs[x][y].xscr != 0) {
               //
               if (pos_ofs[x][y].xscr > 0) {
-                image(get_cha(cha, data[x][y], 32, 16).get((pos_ofs[x][y].xscr)%16, 0, 16, 16), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y);
+                ik(frp(get_cha(cha, data[x][y], 32, 16).get((pos_ofs[x][y].xscr)%16, 0, 16, 16), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y, pos_ofs[x][y].r);
               } else {
-                image(get_cha(cha, data[x][y], 32, 16).get(15-(-pos_ofs[x][y].xscr)%16, 0, 16, 16), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y);
+                ik(frp(get_cha(cha, data[x][y], 32, 16).get(15-(-pos_ofs[x][y].xscr)%16, 0, 16, 16), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y, pos_ofs[x][y].r);
               }
               //t
             } else {
-              image(get_cha(cha, data[x][y]), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y);
+              if (super_obake_list[data[x][y]]) {
+                ik(frp(get_cha(cha, data[x][y]+4), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx, y*16+yofs-scry, 0);
+              }
+              ik(frp(get_cha(cha, data[x][y]), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y, pos_ofs[x][y].r);
             }
           }
         }

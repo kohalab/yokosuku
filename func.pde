@@ -76,7 +76,7 @@ boolean now_rep() {
   return e;
 }
 
-void ik(PImage data, float x, float y, float k) {
+void ik(PImage data, int x, int y, float k) {
   //x -= (data.width/2);
   //y -= (data.height/2);
   pushMatrix();

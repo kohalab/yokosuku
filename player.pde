@@ -1,6 +1,6 @@
 float gravity = 0.35;
-float jump_level = 20;
-float side_jump_level = 10;
+float jump_level = 7;
+float side_jump_level = 15;
 float friction = 1.4;
 float nowfriction = 1.3;
 
@@ -251,7 +251,7 @@ class player {
   //////////////////////////////////////////////////////////////
   void ifblock(int a, int xx, int yy) {
     //pow(2.0, (notenumber - 69.0) / 12.0)
-    if (a == 0x21) {
+    if (hari_list[a]) {
       dead();
       //sound_ping.rate(random(0.95, 1.05));
       //sound_ping.amp(1);
@@ -294,12 +294,12 @@ class player {
       //println("stt"+s);    
       //otjm = false;
     }
-    if (a == 0x80) {
+    if (obake_list[a] || super_obake_list[a]) {
       //sound_jon.amp(1);
       sound_woo.trigger();
       dead();
     }
-    if (a == 0x81) {
+    if (water_list[a]) {
       ys -= 0.3;
       y -= 0.3;
     }
@@ -377,8 +377,8 @@ class player {
        */
       for (int Y = 0; Y < map.data[0].length; Y++) {
         for (int X = 0; X < map.data.length; X++) {
-          int ex = X*16;
-          int ey = Y*16;
+          int ex = (X*16)+map.pos_ofs[X][Y].x;
+          int ey = (Y*16)+map.pos_ofs[X][Y].y;
           int w = 16;
           int h = 16;
           //
@@ -394,11 +394,12 @@ class player {
             if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && left_col_list[map.data[X][Y]]) {
               x = ex+w+(pw/2);
               xs = 0;
-              if (left_jump_list[map.data[X][Y]]) {
+              if (right_jump_list[map.data[X][Y]]) {
                 sound_jon.stop();
                 sound_jon.trigger();
                 //map.data[X][Y] = 0x26;
-                xs += side_jump_level*left_jump_speed[map.data[X][Y]];
+                xs += side_jump_level*right_jump_speed[map.data[X][Y]];
+                //x += 2;
               }
             }
           }
@@ -406,11 +407,12 @@ class player {
             if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && right_col_list[map.data[X][Y]]) {
               x = ex-(pw/2);
               xs = 0;
-              if (right_jump_list[map.data[X][Y]]) {
+              if (left_jump_list[map.data[X][Y]]) {
                 sound_jon.stop();
                 sound_jon.trigger();
                 //map.data[X][Y] = 0x29;
-                xs -= side_jump_level*right_jump_speed[map.data[X][Y]];
+                xs -= side_jump_level*left_jump_speed[map.data[X][Y]];
+                //x -= 2;
               }
             }
           }
@@ -431,6 +433,7 @@ class player {
                 sound_jon.trigger();
                 //map.data[X][Y] = 0x29;
                 ys += jump_level*down_jump_speed[map.data[X][Y]];
+                //ys += 2;
               }
             }
           }
@@ -464,11 +467,12 @@ class player {
               if (y < ey+15) {
                 y = ey;
               }
-              if (right_jump_list[map.data[X][Y]]) {
+              if (up_jump_list[map.data[X][Y]]) {
                 sound_jon.stop();
                 sound_jon.trigger();
                 //map.data[X][Y] = 0x29;
                 ys -= jump_level*up_jump_speed[map.data[X][Y]];
+                //y -= 2;
               }
               tiniasiwotuketeiruka = tiniasiwotuketeiruka_max;
             }

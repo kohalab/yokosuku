@@ -1,4 +1,4 @@
-boolean debug = true;
+boolean debug = false;
 
 int WIDTH = 24;
 int HEIGH = 12;
@@ -78,6 +78,13 @@ float[] up_jump_speed = new float[256];
 float[] down_jump_speed = new float[256];
 float[] right_jump_speed = new float[256];
 float[] left_jump_speed = new float[256];
+
+boolean[] hari_list = new boolean[256];
+boolean[] water_list = new boolean[256];
+boolean[] hata_list = new boolean[256];
+boolean[] obake_list = new boolean[256];
+boolean[] super_obake_list = new boolean[256];
+
 
 map_saver map_saver;
 
@@ -183,6 +190,13 @@ void setup() {
   down_jump_list = col_list_gen("down_jump_list.txt");
   left_jump_list = col_list_gen("left_jump_list.txt");
   right_jump_list = col_list_gen("right_jump_list.txt");
+  
+  
+  hari_list = col_list_gen("hari_list.txt");
+  water_list = col_list_gen("water_list.txt");
+  hata_list = col_list_gen("hata_list.txt");
+  obake_list = col_list_gen("obake_list.txt");
+  super_obake_list = col_list_gen("super_obake_list.txt");
   ;
 
   for (int i = 0; i < up_jump_speed.length; i++) {
@@ -307,62 +321,6 @@ void draw() {
    */
 
   if (frameCount%4 == 0) {
-
-    for (int Y = 0; Y < map.data[0].length; Y++) {
-      for (int X = 0; X < map.data.length; X++) {
-        if (getblock(X, Y) == 0xe7)
-          setblock(X, Y, 0xe0, false);
-        if (getblock(X, Y) == 0xe6)
-          setblock(X, Y, 0xe7, false);
-        if (getblock(X, Y) == 0xe5)
-          setblock(X, Y, 0xe6, false);
-        if (getblock(X, Y) == 0xe4)
-          setblock(X, Y, 0xe5, false);
-        if (getblock(X, Y) == 0xe3)
-          setblock(X, Y, 0xe4, false);
-        if (getblock(X, Y) == 0xe2)
-          setblock(X, Y, 0xe3, false);
-        if (getblock(X, Y) == 0xe1)
-          setblock(X, Y, 0xe2, false);
-        if (getblock(X, Y) == 0xe0)
-          setblock(X, Y, 0xe1, false);
-
-
-        if (getblock(X, Y) == 0xef)
-          setblock(X, Y, 0xe8, false);
-        if (getblock(X, Y) == 0xee)
-          setblock(X, Y, 0xef, false);
-        if (getblock(X, Y) == 0xed)
-          setblock(X, Y, 0xee, false);
-        if (getblock(X, Y) == 0xec)
-          setblock(X, Y, 0xed, false);
-
-        if (getblock(X, Y) == 0xeb)
-          setblock(X, Y, 0xec, false);
-        if (getblock(X, Y) == 0xea)
-          setblock(X, Y, 0xeb, false);
-        if (getblock(X, Y) == 0xe9)
-          setblock(X, Y, 0xea, false);
-        if (getblock(X, Y) == 0xe8)
-          setblock(X, Y, 0xe9, false);
-
-
-        if (getblock(X, Y) == 0x24)
-          setblock(X, Y, 0x22, false);
-        if (getblock(X, Y) == 0x23)
-          setblock(X, Y, 0x24, false);
-
-        if (getblock(X, Y) == 0x27)
-          setblock(X, Y, 0x25, false);
-        if (getblock(X, Y) == 0x26)
-          setblock(X, Y, 0x27, false);
-
-        if (getblock(X, Y) == 0x2a)
-          setblock(X, Y, 0x28, false);
-        if (getblock(X, Y) == 0x29)
-          setblock(X, Y, 0x2a, false);
-      }
-    }
   }
 
   /*--------------------表示表示表示表示---------------------*/

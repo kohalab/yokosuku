@@ -2,16 +2,6 @@ void map() {
   for (int i = 0; i < map.data.length; i++) {
     for (int f = 0; f < map.data[0].length; f++) {
       ;
-      if (getblock(i, f) >= 0x81 && getblock(i, f) <= 0x84) {
-        int d = 0x81;
-        int u = 0x85;
-        if (gbc(i, f, d, u, 0, -1, -1, -1)) {
-          setblock(i, f, 0x81, false);
-        }
-        if (gbc(i, f, d, u, 1, -1, -1, -1)) {
-          setblock(i, f, 0x83, false);
-        }
-      }
       if (getblock(i, f) > 0&& getblock(i, f) <= 31) {
         int d = 1;
         int u = 33;
