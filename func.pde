@@ -56,6 +56,14 @@ int getblock(int mx, int my) {
   }
 }
 
+int getblock_lmt(int mx, int my) {
+  if (mx < 0)mx = 0;
+  if (my < 0)my = 0;
+  if (mx > map.data.length-1)mx = map.data.length-1;
+  if (my > map.data[0].length-1)my = map.data[0].length-1;
+  return map.data[mx][my];
+}
+
 boolean now_rep() {
   boolean e = false;
   for (int i = 0; i < map.data.length; i++) {

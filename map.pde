@@ -2,6 +2,16 @@ void map() {
   for (int i = 0; i < map.data.length; i++) {
     for (int f = 0; f < map.data[0].length; f++) {
       ;
+      if (getblock(i, f) >= 0x81 && getblock(i, f) <= 0x84) {
+        int d = 0x81;
+        int u = 0x85;
+        if (gbc(i, f, d, u, 0, -1, -1, -1)) {
+          setblock(i, f, 0x81, false);
+        }
+        if (gbc(i, f, d, u, 1, -1, -1, -1)) {
+          setblock(i, f, 0x83, false);
+        }
+      }
       if (getblock(i, f) > 0&& getblock(i, f) <= 31) {
         int d = 1;
         int u = 33;
@@ -73,15 +83,15 @@ boolean gbc(int x, int y, int f, int t,
   int u, int r, int d, int l, 
   int lu, int ru, int rd, int ld, int kn) {
   return 
-    (getblock(x, y-1) >= f && getblock(x, y-1) < t)^(u == 0) && 
-    (getblock(x+1, y) >= f && getblock(x+1, y) < t)^(r == 0) && 
-    (getblock(x, y+1) >= f && getblock(x, y+1) < t)^(d == 0) && 
-    (getblock(x-1, y) >= f && getblock(x-1, y) < t)^(l == 0) &&
+    ((getblock_lmt(x, y-1) >= f && getblock_lmt(x, y-1) < t)^(u == 0)||(u == -1)) && 
+    ((getblock_lmt(x+1, y) >= f && getblock_lmt(x+1, y) < t)^(r == 0)||(r == -1)) && 
+    ((getblock_lmt(x, y+1) >= f && getblock_lmt(x, y+1) < t)^(d == 0)||(d == -1)) && 
+    ((getblock_lmt(x-1, y) >= f && getblock_lmt(x-1, y) < t)^(l == 0)||(l == -1)) &&
 
-    ((getblock(x-1, y-1) >= f && getblock(x-1, y-1) < t)^(lu == 0) || (kn == 1)) && 
-    ((getblock(x+1, y-1) >= f && getblock(x+1, y-1) < t)^(ru == 0) || (kn == 1)) && 
-    ((getblock(x+1, y+1) >= f && getblock(x+1, y+1) < t)^(rd == 0) || (kn == 1)) && 
-    ((getblock(x-1, y+1) >= f && getblock(x-1, y+1) < t)^(ld == 0) || (kn == 1));
+    ((getblock_lmt(x-1, y-1) >= f && getblock_lmt(x-1, y-1) < t)^(lu == 0) || (kn == 1)) && 
+    ((getblock_lmt(x+1, y-1) >= f && getblock_lmt(x+1, y-1) < t)^(ru == 0) || (kn == 1)) && 
+    ((getblock_lmt(x+1, y+1) >= f && getblock_lmt(x+1, y+1) < t)^(rd == 0) || (kn == 1)) && 
+    ((getblock_lmt(x-1, y+1) >= f && getblock_lmt(x-1, y+1) < t)^(ld == 0) || (kn == 1));
 }
 boolean gbc(int x, int y, int f, int t, 
   int u, int r, int d, int l) {

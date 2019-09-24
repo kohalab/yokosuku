@@ -5,13 +5,39 @@ PImage get_cha(PImage in, int n) {
 }
 
 PImage get_cha(PImage in, int n, int w, int h) {
-  return in.get((n%16)*w, (n/16)*h, w, h);
+  return in.get((n%16)*16, (n/16)*16, w, h);
+}
+
+class prf {
+  int x, y;
+  boolean hf, vf;
+  int xscr;
+  void reset() {
+    x = 0;
+    y = 0;
+    hf = false;
+    vf = false;
+    xscr = 0;
+  }
+  prf(int i, int f) {
+    x = i;
+    y = f;
+  }
+  prf(int i, int f, boolean h, boolean v) {
+    x = i;
+    y = f;
+    hf = h;
+    vf = v;
+  }
+  prf() {
+  }
 }
 
 
 class map {
   int[][] data;
   int[][] data_old;
+  prf[][] pos_ofs;
   PGraphics map_buf;
   PGraphics g;
   map() {
@@ -24,9 +50,11 @@ class map {
     g = createGraphics(w*16, h*16);
     data = new int[w][h];
     data_old = new int[w][h];
+    pos_ofs  = new prf[w][h];
     for (int y = 0; y < data[0].length; y++) {
       for (int x = 0; x < data.length; x++) {
         data[x][y] = 0;
+        pos_ofs[x][y] = new prf(0, 0);
       }
     }
     for (int y = 0; y < data[0].length; y++) {
@@ -70,42 +98,39 @@ class map {
 
 
   void mob_draw() {
+    for (int y = 0; y < data[0].length; y++) {
+      for (int x = 0; x < data.length; x++) {
+        pos_ofs[x][y].reset();
+        switch(data[x][y]) {
+        case 0x81:
+        case 0x82:
+        case 0x83:
+        case 0x84:
+          pos_ofs[x][y].xscr = int(sin(frameCount/10.0)*4);
+          break;
+        }
+      }
+    }
     g.beginDraw();
     g.clear();
     for (int y = 0; y < data[0].length; y++) {
       for (int x = 0; x < data.length; x++) {
         ;
         if (x*16-scrx >= -32 && x*16-scrx < (WIDTH+1)*16   &&   y*16-scry >= -32 && y*16-scry < (HEIGH+1)*16) {
-          if (data[x][y] == 0x80) {
-            float i = (((float)x/map.data.length)+((float)((float)y/map.data.length)*map.data.length))*TWO_PI;
-            float xt = sin(frameCount/60.0*TWO_PI+i)*3;
-            image(frp(get_cha(cha, data[x][y]), xt >= 0, false), x*16+xt-scrx, (y*16)-scry
-              +int(sin(frameCount/30.0*TWO_PI+i)*3)
-              +yofs);
-          } else
-            if (data[x][y] == 0x81) {
-              float i = (((float)x/map.data.length)+((float)((float)y/map.data[0].length)*map.data.length))*TWO_PI;
-              float xt = sin(frameCount/60.0*TWO_PI+i)*3;
-              g.image(get_cha(cha, data[x][y]), x*16+xt-8, (y*16-8)
-                +int(sin(frameCount/30.0*TWO_PI+i)*3)
-                +0);
-              g.image(get_cha(cha, data[x][y]), x*16+xt+8, (y*16-8)
-                +int(sin(frameCount/30.0*TWO_PI+i)*3)
-                +0);
-              g.image(get_cha(cha, data[x][y]+1), x*16+xt-8, (y*16)+16-8
-                +int(sin(frameCount/30.0*TWO_PI+i)*3)
-                +0, 
-                32, (map.data[0].length-1)*16);
-            } else
-              if (data[x][y] == 0x90 || data[x][y] == 0x91) {
-                float nb = (sin(frameCount/20.0*TWO_PI))*4;
-                image(get_cha(cha, data[x][y]), x*16-scrx, y*16+yofs-scry);
-                image(get_cha(cha, data[x][y]).get(int(nb/2), 0, 16-int(nb), 16), x*16-scrx, y*16+yofs-scry, 16, 16);
-              } else
-                if (data[x][y] > 0x80) {
-                  //else
-                  image(get_cha(cha, data[x][y]), x*16-scrx, y*16+yofs-scry);
-                }
+          if (data[x][y] >= 0x80) {
+            //else
+            if (pos_ofs[x][y].xscr != 0) {
+              //
+              if (pos_ofs[x][y].xscr > 0) {
+                image(get_cha(cha, data[x][y], 32, 16).get((pos_ofs[x][y].xscr)%16, 0, 16, 16), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y);
+              } else {
+                image(get_cha(cha, data[x][y], 32, 16).get(15-(-pos_ofs[x][y].xscr)%16, 0, 16, 16), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y);
+              }
+              //t
+            } else {
+              image(get_cha(cha, data[x][y]), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y);
+            }
+          }
         }
         ;
       }

@@ -194,7 +194,6 @@ class player {
         jump_count = 0;
       }
       if (jump_counter == 1) {
-        println(frameCount +" "+ jump_count);
         ys = -gravity*((jump_count/1)+2)*3.5;
         //jump_cooldown = 15;
         ctr = true;
@@ -395,11 +394,11 @@ class player {
             if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && left_col_list[map.data[X][Y]]) {
               x = ex+w+(pw/2);
               xs = 0;
-              if (map.data[X][Y] == 0x25) {
+              if (left_jump_list[map.data[X][Y]]) {
                 sound_jon.stop();
                 sound_jon.trigger();
-                map.data[X][Y] = 0x26;
-                xs += side_jump_level;
+                //map.data[X][Y] = 0x26;
+                xs += side_jump_level*left_jump_speed[map.data[X][Y]];
               }
             }
           }
@@ -407,11 +406,11 @@ class player {
             if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && right_col_list[map.data[X][Y]]) {
               x = ex-(pw/2);
               xs = 0;
-              if (map.data[X][Y] == 0x28) {
+              if (right_jump_list[map.data[X][Y]]) {
                 sound_jon.stop();
                 sound_jon.trigger();
-                map.data[X][Y] = 0x29;
-                xs -= side_jump_level;
+                //map.data[X][Y] = 0x29;
+                xs -= side_jump_level*right_jump_speed[map.data[X][Y]];
               }
             }
           }
@@ -427,6 +426,12 @@ class player {
               sound_jmp.stop();
               //sound_dom.amp(1);
               sound_dom.trigger();
+              if (down_jump_list[map.data[X][Y]]) {
+                sound_jon.stop();
+                sound_jon.trigger();
+                //map.data[X][Y] = 0x29;
+                ys += jump_level*down_jump_speed[map.data[X][Y]];
+              }
             }
           }
           if (
@@ -459,11 +464,11 @@ class player {
               if (y < ey+15) {
                 y = ey;
               }
-              if (map.data[X][Y] == 0x22) {
+              if (right_jump_list[map.data[X][Y]]) {
                 sound_jon.stop();
                 sound_jon.trigger();
-                map.data[X][Y] = 0x23;
-                ys -= jump_level*gravity;
+                //map.data[X][Y] = 0x29;
+                ys -= jump_level*up_jump_speed[map.data[X][Y]];
               }
               tiniasiwotuketeiruka = tiniasiwotuketeiruka_max;
             }
