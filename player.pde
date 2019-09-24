@@ -19,6 +19,7 @@ void zht(int x, int y) {
 
 class player {
   boolean bubo = true;
+  boolean down;
   boolean lr;
   boolean ark;
   boolean ctr;
@@ -110,8 +111,11 @@ class player {
       t = 6;
     }
     boolean hf = !lr;
-    boolean vf = false;
-    image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs+1-scry, pw, ph);
+    boolean vf = down;
+    if (deadnow) {
+      if (ys > 0.4)vf |= true;
+    }
+    image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs+1-scry+(vf?t==2?10:4:0), pw, ph);
     if (bubo) {
       if (keys['b'] || keys['B']) {
         image(frp(get_cha(map_cha, 0xf0+(frameCount%2)), frameCount/2%2 == 0, false), x-(pw/2)-scrx, y+yofs+1-scry-(frameCount%2), 16, 8+(frameCount*3%7*1));
@@ -159,10 +163,6 @@ class player {
     ark_sc = ark_sc%4;
 
     //----------------------------------
-    if (keys['¥']) {
-      deadnow = false;
-      no_col = false;
-    }
     if (keys['*']) {
       dead();
     }
@@ -213,6 +213,11 @@ class player {
         otjm = true;
         jump_count = 0;
       }
+      down = keys['s'];
+      if (down) {
+        ys += 0.7;
+        y--;
+      }
 
       //println(tiniasiwotuketeiruka);
 
@@ -221,6 +226,11 @@ class player {
       if (tiniasiwotuketeiruka > 0) {
         tiniasiwotuketeiruka -= 1;
       }
+    }
+
+    if (keys['¥'] || keys['\\']) {
+      deadnow = false;
+      no_col = false;
     }
 
     ///////////////////////////////
@@ -300,8 +310,8 @@ class player {
       dead();
     }
     if (water_list[a]) {
-      ys -= 0.3;
-      y -= 0.3;
+      ys -= 0.2;
+      y -= 0.5;
     }
     if (a == 0x2b) {
       float tx = xs;
