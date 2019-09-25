@@ -450,11 +450,11 @@ class player {
           if (
             col(ex, ey, w, h, int(x), int(y-ph+1)) || 
             col(ex, ey, w, h, int(x), int(y   +1.5)) ||
-            col(ex, ey, w, h, int(x-(pw/2)  +0), int(y-ph+1)) || 
-            col(ex, ey, w, h, int(x-(pw/2)  +0), int(y   +1.5)) ||
+            col(ex, ey, w, h, int(x-(pw/2)  -1), int(y-ph+1)) || 
+            col(ex, ey, w, h, int(x-(pw/2)  -1), int(y   +1.5)) ||
             col(ex, ey, w, h, int(x+(pw/2)  -0), int(y-ph+1)) || 
             col(ex, ey, w, h, int(x+(pw/2)  -0), int(y   +1.5)) ||
-            col(ex, ey, w, h, int(x-(pw/2)  +0), int(y)) || 
+            col(ex, ey, w, h, int(x-(pw/2)  -1), int(y)) || 
             col(ex, ey, w, h, int(x+(pw/2)  -0), int(y))
             ) {
             ifblock(map.data[X][Y], X, Y);

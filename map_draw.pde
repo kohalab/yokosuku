@@ -110,7 +110,8 @@ class map {
         pos_ofs[x][y].r = 0;
         pos_ofs[x][y].xscr = 0;
         if (water_list[b]) {
-          pos_ofs[x][y].xscr = int(sin(frameCount/10.0)*4);
+          pos_ofs[x][y].xscr = int(sin(frameCount/60.0*TWO_PI)*4);
+          //pos_ofs[x][y].y = int(sin( (x/30.0*TWO_PI) + (sin(frameCount/30.0*TWO_PI)/2) + (frameCount/30.0*TWO_PI) )*4+4);
         } else if (hata_list[b]) {
           pos_ofs[x][y].xscr = 0;
           pos_ofs[x][y].r = sin((float)(millis()+(x*36))/(1000+(y*4)/2)*TWO_PI)*5;
