@@ -31,6 +31,8 @@ class player {
   int deaddeadtime;
   int jump_cooldown;
   boolean dash;
+  int dpw = 16;
+  int dph = 32;
   int pw = 16;
   int ph = 32;
   float x, y, xs, ys;
@@ -38,6 +40,7 @@ class player {
   int atamaitai_time;
   int tiniasiwotuketeiruka = 0;
   int tiniasiwotuketeiruka_max = 2;
+  int big;
   int now_col;
   map map;
   int non_ctr_count;
@@ -56,6 +59,16 @@ class player {
   boolean asl = false;
 
   void draw() {
+    pw = dpw;
+    ph = dph;
+    if (big == 1) {
+      pw *= 2;
+      ph *= 2;
+    }
+    if (big == -1) {
+      pw = 9;
+      ph = 32;
+    }
     if (first) {
       dead_alway(true);
       first = false;
@@ -140,6 +153,9 @@ class player {
     x += xs;
     y += yys;
     ys += gravity;
+    if (big == -1) {
+      ys -= gravity/4;
+    }
 
     if (x < pw/2)x = pw/2;
     if (x > (map.data.length*16)-(pw/2))x = (map.data.length*16)-(pw/2);
@@ -313,6 +329,15 @@ class player {
       ys -= 0.2;
       y -= 0.5;
     }
+    if (milk_list[a]) {
+      big = 1;
+    }
+    if (poteto_list[a]) {
+      big = 0;
+    }
+    if (kinoko_list[a]) {
+      big = -1;
+    }
     if (a == 0x2b) {
       float tx = xs;
       if (tx < 0) {
@@ -349,6 +374,7 @@ class player {
       x = 16;
       xs = 0;
       ys = 0;
+      big = 0;
       no_col = false;
       deadnow = false;
       for (int yy = 0; yy < map.data[0].length; yy++) {
@@ -410,6 +436,7 @@ class player {
                 //map.data[X][Y] = 0x26;
                 xs += side_jump_level*right_jump_speed[map.data[X][Y]];
                 //x += 2;
+                ys -= gravity*2;
               }
             }
           }
@@ -423,6 +450,7 @@ class player {
                 //map.data[X][Y] = 0x29;
                 xs -= side_jump_level*left_jump_speed[map.data[X][Y]];
                 //x -= 2;
+                ys -= gravity*2;
               }
             }
           }
@@ -473,6 +501,8 @@ class player {
                 fill(255, 128);
                 rect(ex, ey+yofs, w-1, h-1);
               }
+              x += map.pos_ofs[X][Y].xs;
+              y += map.pos_ofs[X][Y].ys;
               ys = -0.01;
               if (y < ey+15) {
                 y = ey;

@@ -83,8 +83,14 @@ boolean[] hari_list = new boolean[256];
 boolean[] water_list = new boolean[256];
 boolean[] hata_list = new boolean[256];
 boolean[] obake_list = new boolean[256];
+boolean[] aobake_list = new boolean[256];
 boolean[] super_obake_list = new boolean[256];
 
+boolean[] milk_list = new boolean[256];
+boolean[] poteto_list = new boolean[256];
+boolean[] kinoko_list = new boolean[256];
+
+//milk_list.txt
 
 map_saver map_saver;
 
@@ -186,25 +192,37 @@ void setup() {
   left_col_list = no_col_list_gen("left_no_col.txt");
   right_col_list = no_col_list_gen("right_no_col.txt");
 
-  up_jump_list = col_list_gen("up_jump_list.txt");
-  down_jump_list = col_list_gen("down_jump_list.txt");
-  left_jump_list = col_list_gen("left_jump_list.txt");
-  right_jump_list = col_list_gen("right_jump_list.txt");
-  
-  
+
+  //
+  float[][] ujl = list_float_gen("up_jump_list.txt");
+  float[][] djl = list_float_gen("down_jump_list.txt");
+  float[][] ljl = list_float_gen("left_jump_list.txt");
+  float[][] rjl = list_float_gen("right_jump_list.txt");
+  for (int i = 0; i < 256; i++) {
+    up_jump_list[i] = ujl[0][i] > 0;
+    down_jump_list[i] = djl[0][i] > 0;
+    left_jump_list[i] = ljl[0][i] > 0;
+    right_jump_list[i] = rjl[0][i] > 0;
+
+    up_jump_speed[i] = ujl[1][i];
+    down_jump_speed[i] = djl[1][i];
+    left_jump_speed[i] = ljl[1][i];
+    right_jump_speed[i] = rjl[1][i];
+  }
+  //println(up_jump_speed);
+
   hari_list = col_list_gen("hari_list.txt");
   water_list = col_list_gen("water_list.txt");
   hata_list = col_list_gen("hata_list.txt");
   obake_list = col_list_gen("obake_list.txt");
+  aobake_list = col_list_gen("aobake_list.txt");
   super_obake_list = col_list_gen("super_obake_list.txt");
+
+  milk_list = col_list_gen("milk_list.txt");
+  poteto_list = col_list_gen("poteto_list.txt");
+  kinoko_list = col_list_gen("kinoko_list.txt");
   ;
 
-  for (int i = 0; i < up_jump_speed.length; i++) {
-    up_jump_speed[i] = 1;
-    down_jump_speed[i] = 1;
-    left_jump_speed[i] = 1;
-    right_jump_speed[i] = 1;
-  }
   //map_saver.save("test.yksm", map);
   //map_saver.load("test.yksm");
   map_cha = cha;
@@ -248,6 +266,28 @@ boolean[] col_list_gen(String path) {
     col_list[unhex(il[i])] = true;
   }
   return col_list;
+}
+
+float[][] list_float_gen(String path) {
+  float[][] list = new float[2][256];
+  //
+  for (int i = 0; i < 256; i++) {
+    list[0][i] = -1;
+    list[1][i] = 1;
+  }
+  String[] il = loadStrings(path);
+  for (int i = 0; i < il.length; i++) {
+    String a = il[i];
+    String[] b = splitTokens(a, " ");
+    if (b.length == 1) {
+      list[0][unhex(b[0])] = 1;
+    }
+    if (b.length == 2) {
+      list[0][unhex(b[0])] = 1;
+      list[1][unhex(b[0])] = float(b[1]);
+    }
+  }
+  return list;
 }
 
 boolean[] no_col_list_gen(String path) {

@@ -10,6 +10,8 @@ PImage get_cha(PImage in, int n, int w, int h) {
 
 class prf {
   int x, y;
+  int ox, oy;
+  int xs, ys;
   boolean hf, vf;
   int xscr;
   float r;
@@ -102,6 +104,12 @@ class map {
   void mob_draw() {
     for (int y = 0; y < data[0].length; y++) {
       for (int x = 0; x < data.length; x++) {
+        pos_ofs[x][y].ox = pos_ofs[x][y].x;
+        pos_ofs[x][y].oy = pos_ofs[x][y].y;
+      }
+    }
+    for (int y = 0; y < data[0].length; y++) {
+      for (int x = 0; x < data.length; x++) {
         int b = data[x][y];
         pos_ofs[x][y].x = 0;
         pos_ofs[x][y].y = 0;
@@ -125,11 +133,22 @@ class map {
           pos_ofs[x][y].hf = sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4) > 0;
           pos_ofs[x][y].x = int(sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
           pos_ofs[x][y].y = int(cos((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
+        } else if (aobake_list[b]) {
+          pos_ofs[x][y].hf = cos((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4) > 0;
+          pos_ofs[x][y].x = int(sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*64);
+        } else if (poteto_list[b]) {
+          pos_ofs[x][y].r = int(sin(millis()/900.0*TWO_PI)*3)*7;
+        } else if (kinoko_list[b]) {
+          pos_ofs[x][y].y = int(-sin(millis()/900.0*TWO_PI%PI)*4);
         }
       }
     }
-    g.beginDraw();
-    g.clear();
+    for (int y = 0; y < data[0].length; y++) {
+      for (int x = 0; x < data.length; x++) {
+        pos_ofs[x][y].xs = pos_ofs[x][y].x-pos_ofs[x][y].ox;
+        pos_ofs[x][y].ys = pos_ofs[x][y].y-pos_ofs[x][y].oy;
+      }
+    }
     for (int y = 0; y < data[0].length; y++) {
       for (int x = 0; x < data.length; x++) {
         ;
@@ -145,7 +164,7 @@ class map {
               }
               //t
             } else {
-              if (super_obake_list[data[x][y]]) {
+              if (super_obake_list[data[x][y]] || aobake_list[data[x][y]]) {
                 ik(frp(get_cha(cha, data[x][y]+4), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx, y*16+yofs-scry, 0);
               }
               ik(frp(get_cha(cha, data[x][y]), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y, pos_ofs[x][y].r);
@@ -155,8 +174,6 @@ class map {
         ;
       }
     }
-    g.endDraw();
-    image(dis(g.get().get(scrx, scry, dw, dh), frameCount%2 == 0), 0, yofs);
   }
 
   void update() {
