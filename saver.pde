@@ -9,7 +9,7 @@ class map_saver {
       'Y', 'K', 'S', 'K', //00
       '-', 'M', 'a', 'p', //04
       'D', 'a', 't', 'a', //08
-      ' ', 'V', '2', ' ', //0c
+      ' ', 'V', '3', ' ', //0c
 
       byte(w&0xff), byte(h&0xff), '.', '.', //10
       '.', '.', '.', '.', //14
@@ -46,6 +46,17 @@ class map_saver {
       out = new map(map.data.length, map.data[0].length);
       int w = in[0x10]&0xff;
       int h = in[0x11]&0xff;
+      String name = "";
+      for (int i = 0; i < 8; i++) {
+        int a = in[24+i]&0xff;
+        if (a != '.') {
+          name += char(a);
+        }
+      }
+      if (name.length() > 0) {
+        out.name = name;
+        //println(name);
+      }
       if (w <= map.data.length && h <= map.data[0].length) {
         //println(w, h);
         for (int y = 0; y < h; y++) {

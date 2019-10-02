@@ -44,6 +44,7 @@ class map {
   prf[][] pos_ofs;
   PGraphics map_buf;
   PGraphics g;
+  String name = null;
   map() {
     map(map.data.length, map.data[0].length);
   }

@@ -31,6 +31,7 @@ PGraphics grd;
 
 int save_load_num = 50;
 boolean[] load_en = new boolean[save_load_num];
+String[] name_load = new String[save_load_num];
 
 PImage[] blocks = new PImage[256];
 boolean[] blocks_no = new boolean[256];
@@ -515,15 +516,19 @@ void draw() {
       int alw = width/10;
       int btw = alw-4;
       int xscr = int(save_load_bank_sm*alw);
+      String name = ""+i;
+      if(name_load[i] != null){
+        name = " "+name_load[i];
+      }
       textFont(r10);
-      if (button("SAVE"+i, i*alw+2-xscr, 0, btw, ((yofs*SCALE)/3)/2, load_en[i])) {
+      if (button("SAVE"+name, i*alw+2-xscr, 0, btw, (((yofs*SCALE)/3)/2)+1, load_en[i])) {
         sound_son.stop();
         sound_son.trigger();
         map_saver.save(map_save_path+i+".yksm", map);
         loadcheck();
         delay(100);
       }
-      if (button("LOAD"+i, i*alw+2-xscr, 0+((yofs*SCALE)/3), btw, (yofs*SCALE/3)-4, load_en[i])) {
+      if (button("LOAD"+name, i*alw+2-xscr, 0+((yofs*SCALE)/3), btw, (yofs*SCALE/3)-4, load_en[i])) {
         sound_son.stop();
         sound_son.trigger();
         map load = map_saver.load(map_save_path+i+".yksm");
@@ -635,8 +640,10 @@ void loadcheck() {
   for (int i = 0; i < save_load_num; i++) {
     map load = map_saver.load(map_save_path+i+".yksm");
     if (load != null) {
+      name_load[i] = load.name;
       load_en[i] = true;
     } else {
+      name_load[i] = null;
       load_en[i] = false;
     }
   }
