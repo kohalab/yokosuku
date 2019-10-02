@@ -133,3 +133,7 @@ boolean button(String t, int x, int y, int w, int h, boolean e) {
   text(t, (x+(w/2))-(textWidth(t)/2), (y+(h/2)+5));
   return p&&mousePressed;
 }
+
+float aida(float a, float b, float s) {
+  return a + ((b-a)*s);
+}

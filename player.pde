@@ -128,7 +128,7 @@ class player {
     if (deadnow) {
       if (ys > 0.4)vf |= true;
     }
-    image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs+1-scry+(vf?t==2?10:4:0), pw, ph);
+    image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs+1-scry+((vf?t==2?10:4:0)*((float)ph/dph)), pw, ph);
     if (bubo) {
       if (keys['b'] || keys['B']) {
         image(frp(get_cha(map_cha, 0xf0+(frameCount%2)), frameCount/2%2 == 0, false), x-(pw/2)-scrx, y+yofs+1-scry-(frameCount%2), 16, 8+(frameCount*3%7*1));
@@ -426,7 +426,13 @@ class player {
               //dead();
             }
           }
-          if (col(ex, ey, w, h, int(x-(pw/2)), int(y-(ph-8))) || col(ex, ey, w, h, int(x-(pw/2)), int(y-12))) {
+          if (
+            col(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0)))||
+            col(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.25)))||
+            col(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.5)))||
+            col(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.75)))||
+            col(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 1)))
+            ) {
             if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && left_col_list[map.data[X][Y]]) {
               x = ex+w+(pw/2);
               xs = 0;
@@ -440,7 +446,13 @@ class player {
               }
             }
           }
-          if (col(ex, ey, w, h, int(x+(pw/2)), int(y-(ph-8))) || col(ex, ey, w, h, int(x+(pw/2)), int(y-12))) {
+          if (
+            col(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0)))||
+            col(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.25)))||
+            col(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.5)))||
+            col(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.75)))||
+            col(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 1)))
+            ) {
             if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && right_col_list[map.data[X][Y]]) {
               x = ex-(pw/2);
               xs = 0;

@@ -517,7 +517,7 @@ void draw() {
       int btw = alw-4;
       int xscr = int(save_load_bank_sm*alw);
       String name = ""+i;
-      if(name_load[i] != null){
+      if (name_load[i] != null) {
         name = " "+name_load[i];
       }
       textFont(r10);
