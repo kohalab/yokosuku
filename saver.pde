@@ -20,6 +20,14 @@ class map_saver {
     for (int i = 0; i < header.length; i++) {
       out[i] = header[i];
     }
+    for (int i = 0; i < 8; i++) {
+      out[24+i] = '.';
+    }
+    if (map.name != null) {
+      for (int i = 0; i < map.name.length(); i++) {
+        out[24+i] = byte(map.name.charAt(i));
+      }
+    }
     for (int y = 0; y < h; y++) {
       for (int x = 0; x < w; x++) {
         out[header.length+(x+(y*w))] = byte(data[x][y]);

@@ -41,6 +41,24 @@ void loadSound() {
   sound_err = minim.loadSample( "sound/err.wav", buffer_size);
   sound_kya = minim.loadSample( "sound/kya.wav", buffer_size);
   sound_ohn = minim.loadSample( "sound/ohn.wav", buffer_size);
+  
+  float gain = -9;
+  sound_pow.setGain(gain);
+  sound_pop.setGain(gain);
+  sound_ping.setGain(gain);
+  sound_woo.setGain(gain);
+  sound_jon.setGain(gain);
+  sound_jmp.setGain(gain);
+  sound_mjp.setGain(gain);
+  sound_ujp.setGain(gain);
+  sound_dom.setGain(gain);
+  sound_boh.setGain(gain);
+  sound_pyn.setGain(gain);
+  sound_dho.setGain(gain);
+  sound_son.setGain(gain);
+  sound_err.setGain(gain);
+  sound_kya.setGain(gain);
+  sound_ohn.setGain(gain);
 }
 
 void super_sound() {

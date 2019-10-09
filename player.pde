@@ -415,8 +415,8 @@ class player {
         for (int X = 0; X < map.data.length; X++) {
           int ex = (X*16)+map.pos_ofs[X][Y].x;
           int ey = (Y*16)+map.pos_ofs[X][Y].y;
-          int w = 16;
-          int h = 16;
+          int w = map.pos_ofs[X][Y].w;
+          int h = map.pos_ofs[X][Y].h;
           //
           noStroke();
           boolean iya = true;
@@ -437,6 +437,7 @@ class player {
               x = ex+w+(pw/2);
               xs = 0;
               if (right_jump_list[map.data[X][Y]]) {
+                map.data_sub[X][Y] = 30;
                 sound_jon.stop();
                 sound_jon.trigger();
                 //map.data[X][Y] = 0x26;
@@ -457,6 +458,7 @@ class player {
               x = ex-(pw/2);
               xs = 0;
               if (left_jump_list[map.data[X][Y]]) {
+                map.data_sub[X][Y] = 30;
                 sound_jon.stop();
                 sound_jon.trigger();
                 //map.data[X][Y] = 0x29;
@@ -479,6 +481,7 @@ class player {
               //sound_dom.amp(1);
               sound_dom.trigger();
               if (down_jump_list[map.data[X][Y]]) {
+                map.data_sub[X][Y] = 30;
                 sound_jon.stop();
                 sound_jon.trigger();
                 //map.data[X][Y] = 0x29;
@@ -520,6 +523,7 @@ class player {
                 y = ey;
               }
               if (up_jump_list[map.data[X][Y]]) {
+                map.data_sub[X][Y] = 30;
                 sound_jon.stop();
                 sound_jon.trigger();
                 //map.data[X][Y] = 0x29;

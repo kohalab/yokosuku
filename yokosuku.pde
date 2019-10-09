@@ -80,6 +80,11 @@ float[] down_jump_speed = new float[256];
 float[] right_jump_speed = new float[256];
 float[] left_jump_speed = new float[256];
 
+boolean[] ugo_hor_list = new boolean[256];
+float[] ugo_hor_level = new float[256];
+boolean[] ugo_ver_list = new boolean[256];
+float[] ugo_ver_level = new float[256];
+
 boolean[] hari_list = new boolean[256];
 boolean[] water_list = new boolean[256];
 boolean[] hata_list = new boolean[256];
@@ -210,7 +215,18 @@ void setup() {
     left_jump_speed[i] = ljl[1][i];
     right_jump_speed[i] = rjl[1][i];
   }
-  //println(up_jump_speed);
+
+  float[][] uhl = list_float_gen("ugo_hor_list.txt");
+  float[][] uvl = list_float_gen("ugo_ver_list.txt");
+
+  for (int i = 0; i < 256; i++) {
+    ugo_hor_list[i] = uhl[0][i] > 0;
+    ugo_hor_level[i] = uhl[1][i];
+    
+    ugo_ver_list[i] = uvl[0][i] > 0;
+    ugo_ver_level[i] = uvl[1][i];
+  }
+  //println(up_jump_speed)
 
   hari_list = col_list_gen("hari_list.txt");
   water_list = col_list_gen("water_list.txt");
@@ -365,7 +381,7 @@ void draw() {
   }
 
   /*--------------------表示表示表示表示---------------------*/
-
+  map.mob_proc();
   map.draw();
   map.backup();
   image(map.get().get(scrx, scry, dw, dh), 0, yofs);

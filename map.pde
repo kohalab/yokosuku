@@ -4,7 +4,7 @@ void map() {
       ;
       if (getblock(i, f) > 0&& getblock(i, f) <= 31) {
         int d = 1;
-        int u = 33;
+        int u = 0x23;
         boolean bou = true;
         if (gbc(i, f, d, u, 0, 0, 0, 0)) {
           setblock(i, f, 0x01, false);
