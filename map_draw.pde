@@ -177,19 +177,23 @@ class map {
         if (ugo_hor_list[b]) {
           int u = int(sin(millis()/100.0/ugo_hor_level[b]*TWO_PI)*ugo_hor_level[b]);
           pos_ofs[x][y].x += u;
-          if (y > 0) {
-            if (data[x][y-1] >= 128) {
-              pos_ofs[x][y-1].x += u;
+          for (int i = 0; i < 2; i++) {
+            if (y > i) {
+              if (data[x][y-(i+1)] >= 128) {
+                pos_ofs[x][y-(i+1)].x += u;
+              }
             }
           }
           //
         }
         if (ugo_ver_list[b]) {
-          int u = int(sin(millis()/100.0/ugo_ver_level[b]*TWO_PI)*ugo_ver_level[b]);
+          int u = int(cos(millis()/100.0/ugo_ver_level[b]*TWO_PI)*ugo_ver_level[b]);
           pos_ofs[x][y].y += u;
-          if (y > 0) {
-            if (data[x][y-1] >= 128) {
-              pos_ofs[x][y-1].y += u;
+          for (int i = 0; i < 2; i++) {
+            if (y > i) {
+              if (data[x][y-(i+1)] >= 128) {
+                pos_ofs[x][y-(i+1)].y += u;
+              }
             }
           }
           //
@@ -205,38 +209,59 @@ class map {
     }
   }
   void mob_draw() {
-    for (int y = 0; y < data[0].length; y++) {
-      for (int x = 0; x < data.length; x++) {
-        ;
-        if (x*16-scrx >= -32 && x*16-scrx < (WIDTH+1)*16   &&   y*16-scry >= -32 && y*16-scry < (HEIGH+1)*16) {
-          if (data[x][y] >= 0x80) {
-            //else
-            //stt
-            if (pos_ofs[x][y].w == 16 && pos_ofs[x][y].h == 16) {
+    for (int L = 0; L < 4; L++) {
+      //
+      for (int y = 0; y < data[0].length; y++) {
+        for (int x = 0; x < data.length; x++) {
+          ;
+          if (x*16-scrx >= -32 && x*16-scrx < (WIDTH+1)*16   &&   y*16-scry >= -32 && y*16-scry < (HEIGH+1)*16) {
+            if (data[x][y] >= 0x80) {
               //
-              if (pos_ofs[x][y].xscr != 0) {
-                //
-                if (pos_ofs[x][y].xscr > 0) {
-                  ik(frp(get_cha(cha, data[x][y], 32, 16).get((pos_ofs[x][y].xscr)%16, 0, 16, 16), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y, pos_ofs[x][y].r);
-                } else {
-                  ik(frp(get_cha(cha, data[x][y], 32, 16).get(15-(-pos_ofs[x][y].xscr)%16, 0, 16, 16), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y, pos_ofs[x][y].r);
+              if (L == 0) {
+                //layer0 begin
+                if (ugo_hor_list[data[x][y]] || ugo_ver_list[data[x][y]]) {
+                  stroke(#afafaf);
+                  for (int i = 0; i < 2; i++) {
+                    for (int f = 0; f < 2; f++) {
+                      line(x*16-scrx+7+i, y*16+yofs-scry+7+f, x*16-scrx+pos_ofs[x][y].x+7+i, y*16+yofs-scry+pos_ofs[x][y].y+7+f);
+                    }
+                  }
+                  noStroke();
                 }
-                //t
-              } else {
                 if (super_obake_list[data[x][y]] || aobake_list[data[x][y]]) {
                   ik(frp(get_cha(cha, data[x][y]+4), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx, y*16+yofs-scry, 0);
                 }
-                ik(frp(get_cha(cha, data[x][y]), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y, pos_ofs[x][y].r);
+                //layer0 end
               }
-              //
-            } else {
-              image(frp(get_cha(cha, data[x][y]), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y, pos_ofs[x][y].w, pos_ofs[x][y].h);
+              //layer1 begin
+              if (L == 1) {
+                //stt
+                if (pos_ofs[x][y].w == 16 && pos_ofs[x][y].h == 16) {
+                  //
+                  if (pos_ofs[x][y].xscr != 0) {
+                    //
+                    if (pos_ofs[x][y].xscr > 0) {
+                      ik(frp(get_cha(cha, data[x][y], 32, 16).get((pos_ofs[x][y].xscr)%16, 0, 16, 16), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y, pos_ofs[x][y].r);
+                    } else {
+                      ik(frp(get_cha(cha, data[x][y], 32, 16).get(15-(-pos_ofs[x][y].xscr)%16, 0, 16, 16), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y, pos_ofs[x][y].r);
+                    }
+                    //t
+                  } else {
+                    ik(frp(get_cha(cha, data[x][y]), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y, pos_ofs[x][y].r);
+                  }
+                  //
+                } else {
+                  image(frp(get_cha(cha, data[x][y]), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx+pos_ofs[x][y].x, y*16+yofs-scry+pos_ofs[x][y].y, pos_ofs[x][y].w, pos_ofs[x][y].h);
+                }
+                //end
+              }
+              //layer1 end
             }
-            //end
           }
+          ;
         }
-        ;
       }
+      //
     }
   }
 

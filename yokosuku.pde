@@ -222,7 +222,7 @@ void setup() {
   for (int i = 0; i < 256; i++) {
     ugo_hor_list[i] = uhl[0][i] > 0;
     ugo_hor_level[i] = uhl[1][i];
-    
+
     ugo_ver_list[i] = uvl[0][i] > 0;
     ugo_ver_level[i] = uvl[1][i];
   }
@@ -381,7 +381,9 @@ void draw() {
   }
 
   /*--------------------表示表示表示表示---------------------*/
-  map.mob_proc();
+  if (game_en) {
+    map.mob_proc();
+  }
   map.draw();
   map.backup();
   image(map.get().get(scrx, scry, dw, dh), 0, yofs);

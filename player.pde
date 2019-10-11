@@ -85,7 +85,7 @@ class player {
       t = 1;
     }
     if (non_ctr_count > 120) {
-      t = (non_ctr_count/40)%2 == 0?2:3;
+      t = (non_ctr_count/40)%2 == 0?2:((non_ctr_count/80)%2 == 0?3:4);
       if ((non_ctr_count/20)%2 == 0) {
         if (non_ctr_count%10 == 0) {
           lr = false;
@@ -94,6 +94,9 @@ class player {
         if (non_ctr_count%10 == 0) {
           lr = true;
         }
+      }
+      if (non_ctr_count/40%4 == 0) {
+        t = 7;
       }
     }
     if (xs > 0.01 || xs < -0.01) {
@@ -506,6 +509,12 @@ class player {
             }
             //println(map.data[X][Y]);
           }
+          if (col(ex, ey, w, h, int(x), int(y+1))) {
+            if (map.data[X][Y] != 0 && col_list[map.data[X][Y]] && down_col_list[map.data[X][Y]]) {
+              x += map.pos_ofs[X][Y].xs;
+              y += map.pos_ofs[X][Y].ys;
+            }
+          }
           if (
             col(ex, ey, w, h, int(x-(pw/3)), int(y+1))||
             col(ex, ey, w, h, int(x), int(y+1))||
@@ -516,8 +525,6 @@ class player {
                 fill(255, 128);
                 rect(ex, ey+yofs, w-1, h-1);
               }
-              x += map.pos_ofs[X][Y].xs;
-              y += map.pos_ofs[X][Y].ys;
               ys = -0.01;
               if (y < ey+15) {
                 y = ey;
