@@ -125,6 +125,11 @@ class map {
         pos_ofs[x][y].xscr = 0;
         pos_ofs[x][y].w = 16;
         pos_ofs[x][y].h = 16;
+      }
+    }
+    for (int y = 0; y < data[0].length; y++) {
+      for (int x = 0; x < data.length; x++) {
+        int b = data[x][y];
         if (b == 0) {
           data_sub[x][y] = 30;
         }
@@ -132,45 +137,45 @@ class map {
           pos_ofs[x][y].xscr = int(sin(frameCount/60.0*TWO_PI)*4);
           //pos_ofs[x][y].y = int(sin( (x/30.0*TWO_PI) + (sin(frameCount/30.0*TWO_PI)/2) + (frameCount/30.0*TWO_PI) )*4+4);
         } else if (hata_list[b]) {
-          pos_ofs[x][y].xscr = 0;
-          pos_ofs[x][y].r = sin((float)(millis()+(x*36))/(1000+(y*4)/2)*TWO_PI)*5;
+          pos_ofs[x][y].xscr += 0;
+          pos_ofs[x][y].r += sin((float)(millis()+(x*36))/(1000+(y*4)/2)*TWO_PI)*5;
         } else if (obake_list[b]) {
-          pos_ofs[x][y].r = sin((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/1)*5.1;
+          pos_ofs[x][y].r += sin((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/1)*5.1;
           pos_ofs[x][y].hf = sin((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/2) > 0;
-          pos_ofs[x][y].x = int(sin((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/2)*8);
-          pos_ofs[x][y].y = int(cos((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/2)*4);
+          pos_ofs[x][y].x += int(sin((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/2)*8);
+          pos_ofs[x][y].y += int(cos((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/2)*4);
         } else if (super_obake_list[b]) {
-          pos_ofs[x][y].r = sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/2)*8;
+          pos_ofs[x][y].r += sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/2)*8;
           pos_ofs[x][y].hf = sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4) > 0;
-          pos_ofs[x][y].x = int(sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
-          pos_ofs[x][y].y = int(cos((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
+          pos_ofs[x][y].x += int(sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
+          pos_ofs[x][y].y += int(cos((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
         } else if (aobake_list[b]) {
           pos_ofs[x][y].hf = cos((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4) > 0;
-          pos_ofs[x][y].x = int(sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*64);
+          pos_ofs[x][y].x += int(sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*64);
         } else if (poteto_list[b]) {
-          pos_ofs[x][y].r = int(sin(millis()/900.0*TWO_PI)*3)*7;
+          pos_ofs[x][y].r += int(sin(millis()/900.0*TWO_PI)*3)*7;
         } else if (kinoko_list[b]) {
-          pos_ofs[x][y].y = int(-sin(millis()/900.0*TWO_PI%PI)*4);
+          pos_ofs[x][y].y += int(-sin(millis()/900.0*TWO_PI%PI)*4);
         } else if (left_jump_list[b] && right_jump_list[b] && up_jump_list[b] && down_jump_list[b]) {
-          pos_ofs[x][y].x = -((data_sub[x][y]/5)-0)/2;
-          pos_ofs[x][y].y = -((data_sub[x][y]/5)-0)/2;
+          pos_ofs[x][y].x += -((data_sub[x][y]/5)-0)/2;
+          pos_ofs[x][y].y += -((data_sub[x][y]/5)-0)/2;
           pos_ofs[x][y].w += ((data_sub[x][y]/5)-0);
           pos_ofs[x][y].h += ((data_sub[x][y]/5)-0);
           if (data_sub[x][y] > 0)data_sub[x][y] -= 15;
         } else if (left_jump_list[b]) {
-          pos_ofs[x][y].x = -((data_sub[x][y]/5)-0);
+          pos_ofs[x][y].x += -((data_sub[x][y]/5)-0);
           pos_ofs[x][y].w += ((data_sub[x][y]/5)-0);
           if (data_sub[x][y] > 0)data_sub[x][y] -= 15;
         } else if (right_jump_list[b]) {
-          pos_ofs[x][y].x = 0;
+          pos_ofs[x][y].x += 0;
           pos_ofs[x][y].w += ((data_sub[x][y]/5)-0);
           if (data_sub[x][y] > 0)data_sub[x][y] -= 15;
         } else if (up_jump_list[b]) {
-          pos_ofs[x][y].y = -((data_sub[x][y]/5)-0);
+          pos_ofs[x][y].y += -((data_sub[x][y]/5)-0);
           pos_ofs[x][y].h += ((data_sub[x][y]/5)-0);
           if (data_sub[x][y] > 0)data_sub[x][y] -= 15;
         } else if (down_jump_list[b]) {
-          pos_ofs[x][y].y = 0;
+          pos_ofs[x][y].y += 0;
           pos_ofs[x][y].h += ((data_sub[x][y]/5)-0);
           if (data_sub[x][y] > 0)data_sub[x][y] -= 15;
         }
@@ -180,7 +185,8 @@ class map {
           for (int i = 0; i < 2; i++) {
             if (y > i) {
               if (data[x][y-(i+1)] >= 128) {
-                pos_ofs[x][y-(i+1)].x += u;
+                pos_ofs[x][y-(i+1)].x += pos_ofs[x][y].x;
+                pos_ofs[x][y-(i+1)].y += pos_ofs[x][y].y;
               }
             }
           }
@@ -192,8 +198,51 @@ class map {
           for (int i = 0; i < 2; i++) {
             if (y > i) {
               if (data[x][y-(i+1)] >= 128) {
-                pos_ofs[x][y-(i+1)].y += u;
+                pos_ofs[x][y-(i+1)].x += pos_ofs[x][y].x;
+                pos_ofs[x][y-(i+1)].y += pos_ofs[x][y].y;
               }
+            }
+          }
+          //
+        }
+        //
+        if (taiho_list[b]) {
+          int n = int((float)frameCount%taiho_level[b]*4);
+          if (x > 0) {
+            if (data[x-1][y] >= 128) {
+              pos_ofs[x-1][y].x -= n;
+              pos_ofs[x-1][y].x += pos_ofs[x][y].x;
+              pos_ofs[x-1][y].y += pos_ofs[x][y].y;
+            }
+          }
+          if (x < data.length-1) {
+            if (data[x+1][y] >= 128) {
+              pos_ofs[x+1][y].x += n;
+              pos_ofs[x+1][y].x += pos_ofs[x][y].x;
+              pos_ofs[x+1][y].y += pos_ofs[x][y].y;
+            }
+          }
+        }
+        //
+      }
+    }
+    for (int y = 0; y < data[0].length; y++) {
+      for (int x = 0; x < data.length; x++) {
+        int b = data[x][y];
+        //
+        if (tunage_list[b]) {
+          //
+          if (x > 0) {
+            if (data[x-1][y] >= 128) {
+              pos_ofs[x-1][y].x += pos_ofs[x][y].x;
+              pos_ofs[x-1][y].y += pos_ofs[x][y].y;
+            }
+          }
+          if (x < data.length-1) {
+            if (data[x+1][y] >= 128) {
+              pos_ofs[x+1][y].x += pos_ofs[x][y].x;
+              pos_ofs[x+1][y].y += pos_ofs[x][y].y;
+              //println(pos_ofs[x][y].xs, pos_ofs[x][y].ys);
             }
           }
           //
@@ -214,7 +263,10 @@ class map {
       for (int y = 0; y < data[0].length; y++) {
         for (int x = 0; x < data.length; x++) {
           ;
-          if (x*16-scrx >= -32 && x*16-scrx < (WIDTH+1)*16   &&   y*16-scry >= -32 && y*16-scry < (HEIGH+1)*16) {
+          if (
+            ((x*16-scrx)+pos_ofs[x][y].x) >= -32 && ((x*16-scrx)+pos_ofs[x][y].x) < (WIDTH+1)*16   &&   ((y*16-scry)+pos_ofs[x][y].y) >= -32 && ((y*16-scry)+pos_ofs[x][y].y) < (HEIGH+1)*16 || 
+            ((x*16-scrx)+0) >= -32 && ((x*16-scrx)+0) < (WIDTH+1)*16   &&   ((y*16-scry)+0) >= -32 && ((y*16-scry)+0) < (HEIGH+1)*16
+            ) {
             if (data[x][y] >= 0x80) {
               //
               if (L == 0) {

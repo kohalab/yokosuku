@@ -10,7 +10,8 @@ void map() {
           setblock(i, f, 0x01, false);
         }
         if (gbc(i, f, d, u, 0, 0, 0, 1)) {
-          setblock(i, f, bou?0x0d:0x01, false);
+          //setblock(i, f, bou?0x0d:0x01, false);
+          setblock(i, f, 0x01, false);
         }
         if (gbc(i, f, d, u, 0, 0, 1, 0)) {
           setblock(i, f, bou?0x0e:0x01, false);
@@ -20,10 +21,12 @@ void map() {
         }
 
         if (gbc(i, f, d, u, 0, 1, 0, 0)) {
-          setblock(i, f, bou?0x0c:0x01, false);
+          //setblock(i, f, bou?0x0c:0x01, false);
+          setblock(i, f, 0x01, false);
         }
         if (gbc(i, f, d, u, 0, 1, 0, 1)) {
-          setblock(i, f, bou?0x0a:0x01, false);
+          //setblock(i, f, bou?0x0a:0x01, false);
+          setblock(i, f, 0x01, false);
         }
         if (gbc(i, f, d, u, 0, 1, 1, 0)) {
           setblock(i, f, 0x06, false);

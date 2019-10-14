@@ -85,6 +85,11 @@ float[] ugo_hor_level = new float[256];
 boolean[] ugo_ver_list = new boolean[256];
 float[] ugo_ver_level = new float[256];
 
+boolean[] taiho_list = new boolean[256];
+float[] taiho_level = new float[256];
+
+boolean[] tunage_list = new boolean[256];
+
 boolean[] hari_list = new boolean[256];
 boolean[] water_list = new boolean[256];
 boolean[] hata_list = new boolean[256];
@@ -218,6 +223,8 @@ void setup() {
 
   float[][] uhl = list_float_gen("ugo_hor_list.txt");
   float[][] uvl = list_float_gen("ugo_ver_list.txt");
+  
+  float[][] thl = list_float_gen("taiho_list.txt");
 
   for (int i = 0; i < 256; i++) {
     ugo_hor_list[i] = uhl[0][i] > 0;
@@ -225,7 +232,12 @@ void setup() {
 
     ugo_ver_list[i] = uvl[0][i] > 0;
     ugo_ver_level[i] = uvl[1][i];
+    
+    taiho_list[i] = thl[0][i] > 0;
+    taiho_level[i] = thl[1][i];
   }
+  
+  tunage_list = col_list_gen("tunage_list.txt");
   //println(up_jump_speed)
 
   hari_list = col_list_gen("hari_list.txt");
