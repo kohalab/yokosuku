@@ -15,7 +15,7 @@ class prf {
   int xs, ys;
   boolean hf, vf;
   int xscr;
-  float r;
+  float r, or;
   void reset() {
     w = 16;
     h = 16;
@@ -105,6 +105,8 @@ class map {
     }
     map_buf.endDraw();
   }
+  
+  int mob_time = 0;
 
 
   void mob_proc() {
@@ -112,6 +114,7 @@ class map {
       for (int x = 0; x < data.length; x++) {
         pos_ofs[x][y].ox = pos_ofs[x][y].x;
         pos_ofs[x][y].oy = pos_ofs[x][y].y;
+        pos_ofs[x][y].or = pos_ofs[x][y].r;
       }
     }
     for (int y = 0; y < data[0].length; y++) {
@@ -134,28 +137,28 @@ class map {
           data_sub[x][y] = 30;
         }
         if (water_list[b]) {
-          pos_ofs[x][y].xscr = int(sin(frameCount/60.0*TWO_PI)*4);
+          pos_ofs[x][y].xscr = int(sin(mob_time/33/60.0*TWO_PI)*4);
           //pos_ofs[x][y].y = int(sin( (x/30.0*TWO_PI) + (sin(frameCount/30.0*TWO_PI)/2) + (frameCount/30.0*TWO_PI) )*4+4);
         } else if (hata_list[b]) {
           pos_ofs[x][y].xscr += 0;
-          pos_ofs[x][y].r += sin((float)(millis()+(x*36))/(1000+(y*4)/2)*TWO_PI)*5;
+          pos_ofs[x][y].r += sin((float)(mob_time+(x*36))/(1000+(y*4)/2)*TWO_PI)*5;
         } else if (obake_list[b]) {
-          pos_ofs[x][y].r += sin((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/1)*5.1;
-          pos_ofs[x][y].hf = sin((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/2) > 0;
-          pos_ofs[x][y].x += int(sin((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/2)*8);
-          pos_ofs[x][y].y += int(cos((float)(millis()+(x*36))/(1000+(y*4))*TWO_PI/2)*4);
+          pos_ofs[x][y].r += sin((float)(mob_time+(x*36))/(1000+(y*4))*TWO_PI/1)*5.1;
+          pos_ofs[x][y].hf = sin((float)(mob_time+(x*36))/(1000+(y*4))*TWO_PI/2) > 0;
+          pos_ofs[x][y].x += int(sin((float)(mob_time+(x*36))/(1000+(y*4))*TWO_PI/2)*8);
+          pos_ofs[x][y].y += int(cos((float)(mob_time+(x*36))/(1000+(y*4))*TWO_PI/2)*4);
         } else if (super_obake_list[b]) {
-          pos_ofs[x][y].r += sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/2)*8;
-          pos_ofs[x][y].hf = sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4) > 0;
-          pos_ofs[x][y].x += int(sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
-          pos_ofs[x][y].y += int(cos((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
+          pos_ofs[x][y].r += sin((float)(mob_time+(x*36*5))/(1000+(y*4*5))*TWO_PI/2)*8;
+          pos_ofs[x][y].hf = sin((float)(mob_time+(x*36*5))/(1000+(y*4*5))*TWO_PI/4) > 0;
+          pos_ofs[x][y].x += int(sin((float)(mob_time+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
+          pos_ofs[x][y].y += int(cos((float)(mob_time+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
         } else if (aobake_list[b]) {
           pos_ofs[x][y].hf = cos((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4) > 0;
-          pos_ofs[x][y].x += int(sin((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*64);
+          pos_ofs[x][y].x += int(sin((float)(mob_time+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*64);
         } else if (poteto_list[b]) {
-          pos_ofs[x][y].r += int(sin(millis()/900.0*TWO_PI)*3)*7;
+          pos_ofs[x][y].r += int(sin(mob_time/900.0*TWO_PI)*3)*7;
         } else if (kinoko_list[b]) {
-          pos_ofs[x][y].y += int(-sin(millis()/900.0*TWO_PI%PI)*4);
+          pos_ofs[x][y].y += int(-sin(mob_time/900.0*TWO_PI%PI)*4);
         } else if (left_jump_list[b] && right_jump_list[b] && up_jump_list[b] && down_jump_list[b]) {
           pos_ofs[x][y].x += -((data_sub[x][y]/5)-0)/2;
           pos_ofs[x][y].y += -((data_sub[x][y]/5)-0)/2;
@@ -180,7 +183,7 @@ class map {
           if (data_sub[x][y] > 0)data_sub[x][y] -= 15;
         }
         if (ugo_hor_list[b]) {
-          int u = int(sin(millis()/100.0/ugo_hor_level[b]*TWO_PI)*ugo_hor_level[b]);
+          int u = int(sin(mob_time/100.0/ugo_hor_level[b]*TWO_PI)*ugo_hor_level[b]);
           pos_ofs[x][y].x += u;
           for (int i = 0; i < 2; i++) {
             if (y > i) {
@@ -193,7 +196,7 @@ class map {
           //
         }
         if (ugo_ver_list[b]) {
-          int u = int(cos(millis()/100.0/ugo_ver_level[b]*TWO_PI)*ugo_ver_level[b]);
+          int u = int(cos(mob_time/100.0/ugo_ver_level[b]*TWO_PI)*ugo_ver_level[b]);
           pos_ofs[x][y].y += u;
           for (int i = 0; i < 2; i++) {
             if (y > i) {
@@ -207,7 +210,7 @@ class map {
         }
         //
         if (taiho_list[b]) {
-          int n = int((float)frameCount%taiho_level[b]*4);
+          int n = int((float)mob_time/33%taiho_level[b]*4);
           if (x > 0) {
             if (data[x-1][y] >= 128) {
               pos_ofs[x-1][y].x -= n;
@@ -220,6 +223,31 @@ class map {
               pos_ofs[x+1][y].x += n;
               pos_ofs[x+1][y].x += pos_ofs[x][y].x;
               pos_ofs[x+1][y].y += pos_ofs[x][y].y;
+            }
+          }
+        }
+        //
+        if (guru_list[b]) {
+          float n = ((float)mob_time/33*360.0/guru_level[b]);
+          pos_ofs[x][y].r += n;
+          if (x > 0) {
+            if (data[x-1][y] >= 128 && !guru_list[data[x-1][y]]) {
+              pos_ofs[x-1][y].r -= n;
+            }
+          }
+          if (x < data.length-1) {
+            if (data[x+1][y] >= 128 && !guru_list[data[x+1][y]]) {
+              pos_ofs[x+1][y].r -= n;
+            }
+          }
+          if (y > 0) {
+            if (data[x][y-1] >= 128 && !guru_list[data[x][y-1]]) {
+              pos_ofs[x][y-1].r -= n;
+            }
+          }
+          if (y < data[0].length-1) {
+            if (data[x][y] >= 128 && !guru_list[data[x][y+1]]) {
+              pos_ofs[x][y+1].r -= n;
             }
           }
         }
@@ -253,9 +281,11 @@ class map {
     for (int y = 0; y < data[0].length; y++) {
       for (int x = 0; x < data.length; x++) {
         pos_ofs[x][y].xs = pos_ofs[x][y].x-pos_ofs[x][y].ox;
+        pos_ofs[x][y].xs += (pos_ofs[x][y].r-pos_ofs[x][y].or)/5.0;
         pos_ofs[x][y].ys = pos_ofs[x][y].y-pos_ofs[x][y].oy;
       }
     }
+    mob_time += 33;
   }
   void mob_draw() {
     for (int L = 0; L < 4; L++) {

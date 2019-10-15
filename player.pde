@@ -29,6 +29,9 @@ class player {
   boolean no_col;
   boolean deadnow;
   int deaddeadtime;
+  int muteki_time = 0;
+  int muteki_length = 60;
+
   int jump_cooldown;
   boolean dash;
   int dpw = 16;
@@ -131,13 +134,17 @@ class player {
     if (deadnow) {
       if (ys > 0.4)vf |= true;
     }
-    image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs+1-scry+((vf?t==2?10:4:0)*((float)ph/dph)), pw, ph);
-    if (bubo) {
-      if (keys['b'] || keys['B']) {
-        image(frp(get_cha(map_cha, 0xf0+(frameCount%2)), frameCount/2%2 == 0, false), x-(pw/2)-scrx, y+yofs+1-scry-(frameCount%2), 16, 8+(frameCount*3%7*1));
-        println("bbb");
+    //
+    if (muteki_time%2 == 0 || muteki_time == 0) {
+      image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs+1-scry+((vf?t==2?10:4:0)*((float)ph/dph)), pw, ph);
+      if (bubo) {
+        if (keys['b'] || keys['B']) {
+          image(frp(get_cha(map_cha, 0xf0+(frameCount%2)), frameCount/2%2 == 0, false), x-(pw/2)-scrx, y+yofs+1-scry-(frameCount%2), 16, 8+(frameCount*3%7*1));
+          println("bbb");
+        }
       }
     }
+    //
     if (!ctr) {
       non_ctr_count++;
     } else {
@@ -153,8 +160,8 @@ class player {
     //
     float yys = ys;
     if (yys < -15)yys = -15;
-    x += xs;
-    y += yys;
+    x += xs*(big == -1?2:1);
+    y += yys*(big == -1?1.5:1);
     ys += gravity;
     if (big == -1) {
       ys -= gravity/4;
@@ -274,6 +281,7 @@ class player {
     }
     if (jump_cooldown > 0)jump_cooldown--;
     dead_alway(false);
+    if (muteki_time > 0)muteki_time--;
   }
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
@@ -363,13 +371,20 @@ class player {
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
   void dead() {
-    //y = 0;
-    //x = 0;
-    deaddeadtime = 0;
-    xs = 0;
-    ys = -4;
-    no_col = true;
-    deadnow = true;
+    if (muteki_time == 0) {
+      if (big == 1) {
+        muteki_time = muteki_length;
+        big = 0;
+        return;
+      }
+      //y = 0;
+      //x = 0;
+      deaddeadtime = 0;
+      xs = 0;
+      ys = -4;
+      no_col = true;
+      deadnow = true;
+    }
   }
   void dead_alway(boolean anyway) {
     if ((no_col && y > map.data[0].length*16+ph && deadnow) || anyway) {
@@ -380,6 +395,7 @@ class player {
       big = 0;
       no_col = false;
       deadnow = false;
+      muteki_time = muteki_length;
       for (int yy = 0; yy < map.data[0].length; yy++) {
         if (
           map.data[1][map.data[0].length-1-yy] == 0x00||
@@ -509,7 +525,10 @@ class player {
             }
             //println(map.data[X][Y]);
           }
-          if (col(ex, ey, w, h, int(x), int(y+1))) {
+          if (col(ex, ey, w, h, int(x), int(y+1)) || 
+            col(ex, ey, w, h, int(x-(pw/2)  -1), int(y)) || 
+            col(ex, ey, w, h, int(x+(pw/2)  -0), int(y))
+            ) {
             if (map.data[X][Y] != 0 && col_list[map.data[X][Y]] && down_col_list[map.data[X][Y]]) {
               x += map.pos_ofs[X][Y].xs;
               y += map.pos_ofs[X][Y].ys;

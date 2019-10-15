@@ -88,6 +88,9 @@ float[] ugo_ver_level = new float[256];
 boolean[] taiho_list = new boolean[256];
 float[] taiho_level = new float[256];
 
+boolean[] guru_list = new boolean[256];
+float[] guru_level = new float[256];
+
 boolean[] tunage_list = new boolean[256];
 
 boolean[] hari_list = new boolean[256];
@@ -223,8 +226,10 @@ void setup() {
 
   float[][] uhl = list_float_gen("ugo_hor_list.txt");
   float[][] uvl = list_float_gen("ugo_ver_list.txt");
-  
+
   float[][] thl = list_float_gen("taiho_list.txt");
+
+  float[][] grl = list_float_gen("guru_list.txt");
 
   for (int i = 0; i < 256; i++) {
     ugo_hor_list[i] = uhl[0][i] > 0;
@@ -232,11 +237,16 @@ void setup() {
 
     ugo_ver_list[i] = uvl[0][i] > 0;
     ugo_ver_level[i] = uvl[1][i];
-    
+
+    guru_list[i] = grl[0][i] > 0;
+    guru_level[i] = grl[1][i];
+
+    //
+
     taiho_list[i] = thl[0][i] > 0;
     taiho_level[i] = thl[1][i];
   }
-  
+
   tunage_list = col_list_gen("tunage_list.txt");
   //println(up_jump_speed)
 
@@ -352,7 +362,7 @@ void draw() {
 
   textFont(r12);
 
-  background(#83d5ff);
+  //background(#83d5ff);
 
   if (sp < 0)sp = 0;
   if (sp > item_list.length-1)sp = item_list.length-1;
@@ -417,7 +427,9 @@ void draw() {
   /*--------------------表示表示表示表示---------------------*/
 
   /*------------------------------------------------------*/
-
+  noStroke();
+  fill(#83d5ff);
+  rect(0, 0, dw, yofs);
   for (int i = 0; i < 256; i++) {
     int n = (i- ((dw/32)/2) )+tsp;
     if (n >= 0 && n < item_list.length) {
@@ -520,6 +532,12 @@ void draw() {
 
   if (rpchg > -1)rpchg--;
   //baketu
+
+  if (!game_en) {
+    noStroke();
+    fill(255, 64);
+    rect(0, 0, dw, dh+yofs);
+  }
 
   try {
     image(get(0, 0, dw, dh+yofs), 0, 0, dw*SCALE, (dh+yofs)*SCALE);//スケーリング
