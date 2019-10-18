@@ -105,7 +105,7 @@ class map {
     }
     map_buf.endDraw();
   }
-  
+
   int mob_time = 0;
 
 
@@ -285,7 +285,7 @@ class map {
         pos_ofs[x][y].ys = pos_ofs[x][y].y-pos_ofs[x][y].oy;
       }
     }
-    mob_time += 33;
+    mob_time += 33.3333333;
   }
   void mob_draw() {
     for (int L = 0; L < 4; L++) {
@@ -357,5 +357,14 @@ class map {
 
   PImage get() {
     return map_buf.get();
+  }
+}
+
+void dead_map() {
+  map.mob_time = 0;
+  for (int y = 0; y < map.data[0].length; y++) {
+    for (int x = 0; x < map.data.length; x++) {
+      map.data_sub[x][y] = -1;
+    }
   }
 }

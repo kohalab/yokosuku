@@ -450,11 +450,6 @@ void draw() {
   //println(tsp);
   //fill(255, 128);
   //rect((dw/2)-24, 0, 32, 32);
-  if (debug) {
-    textFont(r10);
-    fill(0);
-    text(nf(frameRate, 2, 4), 1, dh-1);
-  }
   //baketu
   int[][] tmp = new int[map.data.length][map.data[0].length];
   for (int i = 0; i < map.data.length; i++) {
@@ -544,11 +539,6 @@ void draw() {
   }
   catch(ArrayIndexOutOfBoundsException ex) {
   }
-  if (debug) {
-    tint(255, 128);
-    image(sel_t, 0, 0);
-    noTint();
-  }
   super_sound();
 
   //
@@ -608,6 +598,7 @@ void draw() {
       //
     }
   }
+  debug();
   scrproc();
   /*
   setblock(int(player.x/16)-1, int(player.y/16), 14, false);
@@ -677,6 +668,8 @@ void keyPressed() {
       save_load_bank++;
     }
   }
+  if (key == 'D')
+    debug = !debug;
 }
 
 void keyReleased() {

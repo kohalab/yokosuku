@@ -178,7 +178,7 @@ class player {
         //sound_woo.amp(1);
         sound_woo.trigger();
       }
-      dead();
+      dead(0);
       //y = map.data[0].length*16+ph-10;
     }
 
@@ -190,7 +190,7 @@ class player {
 
     //----------------------------------
     if (keys['*']) {
-      dead();
+      dead(0);
     }
     xs /= nowfriction;
     if (ugokeen && !deadnow) {
@@ -289,7 +289,7 @@ class player {
   void ifblock(int a, int xx, int yy) {
     //pow(2.0, (notenumber - 69.0) / 12.0)
     if (hari_list[a]) {
-      dead();
+      dead(2);
       //sound_ping.rate(random(0.95, 1.05));
       //sound_ping.amp(1);
       sound_ping.trigger();
@@ -334,7 +334,7 @@ class player {
     if (obake_list[a] || super_obake_list[a]) {
       //sound_jon.amp(1);
       sound_woo.trigger();
-      dead();
+      dead(3);
     }
     if (water_list[a]) {
       ys -= 0.2;
@@ -370,8 +370,8 @@ class player {
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////
-  void dead() {
-    if (muteki_time == 0) {
+  void dead(int type) {
+    if (muteki_time == 0 || type == 0) {
       if (big == 1) {
         muteki_time = muteki_length;
         big = 0;
@@ -408,6 +408,7 @@ class player {
       }
       deaddeadtime = 0;
       direct_scr();
+      dead_map();
     }
     //println(deaddeadtime);
     deaddeadtime++;
