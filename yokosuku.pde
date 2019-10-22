@@ -25,7 +25,9 @@ float save_load_bank_sm;
 
 map map;
 
-player player;
+int player_num = 1;
+
+player[] player = new player[player_num];
 
 PGraphics grd;
 
@@ -191,9 +193,11 @@ void setup() {
     }
     map.data[4][map.data[0].length-1-2] = 7;
   }
-  player = new player();
-  player.map = map;
-
+  for (int i = 0; i < player_num; i++) {
+    player[i] = new player();
+    player[i].map = map;
+    player[i].num = i;
+  }
   //
   for (int i = 0; i < 256; i++) {
     col_list[i] = true;
@@ -350,11 +354,12 @@ int rpchg = -1;
 
 boolean nowrep;
 
-boolean deadnow = false;
-
 void draw() {
 
-  deadnow = player.deadnow;
+  boolean[] deadnow = new boolean[player_num];
+  for (int i = 0; i < player_num; i++) {
+    deadnow[i] = player[i].deadnow;
+  }
 
   surface.setSize(WIDTH*16*SCALE, (HEIGH*16+yofs)*SCALE);
 
@@ -408,21 +413,23 @@ void draw() {
   }
   map.draw();
   map.backup();
+
   image(map.get().get(scrx, scry, dw, dh), 0, yofs);
 
-  if (deadnow) {
-    map.mob_draw();
+  //if (deadnow) {
+  map.mob_draw();
+  //}
+  for (int i = 0; i < player_num; i++) {
+    player[i].map = map;
+    player[i].draw();
+    if (game_en) {
+      player[i].proc();
+    }
   }
 
-  player.map = map;
-  player.draw();
-  if (game_en) {
-    player.proc();
-  }
-
-  if (!deadnow) {
-    map.mob_draw();
-  }
+  //if (!deadnow) {
+  map.mob_draw();
+  //}
 
   /*--------------------表示表示表示表示---------------------*/
 
@@ -572,7 +579,9 @@ void draw() {
         map load = map_saver.load(map_save_path+i+".yksm");
         if (load != null) {
           map = load;
-          player.dead_alway(true);
+          for (int f = 0; f < player_num; f++) {
+            player[f].dead_alway(true);
+          }
         } else {
           sound_son.stop();
           sound_err.stop();

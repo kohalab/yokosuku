@@ -18,6 +18,7 @@ void zht(int x, int y) {
 }
 
 class player {
+  int num = 0;
   boolean bubo = true;
   boolean down;
   boolean lr;
@@ -389,7 +390,7 @@ class player {
   void dead_alway(boolean anyway) {
     if ((no_col && y > map.data[0].length*16+ph && deadnow) || anyway) {
       y = 0;
-      x = 16;
+      x = 16+(num*16);
       xs = 0;
       ys = 0;
       big = 0;
@@ -526,7 +527,7 @@ class player {
             }
             //println(map.data[X][Y]);
           }
-          if (col(ex, ey, w, h, int(x), int(y+1)) || 
+          if (col(ex, ey, w, h, int(x), int(y+4)) || 
             col(ex, ey, w, h, int(x-(pw/2)  -1), int(y)) || 
             col(ex, ey, w, h, int(x+(pw/2)  -0), int(y))
             ) {

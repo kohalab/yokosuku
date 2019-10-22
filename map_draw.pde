@@ -130,7 +130,7 @@ class map {
         pos_ofs[x][y].h = 16;
       }
     }
-    for (int y = 0; y < data[0].length; y++) {
+    for (int y = data[0].length-1; y > 0; y--) {
       for (int x = 0; x < data.length; x++) {
         int b = data[x][y];
         if (b == 0) {
@@ -254,25 +254,28 @@ class map {
         //
       }
     }
-    for (int y = 0; y < data[0].length; y++) {
+    for (int y = data[0].length-1; y > 0; y--) {
       for (int x = 0; x < data.length; x++) {
         int b = data[x][y];
         //
-        if (tunage_list[b]) {
+        if (tunage_list[b]) {// 下の位置を上に反映(ついでに自分も)
           //
-          if (x > 0) {
-            if (data[x-1][y] >= 128) {
-              pos_ofs[x-1][y].x += pos_ofs[x][y].x;
-              pos_ofs[x-1][y].y += pos_ofs[x][y].y;
+          int gx = 0;
+          int gy = 0;
+          if (y < data[0].length-1) {
+            if (data[x][y+1] >= 128) {
+              gx = pos_ofs[x][y+1].x;
+              gy = pos_ofs[x][y+1].y;
             }
           }
-          if (x < data.length-1) {
-            if (data[x+1][y] >= 128) {
-              pos_ofs[x+1][y].x += pos_ofs[x][y].x;
-              pos_ofs[x+1][y].y += pos_ofs[x][y].y;
-              //println(pos_ofs[x][y].xs, pos_ofs[x][y].ys);
+          if (y > 0) {
+            if (data[x][y-1] >= 128) {
+              pos_ofs[x][y-1].x += gx;
+              pos_ofs[x][y-1].y += gy;
             }
           }
+          pos_ofs[x][y].x += gx;
+          pos_ofs[x][y].y += gy;
           //
         }
         //

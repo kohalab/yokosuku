@@ -16,13 +16,16 @@ void debug() {
     } else {
       debugl.text("map.name = "+"NULL", 1, height-4);
     }
-    String text = 
-    "player.x  = "+nf(player.x, 0, 0)+"\n"+
-    "player.xs = "+nf(player.xs, 0, 0)+"\n"+
-    "player.y  = "+nf(player.y, 0, 0)+"\n"+
-    "player.ys = "+nf(player.ys, 0, 0)+"\n"
+    String text = "";
+    for (int i = 0; i < player_num; i++) {
+      text += 
+        "player["+i+"].x  = "+(player[i].x >= 0?"+":"")+nf(player[i].x, 0, 3)+"\n"+
+        "player["+i+"].xs = "+(player[i].xs >= 0?"+":"")+nf(player[i].xs, 0, 3)+"\n"+
+        "player["+i+"].y  = "+(player[i].y >= 0?"+":"")+nf(player[i].y, 0, 3)+"\n"+
+        "player["+i+"].ys = "+(player[i].ys >= 0?"+":"")+nf(player[i].ys, 0, 3)+"\n";
+    }
     ;
-    debugl.text(text , width/1.5, 12+(10*0));
+    debugl.text(text, width/1.5, 12+(10*0));
     //
     debugl.text(debugtext, width-textWidth(debugtext), height);
     debugl.endDraw();
