@@ -70,6 +70,82 @@ void map() {
       }
     }
   }
+  //
+  for (int i = 0; i < map.data.length; i++) {
+    for (int f = 0; f < map.data[0].length; f++) {
+      ;
+      int d = 0x50;
+      int u = 0x60;
+      if (getblock(i, f) >= 0x50 && getblock(i, f) < 0x60) {
+        //
+        if (gbc(i, f, d, u, 0, 0, 0, 0)) {
+          setblock(i, f, d+0x0f, false);
+        }
+        if (gbc(i, f, d, u, 0, 0, 0, 1)) {
+          setblock(i, f, d+0x0b, false);
+        }
+        //
+        if (gbc(i, f, d, u, 0, 0, 1, 0)) {
+          setblock(i, f, d+0x0c, false);
+        }
+        if (gbc(i, f, d, u, 0, 0, 1, 1)) {
+          setblock(i, f, d+0x02, false);
+        }
+        //
+        //
+        //
+        //
+        if (gbc(i, f, d, u, 0, 1, 0, 0)) {
+          setblock(i, f, d+0x09, false);
+        }
+        if (gbc(i, f, d, u, 0, 1, 0, 1)) {
+          setblock(i, f, d+0x0A, false);
+        }
+        //
+        if (gbc(i, f, d, u, 0, 1, 1, 0)) {
+          setblock(i, f, d+0x00, false);
+        }
+        if (gbc(i, f, d, u, 0, 1, 1, 1)) {
+          setblock(i, f, d+0x01, false);
+        }
+        //
+        //----------------------------------
+        //
+        if (gbc(i, f, d, u, 1, 0, 0, 0)) {
+          setblock(i, f, d+0x0e, false);
+        }
+        if (gbc(i, f, d, u, 1, 0, 0, 1)) {
+          setblock(i, f, d+0x08, false);
+        }
+        //
+        if (gbc(i, f, d, u, 1, 0, 1, 0)) {
+          setblock(i, f, d+0x0d, false);
+        }
+        if (gbc(i, f, d, u, 1, 0, 1, 1)) {
+          setblock(i, f, d+0x05, false);
+        }
+        //
+        //
+        //
+        //
+        if (gbc(i, f, d, u, 1, 1, 0, 0)) {
+          setblock(i, f, d+0x06, false);
+        }
+        if (gbc(i, f, d, u, 1, 1, 0, 1)) {
+          setblock(i, f, d+0x07, false);
+        }
+        //
+        if (gbc(i, f, d, u, 1, 1, 1, 0)) {
+          setblock(i, f, d+0x03, false);
+        }
+        if (gbc(i, f, d, u, 1, 1, 1, 1)) {
+          setblock(i, f, d+0x04, false);
+        }
+        //
+      }
+    }
+  }
+  //
 }
 
 boolean gbc(int x, int y, int f, int t, 

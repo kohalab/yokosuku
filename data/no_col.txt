@@ -35,3 +35,10 @@ fA
 fB
 fC
 fD
+E8
+E9
+Ea
+Eb
+Ec
+Ed
+Ef

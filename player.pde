@@ -73,6 +73,9 @@ class player {
       pw = 9;
       ph = 32;
     }
+    if(down){
+      ph /= 1.3;
+    }
     if (first) {
       dead_alway(true);
       first = false;
@@ -131,7 +134,7 @@ class player {
       t = 6;
     }
     boolean hf = !lr;
-    boolean vf = down;
+    boolean vf = false;
     if (deadnow) {
       if (ys > 0.4)vf |= true;
     }

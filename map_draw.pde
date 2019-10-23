@@ -150,8 +150,8 @@ class map {
         } else if (super_obake_list[b]) {
           pos_ofs[x][y].r += sin((float)(mob_time+(x*36*5))/(1000+(y*4*5))*TWO_PI/2)*8;
           pos_ofs[x][y].hf = sin((float)(mob_time+(x*36*5))/(1000+(y*4*5))*TWO_PI/4) > 0;
-          pos_ofs[x][y].x += int(sin((float)(mob_time+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
-          pos_ofs[x][y].y += int(cos((float)(mob_time+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*32);
+          pos_ofs[x][y].x += int(sin((float)(mob_time+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*40);
+          pos_ofs[x][y].y += int(cos((float)(mob_time+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*40);
         } else if (aobake_list[b]) {
           pos_ofs[x][y].hf = cos((float)(millis()+(x*36*5))/(1000+(y*4*5))*TWO_PI/4) > 0;
           pos_ofs[x][y].x += int(sin((float)(mob_time+(x*36*5))/(1000+(y*4*5))*TWO_PI/4)*64);
@@ -166,20 +166,20 @@ class map {
           pos_ofs[x][y].h += ((data_sub[x][y]/5)-0);
           if (data_sub[x][y] > 0)data_sub[x][y] -= 15;
         } else if (left_jump_list[b]) {
-          pos_ofs[x][y].x += -((data_sub[x][y]/5)-0);
-          pos_ofs[x][y].w += ((data_sub[x][y]/5)-0);
+          pos_ofs[x][y].x += -((data_sub[x][y]/5)-0)*left_jump_speed[b];
+          pos_ofs[x][y].w += ((data_sub[x][y]/5)-0)*left_jump_speed[b];
           if (data_sub[x][y] > 0)data_sub[x][y] -= 15;
         } else if (right_jump_list[b]) {
           pos_ofs[x][y].x += 0;
-          pos_ofs[x][y].w += ((data_sub[x][y]/5)-0);
+          pos_ofs[x][y].w += ((data_sub[x][y]/5)-0)*right_jump_speed[b];
           if (data_sub[x][y] > 0)data_sub[x][y] -= 15;
         } else if (up_jump_list[b]) {
-          pos_ofs[x][y].y += -((data_sub[x][y]/5)-0);
-          pos_ofs[x][y].h += ((data_sub[x][y]/5)-0);
+          pos_ofs[x][y].y += -((data_sub[x][y]/5)-0)*up_jump_speed[b];
+          pos_ofs[x][y].h += ((data_sub[x][y]/5)-0)*up_jump_speed[b];
           if (data_sub[x][y] > 0)data_sub[x][y] -= 15;
         } else if (down_jump_list[b]) {
           pos_ofs[x][y].y += 0;
-          pos_ofs[x][y].h += ((data_sub[x][y]/5)-0);
+          pos_ofs[x][y].h += ((data_sub[x][y]/5)-0)*down_jump_speed[b];
           if (data_sub[x][y] > 0)data_sub[x][y] -= 15;
         }
         if (ugo_hor_list[b]) {
