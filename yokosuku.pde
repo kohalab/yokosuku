@@ -10,7 +10,9 @@ int dh;
 
 int SCALE = 2;
 
-int yofs = 32;
+int yofs = 0;
+
+int select_height = 32;
 
 PImage cha;
 PImage map_cha;
@@ -354,6 +356,18 @@ int rpchg = -1;
 
 boolean nowrep;
 
+int mouseX_to_x(int x) {
+  //int mx = ((mouseX/SCALE)+scrx)/16;
+  //int my = (mouseY+(scry*SCALE)-(32*SCALE))/SCALE/16;
+  return ((x/SCALE)+scrx)/16;
+}
+
+int mouseY_to_y(int y) {
+  //int mx = ((mouseX/SCALE)+scrx)/16;
+  //int my = (mouseY+(scry*SCALE)-(32*SCALE))/SCALE/16;
+  return (y+(scry*SCALE)-(yofs*SCALE))/SCALE/16;
+}
+
 void draw() {
 
   boolean[] deadnow = new boolean[player_num];
@@ -372,8 +386,8 @@ void draw() {
   if (sp < 0)sp = 0;
   if (sp > item_list.length-1)sp = item_list.length-1;
 
-  int mx = ((mouseX/SCALE)+scrx)/16;
-  int my = (mouseY+(scry*SCALE)-(32*SCALE))/SCALE/16;
+  int mx = mouseX_to_x(mouseX);
+  int my = mouseY_to_y(mouseY);
 
   tsp = sp;
 
@@ -429,6 +443,14 @@ void draw() {
 
   //if (!deadnow) {
   map.mob_draw();
+  //}
+
+  //if (mouseY >= select_height) {
+  //blendMode(BLEND);
+  //tint(255,128);
+  //image(blocks[item_list[tsp]], (mouseX/SCALE)-8, (mouseY/SCALE)-8);
+  //noTint();
+  //blendMode(BLEND);
   //}
 
   /*--------------------表示表示表示表示---------------------*/
@@ -566,14 +588,14 @@ void draw() {
         name = " "+name_load[i];
       }
       textFont(r10);
-      if (button("SAVE"+name, i*alw+2-xscr, 0, btw, (((yofs*SCALE)/3)/2)+1, load_en[i])) {
+      if (button("SAVE"+name, i*alw+2-xscr, 0, btw, (((select_height*SCALE)/3)/2)+1, load_en[i])) {
         sound_son.stop();
         sound_son.trigger();
         map_saver.save(map_save_path+i+".yksm", map);
         loadcheck();
         delay(100);
       }
-      if (button("LOAD"+name, i*alw+2-xscr, 0+((yofs*SCALE)/3), btw, (yofs*SCALE/3)-4, load_en[i])) {
+      if (button("LOAD"+name, i*alw+2-xscr, 0+((select_height*SCALE)/3), btw, (select_height*SCALE/3)-4, load_en[i])) {
         sound_son.stop();
         sound_son.trigger();
         map load = map_saver.load(map_save_path+i+".yksm");
@@ -590,7 +612,7 @@ void draw() {
         loadcheck();
         delay(100);
       }
-      if (button("X", i*alw+2-xscr, 0+((yofs*SCALE)/3*2), 10, 12, load_en[i])) {
+      if (button("X", i*alw+2-xscr, 0+((select_height*SCALE)/3*2), 10, 12, load_en[i])) {
         map load = map_saver.load(map_save_path+i+".yksm");
         if (load != null) {
           sound_kya.stop();
@@ -655,8 +677,8 @@ void keyPressed() {
     }
 
     if (key == '`') {
-      int mx = ((mouseX/SCALE)+scrx)/16;
-      int my = (mouseY+(scry*SCALE)-(32*SCALE))/SCALE/16;
+      int mx = mouseX_to_x(mouseX);
+      int my = mouseY_to_y(mouseY);
       repsp = getblock(mx, my);
       setblock(mx, my, 254, true);
     }

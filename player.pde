@@ -293,7 +293,7 @@ class player {
   void ifblock(int a, int xx, int yy) {
     //pow(2.0, (notenumber - 69.0) / 12.0)
     if (hari_list[a]) {
-      dead(2);
+      dead(0);
       //sound_ping.rate(random(0.95, 1.05));
       //sound_ping.amp(1);
       sound_ping.trigger();
