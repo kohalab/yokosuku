@@ -140,10 +140,10 @@ class player {
     }
     //
     if (muteki_time%2 == 0 || muteki_time == 0) {
-      image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs+1-scry+((vf?t==2?10:4:0)*((float)ph/dph)), pw, ph);
+      image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs-scry+((vf?t==2?10:4:0)*((float)ph/dph)), pw, ph);
       if (bubo) {
         if (keys['b'] || keys['B']) {
-          image(frp(get_cha(map_cha, 0xf0+(frameCount%2)), frameCount/2%2 == 0, false), x-(pw/2)-scrx, y+yofs+1-scry-(frameCount%2), 16, 8+(frameCount*3%7*1));
+          image(frp(get_cha(map_cha, 0xf0+(frameCount%2)), frameCount/2%2 == 0, false), x-(pw/2)-scrx, y+yofs-scry-(frameCount%2), 16, 8+(frameCount*3%7*1));
           println("bbb");
         }
       }
@@ -397,6 +397,7 @@ class player {
       xs = 0;
       ys = 0;
       big = 0;
+      map.onof = false;
       no_col = false;
       deadnow = false;
       muteki_time = muteki_length;
@@ -504,6 +505,7 @@ class player {
               sound_jmp.stop();
               //sound_dom.amp(1);
               sound_dom.trigger();
+              map.data_sub[X][Y] = 1;
               if (down_jump_list[map.data[X][Y]]) {
                 map.data_sub[X][Y] = 30;
                 sound_jon.stop();

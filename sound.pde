@@ -21,6 +21,8 @@ AudioSample sound_err;
 AudioSample sound_kya;
 AudioSample sound_ohn;
 
+AudioSample sound_onof;
+
 void loadSound() {
   minim = new Minim(this);
   out = minim.getLineOut();
@@ -42,6 +44,8 @@ void loadSound() {
   sound_kya = minim.loadSample( "sound/kya.wav", buffer_size);
   sound_ohn = minim.loadSample( "sound/ohn.wav", buffer_size);
   
+  sound_onof = minim.loadSample( "sound/onof.wav", buffer_size);
+  
   float gain = -9;
   sound_pow.setGain(gain);
   sound_pop.setGain(gain);
@@ -59,6 +63,8 @@ void loadSound() {
   sound_err.setGain(gain);
   sound_kya.setGain(gain);
   sound_ohn.setGain(gain);
+  
+  sound_onof.setGain(gain);
 }
 
 void super_sound() {
@@ -78,6 +84,8 @@ void all_stop() {
   sound_son.stop();
   sound_err.stop();
   sound_kya.stop();
+  
+  sound_onof.stop();
   /*
   sound_pow.amp(0);
    sound_pop.amp(0);

@@ -44,6 +44,8 @@ boolean grd_en = true;
 
 boolean game_en = true;
 
+boolean select_en = true;
+
 void settings() {
   //size(WIDTH*16*SCALE, (HEIGH+1)*16*SCALE+yofs);
   dw = WIDTH*16;
@@ -103,6 +105,7 @@ boolean[] hata_list = new boolean[256];
 boolean[] obake_list = new boolean[256];
 boolean[] aobake_list = new boolean[256];
 boolean[] super_obake_list = new boolean[256];
+boolean[] iceteki_list = new boolean[256];
 
 boolean[] milk_list = new boolean[256];
 boolean[] poteto_list = new boolean[256];
@@ -262,6 +265,7 @@ void setup() {
   obake_list = col_list_gen("obake_list.txt");
   aobake_list = col_list_gen("aobake_list.txt");
   super_obake_list = col_list_gen("super_obake_list.txt");
+  iceteki_list = col_list_gen("iceteki_list.txt");
 
   milk_list = col_list_gen("milk_list.txt");
   poteto_list = col_list_gen("poteto_list.txt");
@@ -456,26 +460,28 @@ void draw() {
   /*--------------------表示表示表示表示---------------------*/
 
   /*------------------------------------------------------*/
-  noStroke();
-  fill(#83d5ff);
-  rect(0, 0, dw, yofs);
-  for (int i = 0; i < 256; i++) {
-    int n = (i- ((dw/32)/2) )+tsp;
-    if (n >= 0 && n < item_list.length) {
-      int scrx = i*32;
-      if (scrx >= -32 && scrx < dw) {
-        if (n != tsp) {
-          image(block_box_n, scrx, 0);
-          noStroke();
-          image(blocks[item_list[n]], scrx+8+2, 0+8+2, 12, 12);
+  if (select_en) {
+    noStroke();
+    fill(#83d5ff);
+    rect(0, 0, dw, yofs);
+    for (int i = 0; i < 256; i++) {
+      int n = (i- ((dw/32)/2) )+tsp;
+      if (n >= 0 && n < item_list.length) {
+        int scrx = i*32;
+        if (scrx >= -32 && scrx < dw) {
+          if (n != tsp) {
+            image(block_box_n, scrx, 0);
+            noStroke();
+            image(blocks[item_list[n]], scrx+8+2, 0+8+2, 12, 12);
+          }
         }
       }
     }
+    int scrx = ((dw/32)/2)*32;
+    image(block_box, scrx, 0);
+    noStroke();
+    ik(blocks[item_list[tsp]], scrx+8, 0+8, sin(frameCount/32.0*TWO_PI)*(item_list[tsp] >= 0x80?8:0));
   }
-  int scrx = ((dw/32)/2)*32;
-  image(block_box, scrx, 0);
-  noStroke();
-  ik(blocks[item_list[tsp]], scrx+8, 0+8, sin(frameCount/32.0*TWO_PI)*(item_list[tsp] >= 0x80?8:0));
   //println(tsp);
   //fill(255, 128);
   //rect((dw/2)-24, 0, 32, 32);
@@ -687,7 +693,7 @@ void keyPressed() {
   }
   if (key == '-')frameRate(30);
   if (key == '^')frameRate(60);
-  if (key == 'q') {
+  if (key == 'Q') {
     sl_e = !sl_e;
     loadcheck();
   }
@@ -701,6 +707,9 @@ void keyPressed() {
   }
   if (key == 'D')
     debug = !debug;
+  if (key == 'S') {
+    select_en = !select_en;
+  }
 }
 
 void keyReleased() {

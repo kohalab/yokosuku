@@ -42,3 +42,5 @@ Eb
 Ec
 Ed
 Ef
+F6
+F7

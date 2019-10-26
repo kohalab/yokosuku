@@ -12,6 +12,7 @@ class prf {
   int x, y;
   int w, h;
   int ox, oy;
+  float ofx, ofy;
   int xs, ys;
   boolean hf, vf;
   int xscr;
@@ -42,6 +43,7 @@ class prf {
 
 
 class map {
+  boolean onof;
   int[][] data;
   int[][] data_old;
   int[][] data_sub;
@@ -56,6 +58,7 @@ class map {
     map(w, h);
   }
   void map(int w, int h) {
+    onof = false;
     g = createGraphics(w*16, h*16);
     data = new int[w][h];
     data_old = new int[w][h];
@@ -108,8 +111,53 @@ class map {
 
   int mob_time = 0;
 
+  int of_ofs = 0xF2;
+  int of_ons = 0xF3;
+  int of_ofb = 0xF4;
+  int of_onb = 0xF5;
+  int of_sofb = 0xF6;
+  int of_sonb = 0xF7;
+
 
   void mob_proc() {
+    if (onof) {//on
+      //
+      for (int y = 0; y < data[0].length; y++) {
+        for (int x = 0; x < data.length; x++) {
+          //
+          if (getblock(x, y) == of_ofs || getblock(x, y) == of_ons) {
+            setblock(x, y, of_ons, false);
+          }
+          if (getblock(x, y) == of_ofb || getblock(x, y) == of_sofb) {
+            setblock(x, y, of_sofb, false);
+          }
+          if (getblock(x, y) == of_onb || getblock(x, y) == of_sonb) {
+            setblock(x, y, of_onb, false);
+          }
+        }
+        //
+      }
+      //
+    } else {   //off
+      //
+      for (int y = 0; y < data[0].length; y++) {
+        for (int x = 0; x < data.length; x++) {
+          //
+          if (getblock(x, y) == of_ofs || getblock(x, y) == of_ons) {
+            setblock(x, y, of_ofs, false);
+          }
+          if (getblock(x, y) == of_ofb || getblock(x, y) == of_sofb) {
+            setblock(x, y, of_ofb, false);
+          }
+          if (getblock(x, y) == of_onb || getblock(x, y) == of_sonb) {
+            setblock(x, y, of_sonb, false);
+          }
+        }
+        //
+      }
+      //
+    }
+
     for (int y = 0; y < data[0].length; y++) {
       for (int x = 0; x < data.length; x++) {
         pos_ofs[x][y].ox = pos_ofs[x][y].x;
@@ -133,6 +181,8 @@ class map {
     for (int y = data[0].length-1; y > 0; y--) {
       for (int x = 0; x < data.length; x++) {
         int b = data[x][y];
+        int tx = x*16;
+        int ty = y*16;
         if (b == 0) {
           data_sub[x][y] = 30;
         }
@@ -181,7 +231,26 @@ class map {
           pos_ofs[x][y].y += 0;
           pos_ofs[x][y].h += ((data_sub[x][y]/5)-0)*down_jump_speed[b];
           if (data_sub[x][y] > 0)data_sub[x][y] -= 15;
+        } 
+
+        //moveee
+        if (iceteki_list[b]) {
+          pos_ofs[x][y].hf = player[0].x < tx;
+          pos_ofs[x][y].x = int(pos_ofs[x][y].ofx);
+          pos_ofs[x][y].y = round(cos(mob_time/500.0*2*TWO_PI)*1);
+          float o = player[0].x - (tx+pos_ofs[x][y].x) + (sin(mob_time/500.0*TWO_PI)*64);
+          o /= 16;
+          if (o > 2)o = 2;
+          if (o < -2)o = -2;
+          pos_ofs[x][y].ofx += o;
+          if (pos_ofs[x][y].ofx > +64)pos_ofs[x][y].ofx = +64;
+          if (pos_ofs[x][y].ofx < -64)pos_ofs[x][y].ofx = -64;
+          ;
+        } else {
+          pos_ofs[x][y].ofx = 0;
+          pos_ofs[x][y].ofy = 0;
         }
+
         if (ugo_hor_list[b]) {
           int u = int(sin(mob_time/100.0/ugo_hor_level[b]*TWO_PI)*ugo_hor_level[b]);
           pos_ofs[x][y].x += u;
@@ -252,6 +321,15 @@ class map {
           }
         }
         //
+        if (b == of_ons || b == of_ofs) {
+          if (data_sub[x][y] == 1) {
+            onof = !onof;
+            sound_onof.stop();
+            sound_onof.trigger();
+          }
+          if (data_sub[x][y] > 0 && data_sub[x][y] < 20)data_sub[x][y]--;
+        }
+        //
       }
     }
     for (int y = data[0].length-1; y > 0; y--) {
@@ -288,6 +366,26 @@ class map {
         pos_ofs[x][y].ys = pos_ofs[x][y].y-pos_ofs[x][y].oy;
       }
     }
+    //x*16-scrx+pos_ofs[x][y].x
+    for (int y = 0; y < data[0].length; y++) {
+      for (int x = 0; x < data.length; x++) {
+        //
+        int b = data[x][y];
+        int X = (x*16+pos_ofs[x][y].x)/16;
+        int Y = (y*16+pos_ofs[x][y].y)/16;
+        //
+        if (X >= 0 && Y >= 0) {
+          if (X < data.length && Y < data[0].length) {
+            //
+            if (super_obake_list[b] || kinoko_list[b]) {
+              data_sub[X][Y] = 2;
+            }
+            //
+          }
+        }
+        //
+      }
+    }
     mob_time += 33.3333333;
   }
   void mob_draw() {
@@ -316,6 +414,16 @@ class map {
                 if (super_obake_list[data[x][y]] || aobake_list[data[x][y]]) {
                   ik(frp(get_cha(cha, data[x][y]+4), pos_ofs[x][y].hf, pos_ofs[x][y].vf), x*16-scrx, y*16+yofs-scry, 0);
                 }
+                if (iceteki_list[data[x][y]]) {
+                  image(get_cha(cha, 0x8d), x*16-scrx, y*16+yofs-scry);
+                  for (int k = 0; k < 8; k++) {
+                    float p = k/8.0;
+                    float xx = aida( x*16-scrx, x*16-scrx+pos_ofs[x][y].x, p);
+                    float yy = aida( y*16+yofs-scry, y*16+yofs-scry+pos_ofs[x][y].y, p);
+                    image(get_cha(cha, 0x87), xx, yy+4+round(sin( (p*8)+(mob_time/240.0)*TWO_PI )*1));
+                  }
+                }
+                //
                 //layer0 end
               }
               //layer1 begin
