@@ -17,12 +17,27 @@ class prf {
   boolean hf, vf;
   int xscr;
   float r, or;
+  int ints0;
+  int ints1;
+  int ints2;
+  int ints3;
   void reset() {
+    ints0 = 0;
+    ints1 = 0;
+    ints2 = 0;
+    ints3 = 0;
     w = 16;
     h = 16;
     r = 0;
     x = 0;
     y = 0;
+    ox = 0;
+    oy = 0;
+    ofx = 0;
+    ofy = 0;
+
+    xs = 0;
+    ys = 0;
     hf = false;
     vf = false;
     xscr = 0;
@@ -231,25 +246,62 @@ class map {
           pos_ofs[x][y].y += 0;
           pos_ofs[x][y].h += ((data_sub[x][y]/5)-0)*down_jump_speed[b];
           if (data_sub[x][y] > 0)data_sub[x][y] -= 15;
-        } 
+        } else
+          if (iceteki_list[b]) {
+            pos_ofs[x][y].hf = player[0].x < tx;
+            pos_ofs[x][y].x = int(pos_ofs[x][y].ofx);
+            pos_ofs[x][y].y = round(cos(mob_time/500.0*2*TWO_PI)*1);
+            float o = player[0].x - (tx+pos_ofs[x][y].x) + (sin(mob_time/500.0*TWO_PI)*64);
+            o /= 16;
+            if (o > 2)o = 2;
+            if (o < -2)o = -2;
+            pos_ofs[x][y].ofx += o;
+            if (pos_ofs[x][y].ofx > +64)pos_ofs[x][y].ofx = +64;
+            if (pos_ofs[x][y].ofx < -64)pos_ofs[x][y].ofx = -64;
+            ;
+          } else if (tarai_list[b]) {
+            int mxy = 0;
+          OUT0:
+            for (int Y = 1; Y < data[0].length; Y++) {
+              if (y+Y < data[0].length) {
+                //
+                if (col_list[data[x][y+Y]]) {
+                  println(x, y+Y, data[x][y+Y]);
+                  break OUT0;
+                }
+                mxy = Y;
+                //
+              } else {
+                break OUT0;
+              }
+            }
 
-        //moveee
-        if (iceteki_list[b]) {
-          pos_ofs[x][y].hf = player[0].x < tx;
-          pos_ofs[x][y].x = int(pos_ofs[x][y].ofx);
-          pos_ofs[x][y].y = round(cos(mob_time/500.0*2*TWO_PI)*1);
-          float o = player[0].x - (tx+pos_ofs[x][y].x) + (sin(mob_time/500.0*TWO_PI)*64);
-          o /= 16;
-          if (o > 2)o = 2;
-          if (o < -2)o = -2;
-          pos_ofs[x][y].ofx += o;
-          if (pos_ofs[x][y].ofx > +64)pos_ofs[x][y].ofx = +64;
-          if (pos_ofs[x][y].ofx < -64)pos_ofs[x][y].ofx = -64;
-          ;
-        } else {
-          pos_ofs[x][y].ofx = 0;
-          pos_ofs[x][y].ofy = 0;
-        }
+            println(mxy);
+            pos_ofs[x][y].ints0 = mxy;
+            //
+            pos_ofs[x][y].y = int(pos_ofs[x][y].ofy);
+            //
+            if (pos_ofs[x][y].ofx < pos_ofs[x][y].ofy-4) {
+              pos_ofs[x][y].ofy -= 4;
+            }
+            if (pos_ofs[x][y].ofx > pos_ofs[x][y].ofy+4) {
+              pos_ofs[x][y].ofy += (pos_ofs[x][y].y/16.0)+2;
+            }
+            //
+            if (tx+16+12 > player[0].x && tx-12 < player[0].x) {
+              if (pos_ofs[x][y].ofy < 4) {
+                pos_ofs[x][y].ofx = mxy*16+5;
+              }
+            } else {
+              if (pos_ofs[x][y].ofy > (mxy*16)) {
+                pos_ofs[x][y].ofx = 0;
+              }
+            }
+            //
+          } else {
+            pos_ofs[x][y].ofx = 0;
+            pos_ofs[x][y].ofy = 0;
+          }
 
         if (ugo_hor_list[b]) {
           int u = int(sin(mob_time/100.0/ugo_hor_level[b]*TWO_PI)*ugo_hor_level[b]);
@@ -375,10 +427,11 @@ class map {
         int Y = (y*16+pos_ofs[x][y].y)/16;
         //
         if (X >= 0 && Y >= 0) {
-          if (X < data.length && Y < data[0].length) {
+          if (X < data.length && Y < data[0].length-1) {
             //
-            if (super_obake_list[b] || kinoko_list[b]) {
+            if (obake_list[b] || super_obake_list[b] || kinoko_list[b] || tarai_list[b]) {
               data_sub[X][Y] = 2;
+              data_sub[X][Y+1] = 2;
             }
             //
           }
@@ -449,6 +502,13 @@ class map {
                 //end
               }
               //layer1 end
+              if (L == 2) {
+                if (tarai_list[data[x][y]]) {
+                  tint(255, 32);
+                  image(get_cha(cha, 0x8f), x*16-scrx, (y+pos_ofs[x][y].ints0)*16+yofs-scry+8);
+                  noTint();
+                }
+              }
             }
           }
           ;
@@ -472,10 +532,16 @@ class map {
 }
 
 void dead_map() {
+  map.onof = false;
   map.mob_time = 0;
   for (int y = 0; y < map.data[0].length; y++) {
     for (int x = 0; x < map.data.length; x++) {
       map.data_sub[x][y] = -1;
+    }
+  }
+  for (int y = 0; y < map.data[0].length; y++) {
+    for (int x = 0; x < map.data.length; x++) {
+      map.pos_ofs[x][y].reset();
     }
   }
 }

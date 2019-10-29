@@ -106,6 +106,7 @@ boolean[] obake_list = new boolean[256];
 boolean[] aobake_list = new boolean[256];
 boolean[] super_obake_list = new boolean[256];
 boolean[] iceteki_list = new boolean[256];
+boolean[] tarai_list = new boolean[256];
 
 boolean[] milk_list = new boolean[256];
 boolean[] poteto_list = new boolean[256];
@@ -266,6 +267,7 @@ void setup() {
   aobake_list = col_list_gen("aobake_list.txt");
   super_obake_list = col_list_gen("super_obake_list.txt");
   iceteki_list = col_list_gen("iceteki_list.txt");
+  tarai_list = col_list_gen("tarai_list.txt");
 
   milk_list = col_list_gen("milk_list.txt");
   poteto_list = col_list_gen("poteto_list.txt");
@@ -302,6 +304,7 @@ void setup() {
    ;
    */
   //endtest
+  col_list[0] = false;
 }
 
 boolean[] col_list_gen(String path) {
