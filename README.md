@@ -4,4 +4,4 @@ yokosuku
 # Overview
 ![yokosuku](yokosuku.png)
 ## Description
-*ただ* の横スクロールゲームです
+**ただ** の *横スクロールゲーム* です
