@@ -1,7 +1,4 @@
-Name
-yokosuku
-
 # Overview
 ![yokosuku](yokosuku.png)
 ## Description
-**ただ** の *横スクロールゲーム* です
+*ただ* の *横スクロールゲーム* です
