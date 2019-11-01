@@ -266,7 +266,7 @@ class map {
               if (y+Y < data[0].length) {
                 //
                 if (col_list[data[x][y+Y]]) {
-                  println(x, y+Y, data[x][y+Y]);
+                  //println(x, y+Y, data[x][y+Y]);
                   break OUT0;
                 }
                 mxy = Y;
@@ -276,7 +276,7 @@ class map {
               }
             }
 
-            println(mxy);
+            //println(mxy);
             pos_ofs[x][y].ints0 = mxy;
             //
             pos_ofs[x][y].y = int(pos_ofs[x][y].ofy);
@@ -285,7 +285,7 @@ class map {
               pos_ofs[x][y].ofy -= 4;
             }
             if (pos_ofs[x][y].ofx > pos_ofs[x][y].ofy+4) {
-              pos_ofs[x][y].ofy += (pos_ofs[x][y].y/16.0)+2;
+              pos_ofs[x][y].ofy += (pos_ofs[x][y].y/12.0)+2;
             }
             //
             if (tx+16+12 > player[0].x && tx-12 < player[0].x) {

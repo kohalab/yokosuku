@@ -134,6 +134,39 @@ boolean button(String t, int x, int y, int w, int h, boolean e) {
   return p&&mousePressed;
 }
 
+boolean image_button(PImage img, PImage imgs, int x, int y) {
+  boolean p = 
+    x < mouseX/SCALE && y < mouseY/SCALE &&
+    mouseX/SCALE < x+img.width && mouseY/SCALE < y+img.height
+    ;
+  image(p?imgs:img, x, y);
+  return p&&mousePressed;
+}
+
+boolean image_button(String str, int th, color bg, color fg, PImage img, PImage imgs, int x, int y) {
+  boolean p = 
+    x < mouseX/SCALE && y < mouseY/SCALE &&
+    mouseX/SCALE < x+img.width && mouseY/SCALE < y+img.height
+    ;
+  image(p?imgs:img, x, y);
+  fill(bg);
+  text(str, x+(img.width/2)-(textWidth(str)/2), y+(img.height/2)+th+1);
+  fill(fg);
+  text(str, x+(img.width/2)-(textWidth(str)/2), y+(img.height/2)+th);
+  return p&&mousePressed;
+}
+
 float aida(float a, float b, float s) {
   return a + ((b-a)*s);
+}
+
+void entext(String s, int x, int y, color b, color f) {
+  fill(b);
+  for (int X = -1; X < 2; X++) {
+    for (int Y = -1; Y < 2; Y++) {
+      text(s, x+X, y+Y);
+    }
+  }
+  fill(f);
+  text(s, x, y);
 }
