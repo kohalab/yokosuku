@@ -438,10 +438,10 @@ class player {
        */
       for (int Y = 0; Y < map.data[0].length; Y++) {
         for (int X = 0; X < map.data.length; X++) {
-          int ex = (X*16)+map.pos_ofs[X][Y].x;
-          int ey = (Y*16)+map.pos_ofs[X][Y].y;
-          int w = map.pos_ofs[X][Y].w;
-          int h = map.pos_ofs[X][Y].h;
+          int ex = (X*16)+map.pos_ofs[X][Y].x+rects[map.data[X][Y]].x;
+          int ey = (Y*16)+map.pos_ofs[X][Y].y+rects[map.data[X][Y]].y;
+          int w = map.pos_ofs[X][Y].w+(rects[map.data[X][Y]].w-16);
+          int h = map.pos_ofs[X][Y].h+(rects[map.data[X][Y]].h-16);
           //
           noStroke();
           boolean iya = true;

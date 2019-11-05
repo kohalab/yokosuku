@@ -116,7 +116,12 @@ class map {
             map_buf.image(get_cha(cha, data[x][y]), x*16, y*16);
           } else {
           }
+          ////////////////////////////////////////////////////////////////
+          map_buf.stroke(0,32);
+          map_buf.fill(255,255,0,64);
+          map_buf.rect(x*16+rects[data[x][y]].x, y*16+rects[data[x][y]].y, rects[data[x][y]].w, rects[data[x][y]].h);
           //println("change "+x+" "+y);
+          ////////////////////////////////////////////////////////////////
         }
         ;
       }
@@ -452,6 +457,7 @@ class map {
             ((x*16-scrx)+0) >= -32 && ((x*16-scrx)+0) < (WIDTH+1)*16   &&   ((y*16-scry)+0) >= -32 && ((y*16-scry)+0) < (HEIGH+1)*16
             ) {
             if (data[x][y] >= 0x80) {
+   
               //
               if (L == 0) {
                 //layer0 begin
@@ -509,6 +515,7 @@ class map {
                   noTint();
                 }
               }
+
             }
           }
           ;

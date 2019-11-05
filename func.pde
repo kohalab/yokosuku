@@ -170,3 +170,73 @@ void entext(String s, int x, int y, color b, color f) {
   fill(f);
   text(s, x, y);
 }
+
+class rect {
+  int x = 0;
+  int y = 0;
+  int w = 0;
+  int h = 0;
+  rect(int p0, int p1, int p2, int p3) {
+    x = p0;
+    y = p1;
+    w = p2;
+    h = p3;
+  }
+}
+
+rect getrect(PImage in) {
+  int X = 0;
+  int Y = 0;
+  int W = 0;
+  int H = 0;
+  for (int y = 0; y < in.height; y++) {
+    boolean a = false;
+    for (int x = 0; x < in.width; x++) {
+      if (alpha(in.get(x, y)) > 128) {
+        a = true;
+      }
+    }
+    if (a) {
+      Y = y;
+      break;
+    }
+  }
+  for (int y = 0; y < in.height; y++) {
+    boolean a = false;
+    for (int x = 0; x < in.width; x++) {
+      if (alpha(in.get(x, y)) > 128) {
+        a = true;
+      }
+    }
+    if (a) {
+      H = y;
+    }
+  }
+  //
+  for (int x = 0; x < in.height; x++) {
+    boolean a = false;
+    for (int y = 0; y < in.width; y++) {
+      if (alpha(in.get(x, y)) > 128) {
+        a = true;
+      }
+    }
+    if (a) {
+      X = x;
+      break;
+    }
+  }
+  for (int x = 0; x < in.height; x++) {
+    boolean a = false;
+    for (int y = 0; y < in.width; y++) {
+      if (alpha(in.get(x, y)) > 128) {
+        a = true;
+      }
+    }
+    if (a) {
+      W = x;
+    }
+  }
+  W -= X;
+  H -= Y;
+  return new rect(X, Y, W, H);
+}

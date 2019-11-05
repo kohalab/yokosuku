@@ -41,6 +41,7 @@ boolean[] load_en = new boolean[save_load_num];
 String[] name_load = new String[save_load_num];
 
 PImage[] blocks = new PImage[256];
+rect[] rects;
 boolean[] blocks_no = new boolean[256];
 
 boolean grd_en = true;
@@ -115,6 +116,8 @@ boolean[] milk_list = new boolean[256];
 boolean[] poteto_list = new boolean[256];
 boolean[] kinoko_list = new boolean[256];
 
+int[] sector;
+
 //milk_list.txt
 
 map_saver map_saver;
@@ -166,10 +169,15 @@ void setup() {
   //println(blocks_no);
 
   String[] il = loadStrings("item_list.txt");
-
+  
+  sector = new int[0];
   item_list = new int[il.length];
   for (int i = 0; i < il.length; i++) {
-    item_list[i] = unhex(il[i]);
+    String a = splitTokens(il[i],"//")[0];
+    item_list[i] = unhex(a.substring(0, 1+1));
+    if (a.length() >= 3) {
+      sector = append(sector, i);
+    }
   }
 
   ;
@@ -280,6 +288,12 @@ void setup() {
   kinoko_list = col_list_gen("kinoko_list.txt");
   ;
 
+
+  rects = new rect[256];
+  for (int i = 0; i < 256; i++) {
+    rects[i] = getrect(blocks[i]);
+  }
+
   //map_saver.save("test.yksm", map);
   //map_saver.load("test.yksm");
   map_cha = cha;
@@ -383,6 +397,8 @@ int mouseY_to_y(int y) {
 
 void draw() {
 
+  wait_wait = (System.nanoTime()/1000)-wait_wait;
+
   boolean[] deadnow = new boolean[player_num];
   for (int i = 0; i < player_num; i++) {
     deadnow[i] = player[i].deadnow;
@@ -438,13 +454,12 @@ void draw() {
   if (game_en) {
     map.mob_proc();
   }
+  wait_mapdraw = (System.nanoTime()/1000);
   map.draw();
   map.backup();
-
+  wait_mapdraw = (System.nanoTime()/1000)-wait_mapdraw;
   image(map.get().get(scrx, scry, dw, dh), 0, yofs);
-
   //if (deadnow) {
-  map.mob_draw();
   //}
   for (int i = 0; i < player_num; i++) {
     player[i].map = map;
@@ -454,9 +469,11 @@ void draw() {
     }
   }
 
+  wait_mob = (System.nanoTime()/1000);
   //if (!deadnow) {
   map.mob_draw();
   //}
+  wait_mob = (System.nanoTime()/1000)-wait_mob;
 
   //if (mouseY >= select_height) {
   //blendMode(BLEND);
@@ -469,6 +486,8 @@ void draw() {
   /*--------------------表示表示表示表示---------------------*/
 
   /*------------------------------------------------------*/
+
+  wait_draw = (System.nanoTime()/1000);
   if (select_en) {
     noStroke();
     fill(#83d5ff);
@@ -494,82 +513,6 @@ void draw() {
   //println(tsp);
   //fill(255, 128);
   //rect((dw/2)-24, 0, 32, 32);
-  //baketu
-  int[][] tmp = new int[map.data.length][map.data[0].length];
-  for (int i = 0; i < map.data.length; i++) {
-    for (int f = 0; f < map.data[0].length; f++) {
-      tmp[i][f] = map.data[i][f];
-    }
-  }
-
-  if (!nowrep) {
-
-    for (int i = 0; i < tmp.length; i++) {
-      for (int f = 0; f < tmp[0].length; f++) {
-        ;
-        if (tmp[i][f] == 254) {
-          ;
-          if (i > 0) {
-            if (tmp[i-1][f] == repsp) {
-              setblock(i-1, f, 254, false);
-              //map.data[i-1][f] = 254;
-              rpchg = 5;
-            }
-          }
-          if (f > 0) {
-            if (tmp[i][f-1] == repsp) {
-              setblock(i, f-1, 254, false);
-              //map.data[i][f-1] = 254;
-              rpchg = 5;
-            }
-          }
-
-          if (i < tmp.length-1 && f >= 0) {
-            if (tmp[i+1][f] == repsp) {
-              setblock(i+1, f, 254, false);
-              //map.data[i+1][f] = 254;
-              rpchg = 5;
-            }
-          }
-
-          if (f < tmp[0].length-1) {
-            if (tmp[i][f+1] == repsp) {
-              setblock(i, f+1, 254, false);
-              //map.data[i][f+1] = 254;
-              rpchg = 5;
-            }
-          }
-          ;
-        }
-        ;
-      }
-    }
-  }
-
-  if (rpchg == 0) {
-    wakattawakatta();
-    nowrep = true;
-  }
-  if (nowrep) {
-    boolean r = false;
-    for (int i = 0; i < tmp.length; i++) {
-      for (int f = 0; f < tmp[0].length; f++) {
-        if (tmp[i][f] == 254) {
-          setblock(i, f, item_list[sp], false);
-          //map.data[i][f] = sp;
-          r = true;
-          break;
-        }
-      }
-    }
-    if (!r) {
-      nowrep = false;
-      wakattawakatta();
-    }
-  }
-  //nowrep
-
-  if (rpchg > -1)rpchg--;
   //baketu
 
   if (!game_en) {
@@ -703,7 +646,7 @@ void draw() {
       //image(icons.get(0, 0, 64, 16), (width/SCALE/2)-96, (height/SCALE)/2);
       //image(icons.get(64, 0, 64, 16), (width/SCALE/2)+96-64, (height/SCALE)/2);
       fill(255);
-      if (image_button("する",3,#ff8e00,#ffffff,icons.get(0, 0, 64, 16), icons.get(0, 16, 64, 16), (width/SCALE/2)-96, (height/SCALE)/2)) {
+      if (image_button("する", 3, #ff8e00, #ffffff, icons.get(0, 0, 64, 16), icons.get(0, 16, 64, 16), (width/SCALE/2)-96, (height/SCALE)/2)) {
         sound_onof.trigger();
         //
         if ((sl_state&0xff) == 1) {//save
@@ -731,7 +674,7 @@ void draw() {
         //
         sl_state = 0;
       }//yaru
-      if (image_button("しない",3,#ff8e00,#ffffff,icons.get(0, 0, 64, 16), icons.get(0, 16, 64, 16), (width/SCALE/2)+96-64, (height/SCALE)/2)) {
+      if (image_button("しない", 3, #ff8e00, #ffffff, icons.get(0, 0, 64, 16), icons.get(0, 16, 64, 16), (width/SCALE/2)+96-64, (height/SCALE)/2)) {
         sound_pop.trigger();
         sl_state = 0;
       }//yaranai
@@ -751,6 +694,7 @@ void draw() {
     game_en = false;
   }
   //
+  wait_draw = (System.nanoTime()/1000)-wait_draw;
   debug();
   if (game_en) {
     scrproc();
@@ -760,6 +704,7 @@ void draw() {
    setblock(int(player.x/16), int(player.y/16), 14, false);
    setblock(int(player.x/16)+1, int(player.y/16), 14, false);
    */
+  wait_wait = (System.nanoTime()/1000);
 }
 
 boolean sl_e;
@@ -770,8 +715,26 @@ void keyPressed() {
   if (game_en) {
     if (keyCode == LEFT  || key == '1')sp -= 1;
     if (keyCode == RIGHT || key == '3')sp += 1;
-    if (keyCode == DOWN)sp -= 4;
-    if (keyCode == UP  )sp += 4;
+    if (keyCode == DOWN) {
+      //sp -= 4;
+    a:
+      for (int i = sector.length-1; i >= 0; i--) {
+        if (sector[i] < sp) {
+          sp = sector[i];
+          break a;
+        }
+      }
+    }
+    if (keyCode == UP  ) {
+      //sp += 4;
+    a:
+      for (int i = 0; i < sector.length; i++) {
+        if (sector[i] > sp) {
+          sp = sector[i];
+          break a;
+        }
+      }
+    }
     if (key == '_')sp = 0;
 
     if (key == '9') {

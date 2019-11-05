@@ -1,4 +1,6 @@
 void map() {
+  //
+  //
   for (int i = 0; i < map.data.length; i++) {
     for (int f = 0; f < map.data[0].length; f++) {
       ;
