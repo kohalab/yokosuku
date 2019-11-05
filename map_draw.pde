@@ -117,9 +117,9 @@ class map {
           } else {
           }
           ////////////////////////////////////////////////////////////////
-          map_buf.stroke(0,32);
-          map_buf.fill(255,255,0,64);
-          map_buf.rect(x*16+rects[data[x][y]].x, y*16+rects[data[x][y]].y, rects[data[x][y]].w, rects[data[x][y]].h);
+          //map_buf.stroke(0,32);
+          //map_buf.fill(255,255,0,64);
+          //map_buf.rect(x*16+rects[data[x][y]].x, y*16+rects[data[x][y]].y, rects[data[x][y]].w, rects[data[x][y]].h);
           //println("change "+x+" "+y);
           ////////////////////////////////////////////////////////////////
         }
