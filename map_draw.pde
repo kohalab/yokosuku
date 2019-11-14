@@ -302,6 +302,9 @@ class map {
                 pos_ofs[x][y].ofx = 0;
               }
             }
+            if(y > 0){
+              pos_ofs[x][y-1].y = pos_ofs[x][y].y;
+            }
             //
           } else {
             pos_ofs[x][y].ofx = 0;

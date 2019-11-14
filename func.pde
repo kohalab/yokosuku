@@ -29,18 +29,21 @@ void setblock(int mx, int my, int tsp, boolean s) {
       if (tsp == 0) {
         if (tsp != map.data[mx][my]) {
           //sound_pop.rate(random(0.9, 1.1)-((map.data[mx][my])/500.0));
-          sound_pop.trigger();
+          //sound_pop.trigger();
+          playpop();
           //sound_pop.amp(random(0.8, 1));
         }
       } else {
-        if (map.data[mx][my] != 0) {
+        if (map.data[mx][my] != tsp) {
           //sound_pow.amp(random(0.5, 1));
           //sound_pow.rate(random(0.5, 0.6));
-          sound_pow.trigger();
+          //sound_pow.trigger();
+          playpow();
         } else {
           //sound_pow.amp(random(0.5, 1));
           //sound_pow.rate(random(0.95, 1.05));
-          sound_pow.trigger();
+          //sound_pow.trigger();
+          //playpow();
         }
       }
     }

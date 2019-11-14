@@ -1,8 +1,14 @@
 import ddf.minim.*; 
+
+int popnum = 5;
+int pownum = 5;
+
 Minim minim;
 AudioOutput out;
-AudioSample sound_pow;
-AudioSample sound_pop;
+//AudioSample sound_pow;
+AudioSample[] sound_pow = new AudioSample[popnum];
+//AudioSample sound_pop;
+AudioSample[] sound_pop = new AudioSample[popnum];
 AudioSample sound_ping;
 AudioSample sound_woo;
 AudioSample sound_jon;
@@ -27,8 +33,18 @@ void loadSound() {
   minim = new Minim(this);
   out = minim.getLineOut();
   int buffer_size = 512;
-  sound_pow = minim.loadSample( "sound/pow.wav", buffer_size);
-  sound_pop = minim.loadSample( "sound/pop.wav", buffer_size);
+  //sound_pow = minim.loadSample( "sound/pow.wav", buffer_size);
+  
+  for (int i = 0; i < pownum; i++) {
+    sound_pow[i] = minim.loadSample( "sound/pows/"+i+".wav", buffer_size);
+  }
+
+  //sound_pop = minim.loadSample( "sound/pop.wav", buffer_size);
+
+  for (int i = 0; i < popnum; i++) {
+    sound_pop[i] = minim.loadSample( "sound/pops/"+i+".wav", buffer_size);
+  }
+
   sound_ping= minim.loadSample("sound/ping.wav", buffer_size);
   sound_woo = minim.loadSample( "sound/woo.wav", buffer_size);
   sound_jon = minim.loadSample( "sound/jon.wav", buffer_size);
@@ -43,12 +59,16 @@ void loadSound() {
   sound_err = minim.loadSample( "sound/err.wav", buffer_size);
   sound_kya = minim.loadSample( "sound/kya.wav", buffer_size);
   sound_ohn = minim.loadSample( "sound/ohn.wav", buffer_size);
-  
+
   sound_onof = minim.loadSample( "sound/onof.wav", buffer_size);
-  
+
   float gain = -9;
-  sound_pow.setGain(gain);
-  sound_pop.setGain(gain);
+  for (int i = 0; i < pownum; i++) {
+    sound_pow[i].setGain(gain);
+  }
+  for (int i = 0; i < popnum; i++) {
+    sound_pop[i].setGain(gain-6);
+  }
   sound_ping.setGain(gain);
   sound_woo.setGain(gain);
   sound_jon.setGain(gain);
@@ -63,7 +83,7 @@ void loadSound() {
   sound_err.setGain(gain);
   sound_kya.setGain(gain);
   sound_ohn.setGain(gain);
-  
+
   sound_onof.setGain(gain);
 }
 
@@ -71,8 +91,12 @@ void super_sound() {
 }
 
 void all_stop() {
-  sound_pow.stop();
-  sound_pop.stop();
+  for (int i = 0; i < popnum; i++) {
+    sound_pow[i].stop();
+  }
+  for (int i = 0; i < popnum; i++) {
+    sound_pop[i].stop();
+  }
   sound_ping.stop();
   sound_woo.stop();
   sound_jon.stop();
@@ -84,7 +108,7 @@ void all_stop() {
   sound_son.stop();
   sound_err.stop();
   sound_kya.stop();
-  
+
   sound_onof.stop();
   /*
   sound_pow.amp(0);
@@ -98,4 +122,25 @@ void all_stop() {
    sound_pyn.amp(0);
    sound_dho.amp(0);
    */
+}
+
+void playpop() {
+  sound_pop[int(random(popnum))].trigger();
+}
+
+void stoppop() {
+  for (int i = 0; i < popnum; i++) {
+    sound_pop[i].stop();
+  }
+}
+
+
+void playpow() {
+  sound_pow[int(random(pownum))].trigger();
+}
+
+void stoppow() {
+  for (int i = 0; i < popnum; i++) {
+    sound_pow[i].stop();
+  }
 }

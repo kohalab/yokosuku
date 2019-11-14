@@ -584,7 +584,8 @@ class player {
 
 void wakattawakatta() {
   if (true) {
-    sound_pow.stop();
-    sound_pop.stop();
+    //sound_pow.stop();
+    stoppow();
+    stoppop();
   }
 }

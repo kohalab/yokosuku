@@ -169,11 +169,11 @@ void setup() {
   //println(blocks_no);
 
   String[] il = loadStrings("item_list.txt");
-  
+
   sector = new int[0];
   item_list = new int[il.length];
   for (int i = 0; i < il.length; i++) {
-    String a = splitTokens(il[i],"//")[0];
+    String a = splitTokens(il[i], "//")[0];
     item_list[i] = unhex(a.substring(0, 1+1));
     if (a.length() >= 3) {
       sector = append(sector, i);
@@ -615,15 +615,19 @@ void draw() {
            sl_e = false;
            */
         }
-        fill(#ff8800);
+        fill(#1155cc);
         text(name, x+1, y+12);
         fill(255);
         text(name, x+1, y+11);
         //
         if (!load_en[i]) {
-          stroke(0);
-          line(x-4, y+4, x+64+4, y+4+8);
-          line(x-4, y+4+8, x+64+4, y+4);
+          stroke(255);
+          for (int I = -1; I < 1; I++) {
+            for (int F = -1; F < 1; F++) {
+              line(x-4+I, y+4+F, x+64+4+I, y+4+8+F);
+              line(x-4+I, y+4+8+F, x+64+4+I, y+4+F);
+            }
+          }
           noStroke();
         }
       }
@@ -642,11 +646,11 @@ void draw() {
         t = "本当にロードする？";
       }
       textFont(r10);
-      entext(t, (width/SCALE/2)-int(textWidth(t)/2), (height/SCALE)/2-16+1, #ffcc77, #ffffff);
-      //image(icons.get(0, 0, 64, 16), (width/SCALE/2)-96, (height/SCALE)/2);
+      entext(t, (width/SCALE/2)-int(textWidth(t)/2), (height/SCALE)/2-16+1, #1155cc, #ffffff);
+      //image(icons.get(0, 0, 64, 16), (width/SCALE/2)-96, (height/SCALE)/2
       //image(icons.get(64, 0, 64, 16), (width/SCALE/2)+96-64, (height/SCALE)/2);
       fill(255);
-      if (image_button("する", 3, #ff8e00, #ffffff, icons.get(0, 0, 64, 16), icons.get(0, 16, 64, 16), (width/SCALE/2)-96, (height/SCALE)/2)) {
+      if (image_button("する", 3, #1155cc, #ffffff, icons.get(0, 0, 64, 16), icons.get(0, 16, 64, 16), (width/SCALE/2)-96, (height/SCALE)/2)) {
         sound_onof.trigger();
         //
         if ((sl_state&0xff) == 1) {//save
@@ -674,8 +678,9 @@ void draw() {
         //
         sl_state = 0;
       }//yaru
-      if (image_button("しない", 3, #ff8e00, #ffffff, icons.get(0, 0, 64, 16), icons.get(0, 16, 64, 16), (width/SCALE/2)+96-64, (height/SCALE)/2)) {
-        sound_pop.trigger();
+      if (image_button("しない", 3, #1155cc, #ffffff, icons.get(0, 0, 64, 16), icons.get(0, 16, 64, 16), (width/SCALE/2)+96-64, (height/SCALE)/2)) {
+        //sound_pop.trigger();
+        playpop();
         sl_state = 0;
       }//yaranai
     }
