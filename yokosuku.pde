@@ -122,7 +122,10 @@ int[] sector;
 
 map_saver map_saver;
 
+PImage space;
+
 void setup() {
+  space = createImage(16, 16, ARGB);
   map_saver = new map_saver();
   loadSound();
   r10 = loadFont("10r.vlw");
@@ -704,6 +707,7 @@ void draw() {
   if (game_en) {
     scrproc();
   }
+  smooth_proc();
   /*
   setblock(int(player.x/16)-1, int(player.y/16), 14, false);
    setblock(int(player.x/16), int(player.y/16), 14, false);
@@ -797,6 +801,9 @@ void keyPressed() {
     debug = !debug;
   if (key == 'S') {
     select_en = !select_en;
+  }
+  if (key == 'R') {
+    frameCount = -1;
   }
 }
 

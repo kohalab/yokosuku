@@ -17,9 +17,13 @@ void debug() {
   if (debug) {
     all_wait = wait_draw+wait_mapdraw+wait_mob+wait_wait;
     float wt_draw = (float)wait_draw/all_wait;
+    wt_draw = float_smooth(wt_draw,3,0);
     float wt_mapdraw = (float)wait_mapdraw/all_wait;
+    wt_mapdraw = float_smooth(wt_mapdraw,3,1);
     float wt_mob = (float)wait_mob/all_wait;
+    wt_mob = float_smooth(wt_mob,3,2);
     float wt_wait = (float)wait_wait/all_wait;
+    wt_wait = float_smooth(wt_wait,3,3);
     String debugtext = "now debug";
     int sow = (int)(width/1.5);
     int sox = (width/2)-(sow/2);

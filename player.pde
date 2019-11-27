@@ -73,7 +73,7 @@ class player {
       pw = 9;
       ph = 32;
     }
-    if(down){
+    if (down) {
       ph /= 1.3;
     }
     if (first) {
@@ -140,10 +140,10 @@ class player {
     }
     //
     if (muteki_time%2 == 0 || muteki_time == 0) {
-      image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs-scry+((vf?t==2?10:4:0)*((float)ph/dph)), pw, ph);
+      image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs-scry+((vf?t==2?10:4:0)*((float)ph/dph))+1, pw, ph);
       if (bubo) {
         if (keys['b'] || keys['B']) {
-          image(frp(get_cha(map_cha, 0xf0+(frameCount%2)), frameCount/2%2 == 0, false), x-(pw/2)-scrx, y+yofs-scry-(frameCount%2), 16, 8+(frameCount*3%7*1));
+          image(frp(get_cha(map_cha, 0xf0+(frameCount%2)), frameCount/2%2 == 0, false), x-(pw/2)-scrx, y+yofs-scry-(frameCount%2)+1, 16, 8+(frameCount*3%7*1));
           println("bbb");
         }
       }
@@ -436,148 +436,179 @@ class player {
        }
        }
        */
-      for (int Y = 0; Y < map.data[0].length; Y++) {
-        for (int X = 0; X < map.data.length; X++) {
-          int ex = (X*16)+map.pos_ofs[X][Y].x+rects[map.data[X][Y]].x;
-          int ey = (Y*16)+map.pos_ofs[X][Y].y+rects[map.data[X][Y]].y;
-          int w = map.pos_ofs[X][Y].w+(rects[map.data[X][Y]].w-16);
-          int h = map.pos_ofs[X][Y].h+(rects[map.data[X][Y]].h-16);
-          //
-          noStroke();
-          boolean iya = true;
-          if (col(ex, ey, w, h, int(x), int(y-8)) || col(ex, ey, w, h, int(x), int(y-(ph-8)))) {
-            if (map.data[X][Y] != 0 && col_list[map.data[X][Y]]) {
-              iya = false;
-              //dead();
-            }
-          }
-          if (
-            col(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0)))||
-            col(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.25)))||
-            col(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.5)))||
-            col(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.75)))||
-            col(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 1)))
-            ) {
-            if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && left_col_list[map.data[X][Y]]) {
-              x = ex+w+(pw/2);
-              xs = 0;
-              if (right_jump_list[map.data[X][Y]]) {
-                map.data_sub[X][Y] = 30;
-                sound_jon.stop();
-                sound_jon.trigger();
-                //map.data[X][Y] = 0x26;
-                xs += side_jump_level*right_jump_speed[map.data[X][Y]];
-                //x += 2;
-                ys -= gravity*2;
+      for (int Y = int(y/16)-4; Y < int(y/16)+4; Y++) {
+        for (int X = int(x/16)-4; X < int(x/16)+4; X++) {
+          //start
+          if (X >= 0 && Y >= 0 && X < map.data.length && Y < map.data[0].length) {
+            //int ex = (X*16)+map.pos_ofs[X][Y].x+rects[map.data[X][Y]].x;
+            //int ey = (Y*16)+map.pos_ofs[X][Y].y+rects[map.data[X][Y]].y;
+            //int w = map.pos_ofs[X][Y].w+(rects[map.data[X][Y]].w-16);
+            //int h = map.pos_ofs[X][Y].h+(rects[map.data[X][Y]].h-16);
+            int ex = (X*16)+map.pos_ofs[X][Y].x;
+            int ey = (Y*16)+map.pos_ofs[X][Y].y;
+            int w = map.pos_ofs[X][Y].w;
+            int h = map.pos_ofs[X][Y].h;
+
+            PImage nowimage = blocks[map.data[X][Y]];
+            if (map.data[X][Y] == 0 || !col_list[map.data[X][Y]])nowimage = space;
+            //
+            noStroke();
+            boolean iya = true;
+            if (col(nowimage, ex, ey, w, h, int(x), int(y-8)) || col(nowimage, ex, ey, w, h, int(x), int(y-(ph-8)))) {
+              if (map.data[X][Y] != 0 && col_list[map.data[X][Y]]) {
+                iya = false;
+                //dead();
               }
             }
-          }
-          if (
-            col(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0)))||
-            col(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.25)))||
-            col(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.5)))||
-            col(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.75)))||
-            col(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 1)))
-            ) {
-            if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && right_col_list[map.data[X][Y]]) {
-              x = ex-(pw/2);
-              xs = 0;
-              if (left_jump_list[map.data[X][Y]]) {
-                map.data_sub[X][Y] = 30;
-                sound_jon.stop();
-                sound_jon.trigger();
-                //map.data[X][Y] = 0x29;
-                xs -= side_jump_level*left_jump_speed[map.data[X][Y]];
-                //x -= 2;
-                ys -= gravity*2;
+            boolean asi = false;
+            if (
+              col(nowimage, ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0)))||
+              col(nowimage, ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.25)))||
+              col(nowimage, ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.5)))||
+              col(nowimage, ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.75)))||
+              col(nowimage, ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 1)))
+              ) {
+              if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && left_col_list[map.data[X][Y]]) {
+                //
+                if (col(nowimage, ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.00))) )x = ex+1+(pw/2) + col_x(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.00)));
+                if (col(nowimage, ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.25))) )x = ex+1+(pw/2) + col_x(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.25)));
+                if (col(nowimage, ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.50))) )x = ex+1+(pw/2) + col_x(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.50)));
+                if (col(nowimage, ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.75))) )x = ex+1+(pw/2) + col_x(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 0.75)));
+                if (col(nowimage, ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 1.00))) )x = ex+1+(pw/2) + col_x(ex, ey, w, h, int(x-(pw/2)), int(y-aida(12, (ph-8), 1.00)));
+                //
+                xs = 0;
+                asi = true;
+                if (right_jump_list[map.data[X][Y]]) {
+                  map.data_sub[X][Y] = 30;
+                  sound_jon.stop();
+                  sound_jon.trigger();
+                  //map.data[X][Y] = 0x26;
+                  xs += side_jump_level*right_jump_speed[map.data[X][Y]];
+                  //x += 2;
+                  ys -= gravity*2;
+                }
               }
             }
-          }
-          if (
-            col(ex, ey, w, h, int(x-(pw/3)), int(y-ph+2))||
-            col(ex, ey, w, h, int(x), int(y-ph+2))||
-            col(ex, ey, w, h, int(x+(pw/3)), int(y-ph+2))
-            ) {
-            if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && up_col_list[map.data[X][Y]]) {
-              head_break = (ys < 0?-ys:ys) > 5;
-              ys = ys < 0?-ys:ys;
-              sound_dom.stop();
-              sound_jmp.stop();
-              //sound_dom.amp(1);
-              sound_dom.trigger();
-              map.data_sub[X][Y] = 1;
-              if (down_jump_list[map.data[X][Y]]) {
-                map.data_sub[X][Y] = 30;
-                sound_jon.stop();
-                sound_jon.trigger();
-                //map.data[X][Y] = 0x29;
-                ys += jump_level*down_jump_speed[map.data[X][Y]];
-                //ys += 2;
+            if (
+              col(nowimage, ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0)))||
+              col(nowimage, ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.25)))||
+              col(nowimage, ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.5)))||
+              col(nowimage, ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.75)))||
+              col(nowimage, ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 1)))
+              ) {
+              if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && right_col_list[map.data[X][Y]]) {
+                //x = ex-(pw/2) + col_x(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 1)));
+
+                if (col(nowimage, ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.00))) )x = ex-(pw/2) + col_x(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.00)));
+                if (col(nowimage, ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.25))) )x = ex-(pw/2) + col_x(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.25)));
+                if (col(nowimage, ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.50))) )x = ex-(pw/2) + col_x(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.50)));
+                if (col(nowimage, ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.75))) )x = ex-(pw/2) + col_x(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 0.75)));
+                if (col(nowimage, ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 1.00))) )x = ex-(pw/2) + col_x(ex, ey, w, h, int(x+(pw/2)), int(y-aida(12, (ph-8), 1.00)));
+                xs = 0;
+                asi = true;
+                if (left_jump_list[map.data[X][Y]]) {
+                  map.data_sub[X][Y] = 30;
+                  sound_jon.stop();
+                  sound_jon.trigger();
+                  //map.data[X][Y] = 0x29;
+                  xs -= side_jump_level*left_jump_speed[map.data[X][Y]];
+                  //x -= 2;
+                  ys -= gravity*2;
+                }
               }
             }
-          }
-          if (
-            col(ex, ey, w, h, int(x), int(y-ph+1)) || 
-            col(ex, ey, w, h, int(x), int(y   +1.5)) ||
-            col(ex, ey, w, h, int(x-(pw/2)  -1), int(y-ph+1)) || 
-            col(ex, ey, w, h, int(x-(pw/2)  -1), int(y   +1.5)) ||
-            col(ex, ey, w, h, int(x+(pw/2)  -0), int(y-ph+1)) || 
-            col(ex, ey, w, h, int(x+(pw/2)  -0), int(y   +1.5)) ||
-            col(ex, ey, w, h, int(x-(pw/2)  -1), int(y)) || 
-            col(ex, ey, w, h, int(x+(pw/2)  -0), int(y))
-            ) {
-            ifblock(map.data[X][Y], X, Y);
-            if (map.data[X][Y] != 0 && col_list[map.data[X][Y]]) {
-              now_col = 3;
-            }
-            //println(map.data[X][Y]);
-          }
-          if (col(ex, ey, w, h, int(x), int(y+4)) || 
-            col(ex, ey, w, h, int(x-(pw/2)  -1), int(y)) || 
-            col(ex, ey, w, h, int(x+(pw/2)  -0), int(y))
-            ) {
-            if (map.data[X][Y] != 0 && col_list[map.data[X][Y]] && down_col_list[map.data[X][Y]]) {
-              x += map.pos_ofs[X][Y].xs;
-              y += map.pos_ofs[X][Y].ys;
-            }
-          }
-          if (
-            col(ex, ey, w, h, int(x-(pw/3)), int(y+1))||
-            col(ex, ey, w, h, int(x), int(y+1))||
-            col(ex, ey, w, h, int(x+(pw/3)), int(y+1))
-            ) {
-            if (map.data[X][Y] != 0 && col_list[map.data[X][Y]] && down_col_list[map.data[X][Y]]) {
-              if (debug) {
-                fill(255, 128);
-                rect(ex, ey+yofs, w-1, h-1);
+            //
+            //
+            if (
+              //col(nowimage,ex, ey, w, h, int(x-(pw/3)), int(y-ph+2))||
+              col(nowimage, ex, ey, w, h, int(x), int(y-ph+2))//||
+              //col(nowimage,ex, ey, w, h, int(x+(pw/3)), int(y-ph+2))
+              ) {
+              if (map.data[X][Y] != 0 && iya && col_list[map.data[X][Y]] && up_col_list[map.data[X][Y]]) {
+                head_break = (ys < 0?-ys:ys) > 5;
+                ys = ys < 0?-ys:ys;
+                sound_dom.stop();
+                sound_jmp.stop();
+                //sound_dom.amp(1);
+                sound_dom.trigger();
+                map.data_sub[X][Y] = 1;
+                if (down_jump_list[map.data[X][Y]]) {
+                  map.data_sub[X][Y] = 30;
+                  sound_jon.stop();
+                  sound_jon.trigger();
+                  //map.data[X][Y] = 0x29;
+                  ys += jump_level*down_jump_speed[map.data[X][Y]];
+                  //ys += 2;
+                }
               }
-              ys = -0.01;
-              if (y < ey+15) {
-                y = ey;
-              }
-              if (up_jump_list[map.data[X][Y]]) {
-                map.data_sub[X][Y] = 30;
-                sound_jon.stop();
-                sound_jon.trigger();
-                //map.data[X][Y] = 0x29;
-                ys -= jump_level*up_jump_speed[map.data[X][Y]];
-                //y -= 2;
-              }
-              tiniasiwotuketeiruka = tiniasiwotuketeiruka_max;
             }
-            if (!down_col_list[map.data[X][Y]]) {
-              sound_ohn.stop();
-              sound_ohn.trigger();
+            if (
+              col(nowimage, ex, ey, w, h, int(x), int(y-ph+1)) || 
+              col(nowimage, ex, ey, w, h, int(x), int(y   +1.5)) ||
+              col(nowimage, ex, ey, w, h, int(x-(pw/2)  -1), int(y-ph+1)) || 
+              col(nowimage, ex, ey, w, h, int(x-(pw/2)  -1), int(y   +1.5)) ||
+              col(nowimage, ex, ey, w, h, int(x+(pw/2)  -0), int(y-ph+1)) || 
+              col(nowimage, ex, ey, w, h, int(x+(pw/2)  -0), int(y   +1.5)) ||
+              col(nowimage, ex, ey, w, h, int(x-(pw/2)  -1), int(y)) || 
+              col(nowimage, ex, ey, w, h, int(x+(pw/2)  -0), int(y))
+              ) {
+              ifblock(map.data[X][Y], X, Y);
+              if (map.data[X][Y] != 0 && col_list[map.data[X][Y]]) {
+                now_col = 3;
+              }
+              //println(map.data[X][Y]);
             }
+            if (col(nowimage, ex, ey, w, h, int(x), int(y+4)) || 
+              col(nowimage, ex, ey, w, h, int(x-(pw/2)  -1), int(y)) || 
+              col(nowimage, ex, ey, w, h, int(x+(pw/2)  -0), int(y))
+              ) {
+              if (map.data[X][Y] != 0 && col_list[map.data[X][Y]] && down_col_list[map.data[X][Y]]) {
+                x += map.pos_ofs[X][Y].xs;
+                y += map.pos_ofs[X][Y].ys;
+              }
+            }
+            if (
+              col(nowimage, ex, ey, w, h, int(x- 1    ), int(y+1))||
+              col(nowimage, ex, ey, w, h, int(x       ), int(y+1))||
+              col(nowimage, ex, ey, w, h, int(x+ 1    ), int(y+1))
+              ) {
+              if (map.data[X][Y] != 0 && col_list[map.data[X][Y]] && down_col_list[map.data[X][Y]]) {
+                if (debug) {
+                  fill(255, 128);
+                  rect(ex, ey+yofs, w-1, h-1);
+                }
+                ys = -0.01;
+
+                //y = ey + col_y(ex, ey, w, h, int(x), int(y+1));
+                     if ( col(nowimage, ex, ey, w, h, int(x  ), int(y-  1)) )y = ey + col_y(ex, ey, w, h, int(x  ), int(y-1));
+                else if ( col(nowimage, ex, ey, w, h, int(x-1), int(y-  1)) )y = ey + col_y(ex, ey, w, h, int(x-1), int(y-1));
+                else if ( col(nowimage, ex, ey, w, h, int(x+1), int(y-  1)) )y = ey + col_y(ex, ey, w, h, int(x+1), int(y-1));
+
+                if (up_jump_list[map.data[X][Y]]) {
+                  map.data_sub[X][Y] = 30;
+                  sound_jon.stop();
+                  sound_jon.trigger();
+                  //map.data[X][Y] = 0x29;
+                  ys -= jump_level*up_jump_speed[map.data[X][Y]];
+                  //y -= 2;
+                }
+                tiniasiwotuketeiruka = tiniasiwotuketeiruka_max;
+              }
+              if (!down_col_list[map.data[X][Y]]) {
+                sound_ohn.stop();
+                sound_ohn.trigger();
+              }
+            }
+            //
           }
-          //
+        }
+        if (now_col > -3)now_col--;
+        if (now_col <= 0) {
+          //println(frameCount+"now");
+          nowfriction = 1.2;
         }
       }
-      if (now_col > -3)now_col--;
-      if (now_col <= 0) {
-        //println(frameCount+"now");
-        nowfriction = 1.2;
-      }
+      //end
     }
   }
 }

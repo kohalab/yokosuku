@@ -16,6 +16,31 @@ boolean col(int x1, int y1, int w1, int h1, int x2, int y2) {
   return (x1 <= x2 && x1+w1 > x2) && (y1 <= y2 && y1+h1 > y2);
 }
 
+boolean col(PImage col, int x1, int y1, int w1, int h1, int x2, int y2) {
+  //if(( (x1 <= x2 && x1+w1 > x2) && (y1 <= y2 && y1+h1 > y2) ))println((x2-x1), (y2-y1));
+  return getalpha(col, (x2-x1), (y2-y1)) && ( (x1 <= x2 && x1+w1 > x2) && (y1 <= y2 && y1+h1 > y2) );
+}
+
+
+boolean col(PImage col,int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
+  return getalpha(col, (x2-x1), (y2-y1)) && (x2 < (x1+w1)) && (x1 < (x2+w2)) && (y2 < (y1+h1)) && (y1 < (y2+h2));
+}
+
+int col_x(int x1, int y1, int w1, int h1, int x2, int y2) {
+  return (x2-x1);
+}
+int col_y(int x1, int y1, int w1, int h1, int x2, int y2) {
+  return (y2-y1);
+}
+
+boolean getalpha(PImage in, int x, int y) {
+  if (x >= 0 && y >= 0 && x < in.width && y < in.height) {
+    return (((in.get(x, y)>>24) &(1<<7)) != 0 );
+  } else {
+    return false;
+  }
+}
+
 char smal(char in) {
   char out = in;
   if (in >= 'A' && in <= 'Z')
@@ -219,7 +244,7 @@ rect getrect(PImage in) {
   for (int x = 0; x < in.height; x++) {
     boolean a = false;
     for (int y = 0; y < in.width; y++) {
-      if (alpha(in.get(x, y)) > 128) {
+      if (alpha(in.get(x, y)) > 1) {
         a = true;
       }
     }
@@ -231,7 +256,7 @@ rect getrect(PImage in) {
   for (int x = 0; x < in.height; x++) {
     boolean a = false;
     for (int y = 0; y < in.width; y++) {
-      if (alpha(in.get(x, y)) > 128) {
+      if (alpha(in.get(x, y)) > 1) {
         a = true;
       }
     }
