@@ -44,6 +44,8 @@ class player {
   int atamaitai_time;
   int tiniasiwotuketeiruka = 0;
   int tiniasiwotuketeiruka_max = 2;
+  int nobotteru;
+  int nobotterutime = 10;
   int big;
   int now_col;
   map map;
@@ -121,10 +123,19 @@ class player {
         t = 7;
       }
       if (xs > 0.03 || xs < -0.03) {
-        if (int(ark_sc) == 0)t = 0;
-        if (int(ark_sc) == 1)t = 3;
-        if (int(ark_sc) == 2)t = 0;
-        if (int(ark_sc) == 3)t = 4;
+        //
+        if (nobotteru > 0) {
+          if (int(ark_sc) == 0)t = 8;
+          if (int(ark_sc) == 1)t = 10;
+          if (int(ark_sc) == 2)t = 9;
+          if (int(ark_sc) == 3)t = 10;
+        } else {
+          if (int(ark_sc) == 0)t = 0;
+          if (int(ark_sc) == 1)t = 3;
+          if (int(ark_sc) == 2)t = 0;
+          if (int(ark_sc) == 3)t = 4;
+        }
+        //
       }
     }
     if (atamaitai_time > 0) {
@@ -140,10 +151,10 @@ class player {
     }
     //
     if (muteki_time%2 == 0 || muteki_time == 0) {
-      image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs-scry+((vf?t==2?10:4:0)*((float)ph/dph))+1, pw, ph);
+      image(frp(cha.get(t*16, 0, 16, 32), hf, vf), x-(pw/2)-scrx, y-ph+yofs-scry+((vf?t==2?10:4:0)*((float)ph/dph))+2, pw, ph);
       if (bubo) {
         if (keys['b'] || keys['B']) {
-          image(frp(get_cha(map_cha, 0xf0+(frameCount%2)), frameCount/2%2 == 0, false), x-(pw/2)-scrx, y+yofs-scry-(frameCount%2)+1, 16, 8+(frameCount*3%7*1));
+          image(frp(get_cha(map_cha, 0xf0+(frameCount%2)), frameCount/2%2 == 0, false), x-(pw/2)-scrx, y+yofs-scry-(frameCount%2)+2, 16, 8+(frameCount*3%7*1));
           println("bbb");
         }
       }
@@ -341,8 +352,8 @@ class player {
       dead(3);
     }
     if (water_list[a]) {
-      ys -= 0.2;
-      y -= 0.5;
+      ys -= 0.1;
+      y -= 0.1;
     }
     if (milk_list[a]) {
       big = 1;
@@ -436,6 +447,7 @@ class player {
        }
        }
        */
+      if (nobotteru > 0)nobotteru--;
       for (int Y = int(y/16)-4; Y < int(y/16)+4; Y++) {
         for (int X = int(x/16)-4; X < int(x/16)+4; X++) {
           //start
@@ -543,14 +555,14 @@ class player {
               }
             }
             if (
-              col(nowimage, ex, ey, w, h, int(x), int(y-ph+1)) || 
-              col(nowimage, ex, ey, w, h, int(x), int(y   +1.5)) ||
-              col(nowimage, ex, ey, w, h, int(x-(pw/2)  -1), int(y-ph+1)) || 
-              col(nowimage, ex, ey, w, h, int(x-(pw/2)  -1), int(y   +1.5)) ||
-              col(nowimage, ex, ey, w, h, int(x+(pw/2)  -0), int(y-ph+1)) || 
-              col(nowimage, ex, ey, w, h, int(x+(pw/2)  -0), int(y   +1.5)) ||
-              col(nowimage, ex, ey, w, h, int(x-(pw/2)  -1), int(y)) || 
-              col(nowimage, ex, ey, w, h, int(x+(pw/2)  -0), int(y))
+              col( ex, ey, w, h, int(x), int(y-ph+1)) || 
+              col( ex, ey, w, h, int(x), int(y   +1.5)) ||
+              col( ex, ey, w, h, int(x-(pw/2)  -1), int(y-ph+1)) || 
+              col( ex, ey, w, h, int(x-(pw/2)  -1), int(y   +1.5)) ||
+              col( ex, ey, w, h, int(x+(pw/2)  -0), int(y-ph+1)) || 
+              col( ex, ey, w, h, int(x+(pw/2)  -0), int(y   +1.5)) ||
+              col( ex, ey, w, h, int(x-(pw/2)  -1), int(y)) || 
+              col( ex, ey, w, h, int(x+(pw/2)  -0), int(y))
               ) {
               ifblock(map.data[X][Y], X, Y);
               if (map.data[X][Y] != 0 && col_list[map.data[X][Y]]) {
@@ -568,21 +580,34 @@ class player {
               }
             }
             if (
-              col(nowimage, ex, ey, w, h, int(x- 1    ), int(y+1))||
+              col(nowimage, ex, ey, w, h, int(x- 2    ), int(y-1))||
               col(nowimage, ex, ey, w, h, int(x       ), int(y+1))||
-              col(nowimage, ex, ey, w, h, int(x+ 1    ), int(y+1))
+              col(nowimage, ex, ey, w, h, int(x+ 2    ), int(y-1))
               ) {
               if (map.data[X][Y] != 0 && col_list[map.data[X][Y]] && down_col_list[map.data[X][Y]]) {
                 if (debug) {
                   fill(255, 128);
                   rect(ex, ey+yofs, w-1, h-1);
                 }
-                ys = -0.01;
+                ys = -0.0001;
 
                 //y = ey + col_y(ex, ey, w, h, int(x), int(y+1));
-                     if ( col(nowimage, ex, ey, w, h, int(x  ), int(y-  1)) )y = ey + col_y(ex, ey, w, h, int(x  ), int(y-1));
-                else if ( col(nowimage, ex, ey, w, h, int(x-1), int(y-  1)) )y = ey + col_y(ex, ey, w, h, int(x-1), int(y-1));
-                else if ( col(nowimage, ex, ey, w, h, int(x+1), int(y-  1)) )y = ey + col_y(ex, ey, w, h, int(x+1), int(y-1));
+                if ( col(nowimage, ex, ey, w, h, int(x  ), int(y-  1)) ) {
+                  y = ey + col_y(ex, ey, w, h, int(x  ), int(y-1))-int(xs >= 0?xs:-xs);
+                  if ( y > (ey + col_y(ex, ey, w, h, int(x  ), int(y-1))) )nobotteru = nobotterutime;
+                } else {
+                  if ( col(nowimage, ex, ey, w, h, int(x-2), int(y+  0)) ) {
+                    y = ey + col_y(ex, ey, w, h, int(x-2), int(y-0))-int(xs >= 0?xs:-xs);
+                    if ( y > (ey + col_y(ex, ey, w, h, int(x-2  ), int(y-0))) )nobotteru = nobotterutime;
+                    xs += 0.6;
+                  } 
+                  if ( col(nowimage, ex, ey, w, h, int(x+2), int(y+  0)) ) {
+                    y = ey + col_y(ex, ey, w, h, int(x+2), int(y-0))-int(xs >= 0?xs:-xs);
+                    if ( y > (ey + col_y(ex, ey, w, h, int(x+2  ), int(y-0))) )nobotteru = nobotterutime;
+                    xs -= 0.6;
+                  }
+                }
+                //ys -= int(xs >= 0?xs:-xs)/4.2;
 
                 if (up_jump_list[map.data[X][Y]]) {
                   map.data_sub[X][Y] = 30;

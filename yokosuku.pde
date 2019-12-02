@@ -1,9 +1,9 @@
 boolean debug = false;
 
-int WIDTH = 24;
-int HEIGH = 12;
-int SWIDT = WIDTH*6;
-int SHEIG = HEIGH*4;
+int WIDTH = 12;//24
+int HEIGH = 12;//12
+int SWIDT = 24*6;
+int SHEIG = 12*4;
 
 int dw;
 int dh;
@@ -524,7 +524,7 @@ void draw() {
     rect(0, 0, width/SCALE, height/SCALE);
   }
 
-  if (save_load_bank > save_load_num-2)save_load_bank = save_load_num-2;
+  if (save_load_bank > save_load_num)save_load_bank = save_load_num;
   if (save_load_bank < 0)save_load_bank = 0;
   //println(save_load_bank);
   save_load_bank_sm = (save_load_bank+(save_load_bank_sm*2.0))/3.0;
