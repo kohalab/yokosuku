@@ -27,6 +27,8 @@ AudioSample sound_err;
 AudioSample sound_kya;
 AudioSample sound_ohn;
 
+AudioSample sound_cin;
+
 AudioSample sound_onof;
 
 void loadSound() {
@@ -61,6 +63,8 @@ void loadSound() {
   sound_ohn = minim.loadSample( "sound/ohn.wav", buffer_size);
 
   sound_onof = minim.loadSample( "sound/onof.wav", buffer_size);
+  
+  sound_cin = minim.loadSample( "sound/coin.wav", buffer_size);
 
   float gain = -9;
   for (int i = 0; i < pownum; i++) {
@@ -85,43 +89,11 @@ void loadSound() {
   sound_ohn.setGain(gain);
 
   sound_onof.setGain(gain);
+  
+  sound_cin.setGain(gain);
 }
 
 void super_sound() {
-}
-
-void all_stop() {
-  for (int i = 0; i < popnum; i++) {
-    sound_pow[i].stop();
-  }
-  for (int i = 0; i < popnum; i++) {
-    sound_pop[i].stop();
-  }
-  sound_ping.stop();
-  sound_woo.stop();
-  sound_jon.stop();
-  sound_jmp.stop();
-  sound_dom.stop();
-  sound_boh.stop();
-  sound_pyn.stop();
-  sound_dho.stop();
-  sound_son.stop();
-  sound_err.stop();
-  sound_kya.stop();
-
-  sound_onof.stop();
-  /*
-  sound_pow.amp(0);
-   sound_pop.amp(0);
-   sound_ping.amp(0);
-   sound_woo.amp(0);
-   sound_jon.amp(0);
-   sound_jmp.amp(0);
-   sound_dom.amp(0);
-   sound_boh.amp(0);
-   sound_pyn.amp(0);
-   sound_dho.amp(0);
-   */
 }
 
 void playpop() {

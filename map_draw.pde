@@ -302,10 +302,15 @@ class map {
                 pos_ofs[x][y].ofx = 0;
               }
             }
-            if(y > 0){
+            if (y > 0) {
               pos_ofs[x][y-1].y = pos_ofs[x][y].y;
             }
             //
+          } else if (hatena_list[b]) {
+            if (data_sub[x][y] == 1) {
+              coin(x, y, hatena_num[b]);
+            }
+            if (data_sub[x][y] > 0 && data_sub[x][y] < 20)data_sub[x][y]--;
           } else {
             pos_ofs[x][y].ofx = 0;
             pos_ofs[x][y].ofy = 0;
@@ -380,6 +385,8 @@ class map {
             }
           }
         }
+        //
+        //
         //
         if (b == of_ons || b == of_ofs) {
           if (data_sub[x][y] == 1) {
@@ -460,7 +467,7 @@ class map {
             ((x*16-scrx)+0) >= -32 && ((x*16-scrx)+0) < (WIDTH+1)*16   &&   ((y*16-scry)+0) >= -32 && ((y*16-scry)+0) < (HEIGH+1)*16
             ) {
             if (data[x][y] >= 0x80) {
-   
+
               //
               if (L == 0) {
                 //layer0 begin
@@ -518,7 +525,6 @@ class map {
                   noTint();
                 }
               }
-
             }
           }
           ;

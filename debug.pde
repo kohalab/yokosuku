@@ -76,7 +76,8 @@ void debug() {
         "player["+i+"].ys = "+(player[i].ys >= 0?"+":"")+nf(player[i].ys, 0, 3)+"\n";
     }
     ;
-    text += "sp = "+sp;
+    text += "sp = "+sp+"\n";
+    text += "mobfree = "+mobfree()+"\n";
     debugl.text(text, width/1.5, 12+(10*0));
     //
     debugl.text(debugtext, width-textWidth(debugtext), height-3);

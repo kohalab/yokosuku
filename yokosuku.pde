@@ -1,6 +1,6 @@
 boolean debug = false;
 
-int WIDTH = 12;//24
+int WIDTH = 24;//24
 int HEIGH = 12;//12
 int SWIDT = 24*6;
 int SHEIG = 12*4;
@@ -32,7 +32,11 @@ map map;
 
 int player_num = 1;
 
+int mobnum = 60;
+
 player[] player = new player[player_num];
+
+mob[] mob = new mob[mobnum];
 
 PGraphics grd;
 
@@ -115,6 +119,9 @@ boolean[] tarai_list = new boolean[256];
 boolean[] milk_list = new boolean[256];
 boolean[] poteto_list = new boolean[256];
 boolean[] kinoko_list = new boolean[256];
+
+boolean[] hatena_list = new boolean[256];
+int[] hatena_num = new int[256];
 
 int[] sector;
 
@@ -221,6 +228,9 @@ void setup() {
     player[i].map = map;
     player[i].num = i;
   }
+  for (int i = 0; i < mobnum; i++) {
+    mob[i] = new mob();
+  }
   //
   for (int i = 0; i < 256; i++) {
     col_list[i] = true;
@@ -292,6 +302,10 @@ void setup() {
   ;
 
 
+  hatena_list = col_list_gen("hatena_list.txt");
+  hatena_num = list_int_gen("hatena_list.txt");
+
+
   rects = new rect[256];
   for (int i = 0; i < 256; i++) {
     rects[i] = getrect(blocks[i]);
@@ -338,7 +352,7 @@ boolean[] col_list_gen(String path) {
   //
   String[] il = loadStrings(path);
   for (int i = 0; i < il.length; i++) {
-    col_list[unhex(il[i])] = true;
+    col_list[unhex(il[i].substring(0, 2))] = true;
   }
   return col_list;
 }
@@ -365,6 +379,20 @@ float[][] list_float_gen(String path) {
   return list;
 }
 
+int[] list_int_gen(String path) {
+  int[] list = new int[256];
+  //
+  for (int i = 0; i < 256; i++) {
+    list[i] = 0;
+  }
+  String[] il = loadStrings(path);
+  for (int i = 0; i < il.length; i++) {
+    String[] b = splitTokens(il[i], " ");
+    list[unhex(b[0])] = int(b[1]);
+  }
+  return list;
+}
+
 boolean[] no_col_list_gen(String path) {
   boolean[] col_list = new boolean[256];
   for (int i = 0; i < col_list.length; i++) {
@@ -373,7 +401,7 @@ boolean[] no_col_list_gen(String path) {
   //
   String[] il = loadStrings(path);
   for (int i = 0; i < il.length; i++) {
-    col_list[unhex(il[i])] = false;
+    col_list[unhex(il[i].substring(0, 2))] = false;
   }
   return col_list;
 }
@@ -449,10 +477,6 @@ void draw() {
    }
    
    */
-
-  if (frameCount%4 == 0) {
-  }
-
   /*--------------------表示表示表示表示---------------------*/
   if (game_en) {
     map.mob_proc();
@@ -485,6 +509,11 @@ void draw() {
   //noTint();
   //blendMode(BLEND);
   //}
+
+  for (int i = 0; i < mobnum; i++) {
+    mob[i].proc();
+    mob[i].draw();
+  }
 
   /*--------------------表示表示表示表示---------------------*/
 
@@ -780,8 +809,6 @@ void keyPressed() {
       repsp = getblock(mx, my);
       setblock(mx, my, 254, true);
     }
-    if (key == 'm')
-      all_stop();
   }
   if (key == '-')frameRate(30);
   if (key == '^')frameRate(60);
