@@ -48,6 +48,8 @@ PImage[] blocks = new PImage[256];
 rect[] rects;
 boolean[] blocks_no = new boolean[256];
 
+PImage[] bgblocks = new PImage[256];
+
 boolean grd_en = true;
 
 boolean game_en = true;
@@ -98,6 +100,8 @@ boolean[] ugo_hor_list = new boolean[256];
 float[] ugo_hor_level = new float[256];
 boolean[] ugo_ver_list = new boolean[256];
 float[] ugo_ver_level = new float[256];
+
+boolean[] tama_list = new boolean[256];
 
 boolean[] taiho_list = new boolean[256];
 float[] taiho_level = new float[256];
@@ -209,8 +213,10 @@ void setup() {
   }
   grd.endDraw();
   textFont(b12);
+  PImage bgi = loadImage("bgdata.png");
   for (int n = 0; n < 256; n++) {
     blocks[n] = cha.get((n%16)*16, (n/16)*16, 16, 16);
+    bgblocks[n] = bgi.get((n%16)*16, (n/16)*16, 16, 16);
     ;
   }
   if (true) {
@@ -242,6 +248,8 @@ void setup() {
   down_col_list = no_col_list_gen("down_no_col.txt");
   left_col_list = no_col_list_gen("left_no_col.txt");
   right_col_list = no_col_list_gen("right_no_col.txt");
+  
+  tama_list = col_list_gen("tama_list.txt");
 
 
   //
@@ -342,6 +350,8 @@ void setup() {
    */
   //endtest
   col_list[0] = false;
+  //
+  //
 }
 
 boolean[] col_list_gen(String path) {
@@ -427,297 +437,339 @@ int mouseY_to_y(int y) {
 }
 
 void draw() {
-
-  wait_wait = (System.nanoTime()/1000)-wait_wait;
-
-  boolean[] deadnow = new boolean[player_num];
-  for (int i = 0; i < player_num; i++) {
-    deadnow[i] = player[i].deadnow;
+  foo = fot;
+  fot = force;
+  if (foo == false && force == true) {
+    force_img = get(0, 0, width, height);
+    force_img.resize(force_img.width/2, force_img.height/2);
   }
-
-  surface.setSize(WIDTH*16*SCALE, (HEIGH*16+yofs)*SCALE);
-
-  speed = frameRate/30.0;
-
-  textFont(r12);
-
-  //background(#83d5ff);
-
-  if (sp < 0)sp = 0;
-  if (sp > item_list.length-1)sp = item_list.length-1;
-
-  int mx = mouseX_to_x(mouseX);
-  int my = mouseY_to_y(mouseY);
-
-  tsp = sp;
-
-  if (game_en) {
-    if (mouseY/SCALE >= yofs) {  
-      if (mousePressed) {
-        if (mouseButton == RIGHT)
-          tsp = 0;
-        setblock(mx, my, item_list[tsp], true);
-      }
+  if (!force) {
+    //force start
+    wait_wait = (System.nanoTime()/1000)-wait_wait;
+    boolean[] deadnow = new boolean[player_num];
+    for (int i = 0; i < player_num; i++) {
+      deadnow[i] = player[i].deadnow;
     }
-  }
 
-  if (!now_rep()) {
-    map();
-  }
+    surface.setSize(WIDTH*16*SCALE, (HEIGH*16+yofs)*SCALE);
 
+    speed = frameRate/30.0;
 
-  /*
-  for (int Y = 0; Y < HEIGH; Y++) {
-   for (int X = 0; X < WIDTH; X++) {
-   if (getblock(X, Y) == 13) {
-   new_obj(new obj(13, 16, 16, X*16+8, Y*16+8, 0, 0));
-   setblock(X, Y, 0, false);
-   }
-   }
-   }
-   
-   */
-  /*--------------------表示表示表示表示---------------------*/
-  if (game_en) {
-    map.mob_proc();
-  }
-  wait_mapdraw = (System.nanoTime()/1000);
-  map.draw();
-  map.backup();
-  wait_mapdraw = (System.nanoTime()/1000)-wait_mapdraw;
-  image(map.get().get(scrx, scry, dw, dh), 0, yofs);
-  //if (deadnow) {
-  //}
-  for (int i = 0; i < player_num; i++) {
-    player[i].map = map;
-    player[i].draw();
+    textFont(r12);
+
+    //background(#83d5ff);
+
+    if (sp < 0)sp = 0;
+    if (sp > item_list.length-1)sp = item_list.length-1;
+
+    int mx = mouseX_to_x(mouseX);
+    int my = mouseY_to_y(mouseY);
+
+    tsp = sp;
+
     if (game_en) {
-      player[i].proc();
-    }
-  }
-
-  wait_mob = (System.nanoTime()/1000);
-  //if (!deadnow) {
-  map.mob_draw();
-  //}
-  wait_mob = (System.nanoTime()/1000)-wait_mob;
-
-  //if (mouseY >= select_height) {
-  //blendMode(BLEND);
-  //tint(255,128);
-  //image(blocks[item_list[tsp]], (mouseX/SCALE)-8, (mouseY/SCALE)-8);
-  //noTint();
-  //blendMode(BLEND);
-  //}
-
-  for (int i = 0; i < mobnum; i++) {
-    mob[i].proc();
-    mob[i].draw();
-  }
-
-  /*--------------------表示表示表示表示---------------------*/
-
-  /*------------------------------------------------------*/
-
-  wait_draw = (System.nanoTime()/1000);
-  if (select_en) {
-    noStroke();
-    fill(#83d5ff);
-    rect(0, 0, dw, yofs);
-    for (int i = 0; i < 256; i++) {
-      int n = (i- ((dw/32)/2) )+tsp;
-      if (n >= 0 && n < item_list.length) {
-        int scrx = i*32;
-        if (scrx >= -32 && scrx < dw) {
-          if (n != tsp) {
-            image(block_box_n, scrx, 0);
-            noStroke();
-            image(blocks[item_list[n]], scrx+8+2, 0+8+2, 12, 12);
-          }
+      if (mouseY/SCALE >= yofs) {  
+        if (mousePressed) {
+          if (mouseButton == RIGHT)
+            tsp = 0;
+          setblock(mx, my, item_list[tsp], true);
         }
       }
     }
-    int scrx = ((dw/32)/2)*32;
-    image(block_box, scrx, 0);
-    noStroke();
-    ik(blocks[item_list[tsp]], scrx+8, 0+8, sin(frameCount/32.0*TWO_PI)*(item_list[tsp] >= 0x80?8:0));
-  }
-  //println(tsp);
-  //fill(255, 128);
-  //rect((dw/2)-24, 0, 32, 32);
-  //baketu
 
-  if (!game_en) {
-    noStroke();
-    fill(255, 32);
-    rect(0, 0, width/SCALE, height/SCALE);
-  }
-
-  if (save_load_bank > save_load_num)save_load_bank = save_load_num;
-  if (save_load_bank < 0)save_load_bank = 0;
-  //println(save_load_bank);
-  save_load_bank_sm = (save_load_bank+(save_load_bank_sm*2.0))/3.0;
-
-  if (sl_e) {
-    for (int i = 0; i < save_load_num; i++) {
-      int alw = 128;
-      int xscr = int(save_load_bank_sm*alw);
-      String name = " "+i;
-      int x = (i*alw)+8-xscr;
-      int y = 8;
-      if (name_load[i] != null) {
-        name = " "+name_load[i];
-      }
-      textFont(b10);
-      /*
-      if (button("SAVE"+name, i*alw+2-xscr, 0, btw, (((select_height*SCALE)/3)/2)+1, load_en[i])) {
-       sound_son.stop();
-       sound_son.trigger();
-       map_saver.save(map_save_path+i+".yksm", map);
-       loadcheck();
-       delay(100);
-       }
-       if (button("LOAD"+name, i*alw+2-xscr, 0+((select_height*SCALE)/3), btw, (select_height*SCALE/3)-4, load_en[i])) {
-       sound_son.stop();
-       sound_son.trigger();
-       map load = map_saver.load(map_save_path+i+".yksm");
-       if (load != null) {
-       map = load;
-       for (int f = 0; f < player_num; f++) {
-       player[f].dead_alway(true);
-       }
-       } else {
-       sound_son.stop();
-       sound_err.stop();
-       sound_err.trigger();
-       }
-       loadcheck();
-       delay(100);
-       }
-       if (button("X", i*alw+2-xscr, 0+((select_height*SCALE)/3*2), 10, 12, load_en[i])) {
-       map load = map_saver.load(map_save_path+i+".yksm");
-       if (load != null) {
-       sound_kya.stop();
-       sound_kya.trigger();
-       saveBytes(map_save_path+i+".yksm", new byte[] {});
-       } else {
-       sound_err.stop();
-       sound_err.trigger();
-       }
-       loadcheck();
-       delay(100);
-       }
-       */
-      if (x >= -alw && x < width/SCALE) {
-        //
-        //name
-        if (image_button(save_box.get(0, 0, 64, 16), save_box_s.get(0, 0, 64, 16), x, y)) {
-        }
-
-        //save
-        if (image_button(save_box.get(64, 0, 32, 16), save_box_s.get(64, 0, 32, 16), x+63, y)) {
-          sl_state = 1|(i<<8);
-          /*
-          sound_son.stop();
-           sound_son.trigger();
-           map_saver.save(map_save_path+i+".yksm", map);
-           loadcheck();
-           sl_e = false;
-           */
-        }
-
-        //load
-        if (image_button(save_box.get(96, 0, 32, 16), save_box_s.get(96, 0, 32, 16), x+90, y)) {
-          sl_state = 2|(i<<8);
-          /*
-          sound_son.stop();
-           sound_son.trigger();
-           map load = map_saver.load(map_save_path+i+".yksm");
-           if (load != null) {
-           map = load;
-           for (int f = 0; f < player_num; f++) {
-           player[f].dead_alway(true);
-           }
-           } else {
-           sound_son.stop();
-           sound_err.stop();
-           sound_err.trigger();
-           }
-           loadcheck();
-           sl_e = false;
-           */
-        }
-        fill(#1155cc);
-        text(name, x+1, y+12);
-        fill(255);
-        text(name, x+1, y+11);
-        //
-        if (!load_en[i]) {
-          stroke(255);
-          for (int I = -1; I < 1; I++) {
-            for (int F = -1; F < 1; F++) {
-              line(x-4+I, y+4+F, x+64+4+I, y+4+8+F);
-              line(x-4+I, y+4+8+F, x+64+4+I, y+4+F);
-            }
-          }
-          noStroke();
-        }
-      }
-
-      //
+    if (!now_rep()) {
+      map();
     }
-    if (sl_state != 0) {
+
+
+    /*
+  for (int Y = 0; Y < HEIGH; Y++) {
+     for (int X = 0; X < WIDTH; X++) {
+     if (getblock(X, Y) == 13) {
+     new_obj(new obj(13, 16, 16, X*16+8, Y*16+8, 0, 0));
+     setblock(X, Y, 0, false);
+     }
+     }
+     }
+     
+     */
+    /*--------------------表示表示表示表示---------------------*/
+    if (game_en) {
+      map.mob_proc();
+    }
+    wait_mapdraw = (System.nanoTime()/1000);
+    map.draw();
+    map.backup();
+    map.bgbackup();
+    wait_mapdraw = (System.nanoTime()/1000)-wait_mapdraw;
+    image(map.get().get(scrx, scry, dw, dh), 0, yofs);
+    //if (deadnow) {
+    //}
+    for (int i = 0; i < player_num; i++) {
+      player[i].map = map;
+      player[i].draw();
+      if (game_en) {
+        player[i].proc();
+      }
+    }
+
+    wait_mob = (System.nanoTime()/1000);
+    //if (!deadnow) {
+    map.mob_draw();
+    //}
+    wait_mob = (System.nanoTime()/1000)-wait_mob;
+
+    //if (mouseY >= select_height) {
+    //blendMode(BLEND);
+    //tint(255,128);
+    //image(blocks[item_list[tsp]], (mouseX/SCALE)-8, (mouseY/SCALE)-8);
+    //noTint();
+    //blendMode(BLEND);
+    //}
+
+    for (int i = 0; i < mobnum; i++) {
+      mob[i].proc();
+      mob[i].draw();
+    }
+
+    /*--------------------表示表示表示表示---------------------*/
+
+    /*------------------------------------------------------*/
+
+    wait_draw = (System.nanoTime()/1000);
+    if (select_en) {
       noStroke();
-      fill(255, 64);
-      rect(0, 0, width/SCALE, height/SCALE);
-      String t = "";
-      if ((sl_state&0xff) == 1) {
-        t = "本当にセーブする？";
-      }
-      if ((sl_state&0xff) == 2) {
-        t = "本当にロードする？";
-      }
-      textFont(r10);
-      entext(t, (width/SCALE/2)-int(textWidth(t)/2), (height/SCALE)/2-16+1, #1155cc, #ffffff);
-      //image(icons.get(0, 0, 64, 16), (width/SCALE/2)-96, (height/SCALE)/2
-      //image(icons.get(64, 0, 64, 16), (width/SCALE/2)+96-64, (height/SCALE)/2);
-      fill(255);
-      if (image_button("する", 3, #1155cc, #ffffff, icons.get(0, 0, 64, 16), icons.get(0, 16, 64, 16), (width/SCALE/2)-96, (height/SCALE)/2)) {
-        sound_onof.trigger();
-        //
-        if ((sl_state&0xff) == 1) {//save
-          sound_son.stop();
-          sound_son.trigger();
-          map_saver.save(map_save_path+(sl_state>>8)+".yksm", map);
-          loadcheck();
-        }
-        if ((sl_state&0xff) == 2) {//load
-          sound_son.stop();
-          sound_son.trigger();
-          map load = map_saver.load(map_save_path+(sl_state>>8)+".yksm");
-          if (load != null) {
-            map = load;
-            for (int f = 0; f < player_num; f++) {
-              player[f].dead_alway(true);
+      fill(#83d5ff);
+      rect(0, 0, dw, yofs);
+      for (int i = 0; i < 256; i++) {
+        int n = (i- ((dw/32)/2) )+tsp;
+        if (n >= 0 && n < item_list.length) {
+          int scrx = i*32;
+          if (scrx >= -32 && scrx < dw) {
+            if (n != tsp) {
+              image(block_box_n, scrx, 0);
+              noStroke();
+              image(blocks[item_list[n]], scrx+8+2, 0+8+2, 12, 12);
             }
-          } else {
-            sound_son.stop();
-            sound_err.stop();
-            sound_err.trigger();
           }
-          loadcheck();
         }
-        //
-        sl_state = 0;
-      }//yaru
-      if (image_button("しない", 3, #1155cc, #ffffff, icons.get(0, 0, 64, 16), icons.get(0, 16, 64, 16), (width/SCALE/2)+96-64, (height/SCALE)/2)) {
-        //sound_pop.trigger();
-        playpop();
-        sl_state = 0;
-      }//yaranai
+      }
+      int scrx = ((dw/32)/2)*32;
+      image(block_box, scrx, 0);
+      noStroke();
+      ik(blocks[item_list[tsp]], scrx+8, 0+8, sin(frameCount/32.0*TWO_PI)*(item_list[tsp] >= 0x80?8:0));
     }
-  }
+    //println(tsp);
+    //fill(255, 128);
+    //rect((dw/2)-24, 0, 32, 32);
+    //baketu
 
+    if (!game_en) {
+      noStroke();
+      fill(255, 32);
+      rect(0, 0, width/SCALE, height/SCALE);
+    }
+
+    if (save_load_bank > save_load_num)save_load_bank = save_load_num;
+    if (save_load_bank < 0)save_load_bank = 0;
+    //println(save_load_bank);
+    save_load_bank_sm = (save_load_bank+(save_load_bank_sm*2.0))/3.0;
+
+    if (sl_e) {
+      for (int i = 0; i < save_load_num; i++) {
+        int alw = 128;
+        int xscr = int(save_load_bank_sm*alw);
+        String name = " "+i;
+        int x = (i*alw)+8-xscr;
+        int y = 8;
+        if (name_load[i] != null) {
+          name = " "+name_load[i];
+        }
+        textFont(b10);
+        /*
+      if (button("SAVE"+name, i*alw+2-xscr, 0, btw, (((select_height*SCALE)/3)/2)+1, load_en[i])) {
+         sound_son.stop();
+         sound_son.trigger();
+         map_saver.save(map_save_path+i+".yksm", map);
+         loadcheck();
+         delay(100);
+         }
+         if (button("LOAD"+name, i*alw+2-xscr, 0+((select_height*SCALE)/3), btw, (select_height*SCALE/3)-4, load_en[i])) {
+         sound_son.stop();
+         sound_son.trigger();
+         map load = map_saver.load(map_save_path+i+".yksm");
+         if (load != null) {
+         map = load;
+         for (int f = 0; f < player_num; f++) {
+         player[f].dead_alway(true);
+         }
+         } else {
+         sound_son.stop();
+         sound_err.stop();
+         sound_err.trigger();
+         }
+         loadcheck();
+         delay(100);
+         }
+         if (button("X", i*alw+2-xscr, 0+((select_height*SCALE)/3*2), 10, 12, load_en[i])) {
+         map load = map_saver.load(map_save_path+i+".yksm");
+         if (load != null) {
+         sound_kya.stop();
+         sound_kya.trigger();
+         saveBytes(map_save_path+i+".yksm", new byte[] {});
+         } else {
+         sound_err.stop();
+         sound_err.trigger();
+         }
+         loadcheck();
+         delay(100);
+         }
+         */
+        if (x >= -alw && x < width/SCALE) {
+          //
+          //name
+          if (image_button(save_box.get(0, 0, 64, 16), save_box_s.get(0, 0, 64, 16), x, y)) {
+          }
+
+          //save
+          if (image_button(save_box.get(64, 0, 32, 16), save_box_s.get(64, 0, 32, 16), x+63, y)) {
+            sl_state = 1|(i<<8);
+            /*
+          sound_son.stop();
+             sound_son.trigger();
+             map_saver.save(map_save_path+i+".yksm", map);
+             loadcheck();
+             sl_e = false;
+             */
+          }
+
+          //load
+          if (image_button(save_box.get(96, 0, 32, 16), save_box_s.get(96, 0, 32, 16), x+90, y)) {
+            sl_state = 2|(i<<8);
+            /*
+          sound_son.stop();
+             sound_son.trigger();
+             map load = map_saver.load(map_save_path+i+".yksm");
+             if (load != null) {
+             map = load;
+             for (int f = 0; f < player_num; f++) {
+             player[f].dead_alway(true);
+             }
+             } else {
+             sound_son.stop();
+             sound_err.stop();
+             sound_err.trigger();
+             }
+             loadcheck();
+             sl_e = false;
+             */
+          }
+          fill(#1155cc);
+          text(name, x+1, y+12);
+          fill(255);
+          text(name, x+1, y+11);
+          //
+          if (!load_en[i]) {
+            stroke(255);
+            for (int I = -1; I < 1; I++) {
+              for (int F = -1; F < 1; F++) {
+                line(x-4+I, y+4+F, x+64+4+I, y+4+8+F);
+                line(x-4+I, y+4+8+F, x+64+4+I, y+4+F);
+              }
+            }
+            noStroke();
+          }
+        }
+
+        //
+      }
+      if (sl_state != 0) {
+        noStroke();
+        fill(255, 64);
+        rect(0, 0, width/SCALE, height/SCALE);
+        String t = "";
+        if ((sl_state&0xff) == 1) {
+          t = "本当にセーブする？";
+        }
+        if ((sl_state&0xff) == 2) {
+          t = "本当にロードする？";
+        }
+        textFont(r10);
+        entext(t, (width/SCALE/2)-int(textWidth(t)/2), (height/SCALE)/2-16+1, #1155cc, #ffffff);
+        //image(icons.get(0, 0, 64, 16), (width/SCALE/2)-96, (height/SCALE)/2
+        //image(icons.get(64, 0, 64, 16), (width/SCALE/2)+96-64, (height/SCALE)/2);
+        fill(255);
+        if (image_button("する", 3, #1155cc, #ffffff, icons.get(0, 0, 64, 16), icons.get(0, 16, 64, 16), (width/SCALE/2)-96, (height/SCALE)/2)) {
+          sound_onof.trigger();
+          //
+          if ((sl_state&0xff) == 1) {//save
+            sound_son.stop();
+            sound_son.trigger();
+            map_saver.save(map_save_path+(sl_state>>8)+".yksm", map);
+            loadcheck();
+          }
+          if ((sl_state&0xff) == 2) {//load
+            sound_son.stop();
+            sound_son.trigger();
+            map load = map_saver.load(map_save_path+(sl_state>>8)+".yksm");
+            if (load != null) {
+              map = load;
+              for (int f = 0; f < player_num; f++) {
+                player[f].dead_alway(true);
+              }
+            } else {
+              sound_son.stop();
+              sound_err.stop();
+              sound_err.trigger();
+            }
+            loadcheck();
+          }
+          //
+          sl_state = 0;
+        }//yaru
+        if (image_button("しない", 3, #1155cc, #ffffff, icons.get(0, 0, 64, 16), icons.get(0, 16, 64, 16), (width/SCALE/2)+96-64, (height/SCALE)/2)) {
+          //sound_pop.trigger();
+          playpop();
+          sl_state = 0;
+        }//yaranai
+      }
+    }
+    force_blackout = 0;
+  } else {
+    //force start
+    if (force_blackout < 10) {
+      force_img.filter(BLUR, 1);
+    }
+    if (force_img.width > 1) {
+      image(force_img, 0, 0);
+      int p = force_blackout;
+      p *= 6;
+      if (p > 255)p = 255;
+      stroke(255, p);
+      fill(0, force_blackout);
+      rect(0, 0, (width/SCALE)-1, (height/SCALE)-1);
+    }
+    //force end
+    force_blackout = (64+force_blackout*7)/8;
+    //
+    //simple_button
+    int wm = ((width/SCALE)/20);
+    int hm = ((height/SCALE)/10);
+    for (int i = 0; i < 20; i++) {
+      stroke(255, force_blackout);
+      line(wm*i, 0, wm*i, height/SCALE);
+    }
+    for (int i = 0; i < 10; i++) {
+      stroke(255, force_blackout);
+      line(0, hm*i, width/SCALE, hm*i);
+    }
+    textFont(b10);
+    if (simple_button("mob reset", 1*wm, 1*hm, 4*wm, 1*hm)) {
+      map.mobreset();
+    }
+    //
+  }
+  //
   try {
     image(get(0, 0, dw, dh+yofs), 0, 0, dw*SCALE, (dh+yofs)*SCALE);//スケーリング
   }
@@ -743,9 +795,18 @@ void draw() {
    setblock(int(player.x/16)+1, int(player.y/16), 14, false);
    */
   wait_wait = (System.nanoTime()/1000);
+  //force end
 }
 
 boolean sl_e;
+
+boolean force;
+int force_blackout;
+
+PImage force_img = createImage(1, 1, ARGB);
+
+boolean fot;
+boolean foo;
 
 int sl_state;
 
@@ -831,6 +892,10 @@ void keyPressed() {
   }
   if (key == 'R') {
     frameCount = -1;
+  }
+
+  if (key == '_') {
+    force = !force;
   }
 }
 

@@ -181,6 +181,7 @@ class player {
     if (big == -1) {
       ys -= gravity/4;
     }
+    if(ys > 7)ys = 7;
 
     if (x < pw/2)x = pw/2;
     if (x > (map.data.length*16)-(pw/2))x = (map.data.length*16)-(pw/2);
@@ -448,8 +449,8 @@ class player {
        }
        */
       if (nobotteru > 0)nobotteru--;
-      for (int Y = int(y/16)-4; Y < int(y/16)+4; Y++) {
-        for (int X = int(x/16)-4; X < int(x/16)+4; X++) {
+      for (int Y = int(y/16)-(WIDTH); Y < int(y/16)+(WIDTH); Y++) {
+        for (int X = int(x/16)-(HEIGH); X < int(x/16)+(HEIGH); X++) {
           //start
           if (X >= 0 && Y >= 0 && X < map.data.length && Y < map.data[0].length) {
             //int ex = (X*16)+map.pos_ofs[X][Y].x+rects[map.data[X][Y]].x;

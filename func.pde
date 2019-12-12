@@ -22,7 +22,7 @@ boolean col(PImage col, int x1, int y1, int w1, int h1, int x2, int y2) {
 }
 
 
-boolean col(PImage col,int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
+boolean col(PImage col, int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2) {
   return getalpha(col, (x2-x1), (y2-y1)) && (x2 < (x1+w1)) && (x1 < (x2+w2)) && (y2 < (y1+h1)) && (y1 < (y2+h2));
 }
 
@@ -31,6 +31,17 @@ int col_x(int x1, int y1, int w1, int h1, int x2, int y2) {
 }
 int col_y(int x1, int y1, int w1, int h1, int x2, int y2) {
   return (y2-y1);
+}
+
+boolean simple_button(String txt,int x, int y, int w, int h) {
+  boolean p = col(x, y, w, h, mouseX/SCALE, mouseY/SCALE);
+  stroke(0);
+  fill(p?240:255);
+  if (p&&mousePressed)fill(200);
+  rect(x, y, w, h);
+  fill(0);
+  text(txt,x+(w/2)-(textWidth(txt)/2),y+(h/2)+(((-textDescent())+textAscent())/1));
+  return p&mousePressed;
 }
 
 boolean getalpha(PImage in, int x, int y) {
