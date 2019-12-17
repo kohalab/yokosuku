@@ -19,6 +19,8 @@ PImage map_cha;
 PImage save_box;
 PImage save_box_s;
 PImage icons;
+PImage bgedit_img;
+PImage bgedit_img_v;
 
 boolean[] keycode = new boolean[256*256];
 boolean[] keys = new boolean[256*256];
@@ -44,6 +46,8 @@ int save_load_num = 50;
 boolean[] load_en = new boolean[save_load_num];
 String[] name_load = new String[save_load_num];
 
+boolean bgedit;
+
 PImage[] blocks = new PImage[256];
 rect[] rects;
 boolean[] blocks_no = new boolean[256];
@@ -66,8 +70,9 @@ void settings() {
 PFont r10, b10, r12, b12;
 
 int sp;
-
 int tsp;
+int bp;
+int tbp;
 
 float ssp;
 
@@ -200,6 +205,8 @@ void setup() {
   save_box = loadImage("savebox.png");
   save_box_s = loadImage("savebox_s.png");
   icons = loadImage("icons.png");
+  bgedit_img = loadImage("bgedit_window.png");
+  bgedit_img_v = loadImage("bgedit_window_v.png");
   frameRate(30);
 
   grd = createGraphics(dw, dh);
@@ -248,7 +255,7 @@ void setup() {
   down_col_list = no_col_list_gen("down_no_col.txt");
   left_col_list = no_col_list_gen("left_no_col.txt");
   right_col_list = no_col_list_gen("right_no_col.txt");
-  
+
   tama_list = col_list_gen("tama_list.txt");
 
 
@@ -436,7 +443,12 @@ int mouseY_to_y(int y) {
   return (y+(scry*SCALE)-(yofs*SCALE))/SCALE/16;
 }
 
+boolean pmpm, pmousePressed;
+
 void draw() {
+  if(force == false)background(240);
+  pmousePressed = pmpm;
+  pmpm = mousePressed;
   foo = fot;
   fot = force;
   if (foo == false && force == true) {
@@ -444,6 +456,7 @@ void draw() {
     force_img.resize(force_img.width/2, force_img.height/2);
   }
   if (!force) {
+    if (bgedit)game_en = false;
     //force start
     wait_wait = (System.nanoTime()/1000)-wait_wait;
     boolean[] deadnow = new boolean[player_num];
@@ -461,11 +474,14 @@ void draw() {
 
     if (sp < 0)sp = 0;
     if (sp > item_list.length-1)sp = item_list.length-1;
+    if (bp < 0)bp = 0;
+    if (bp > bgblocks.length-1)bp = bgblocks.length-1;
 
     int mx = mouseX_to_x(mouseX);
     int my = mouseY_to_y(mouseY);
 
     tsp = sp;
+    tbp = bp;
 
     if (game_en) {
       if (mouseY/SCALE >= yofs) {  
@@ -473,6 +489,15 @@ void draw() {
           if (mouseButton == RIGHT)
             tsp = 0;
           setblock(mx, my, item_list[tsp], true);
+        }
+      }
+    }
+    if (bgedit) {
+      if (!itbgeditwindow() && sl_e == false) {
+        if (mousePressed) {
+          if (mouseButton == RIGHT)
+            tbp = 0;
+          setbg(mx, my, tbp);
         }
       }
     }
@@ -502,7 +527,11 @@ void draw() {
     map.backup();
     map.bgbackup();
     wait_mapdraw = (System.nanoTime()/1000)-wait_mapdraw;
-    image(map.get().get(scrx, scry, dw, dh), 0, yofs);
+    if (!bgedit^bep) {
+      image(map.get().get(scrx, scry, dw, dh), 0, yofs);
+    } else {
+      image(map.getbg().get(scrx, scry, dw, dh), 0, yofs);
+    }
     //if (deadnow) {
     //}
     for (int i = 0; i < player_num; i++) {
@@ -537,27 +566,31 @@ void draw() {
     /*------------------------------------------------------*/
 
     wait_draw = (System.nanoTime()/1000);
-    if (select_en) {
+    if (select_en && bgedit == false) {
       noStroke();
       fill(#83d5ff);
       rect(0, 0, dw, yofs);
       for (int i = 0; i < 256; i++) {
         int n = (i- ((dw/32)/2) )+tsp;
         if (n >= 0 && n < item_list.length) {
-          int scrx = i*32;
-          if (scrx >= -32 && scrx < dw) {
+          int scrxx = i*32;
+          if (scrxx >= -32 && scrxx < dw) {
             if (n != tsp) {
-              image(block_box_n, scrx, 0);
+              image(block_box_n, scrxx, 0);
               noStroke();
-              image(blocks[item_list[n]], scrx+8+2, 0+8+2, 12, 12);
+              image(blocks[item_list[n]], scrxx+8+2, 0+8+2, 12, 12);
             }
           }
         }
       }
-      int scrx = ((dw/32)/2)*32;
-      image(block_box, scrx, 0);
+      int scrxx = ((dw/32)/2)*32;
+      image(block_box, scrxx, 0);
       noStroke();
-      ik(blocks[item_list[tsp]], scrx+8, 0+8, sin(frameCount/32.0*TWO_PI)*(item_list[tsp] >= 0x80?8:0));
+      ik(blocks[item_list[tsp]], scrxx+8, 0+8, sin(frameCount/32.0*TWO_PI)*(item_list[tsp] >= 0x80?8:0));
+    }
+
+    if (bgedit) {
+      bgeditwindow();
     }
     //println(tsp);
     //fill(255, 128);
@@ -670,7 +703,7 @@ void draw() {
           text(name, x+1, y+11);
           //
           if (!load_en[i]) {
-            stroke(255);
+            stroke(255, 0, 0, 96);
             for (int I = -1; I < 1; I++) {
               for (int F = -1; F < 1; F++) {
                 line(x-4+I, y+4+F, x+64+4+I, y+4+8+F);
@@ -766,12 +799,23 @@ void draw() {
     textFont(b10);
     if (simple_button("mob reset", 1*wm, 1*hm, 4*wm, 1*hm)) {
       map.mobreset();
+      sound_woo.stop();
+      sound_woo.trigger();
+    }
+    //bgedit
+    if (simple_button("bgedit", 6*wm, 1*hm, 4*wm, 1*hm)) {
+      bgedit = !bgedit;
+      force = false;
+      sound_cin.stop();
+      sound_cin.trigger();
+      delay(500);
     }
     //
   }
   //
   try {
-    image(get(0, 0, dw, dh+yofs), 0, 0, dw*SCALE, (dh+yofs)*SCALE);//スケーリング
+    PImage a = get(0, 0, dw, dh+yofs);
+    image(a, 0, 0, dw*SCALE, (dh+yofs)*SCALE);//スケーリング
   }
   catch(ArrayIndexOutOfBoundsException ex) {
   }
@@ -785,8 +829,14 @@ void draw() {
   //
   wait_draw = (System.nanoTime()/1000)-wait_draw;
   debug();
-  if (game_en) {
+  if (game_en && bgedit == false) {
     scrproc();
+  }
+  if (bgedit) {
+    if (keys['a'])scrx -= 4;
+    if (keys['d'])scrx += 4;
+    if (keys['w'])scry -= 4;
+    if (keys['s'])scry += 4;
   }
   smooth_proc();
   /*
@@ -812,30 +862,34 @@ int sl_state;
 
 void keyPressed() {
   if (game_en) {
-    if (keyCode == LEFT  || key == '1')sp -= 1;
-    if (keyCode == RIGHT || key == '3')sp += 1;
-    if (keyCode == DOWN) {
-      //sp -= 4;
-    a:
-      for (int i = sector.length-1; i >= 0; i--) {
-        if (sector[i] < sp) {
-          sp = sector[i];
-          break a;
+    if (!bgedit) {
+      if (keyCode == LEFT  || key == '1')sp -= 1;
+      if (keyCode == RIGHT || key == '3')sp += 1;
+      if (keyCode == DOWN) {
+        //sp -= 4;
+      a:
+        for (int i = sector.length-1; i >= 0; i--) {
+          if (sector[i] < sp) {
+            sp = sector[i];
+            break a;
+          }
         }
       }
-    }
-    if (keyCode == UP  ) {
-      //sp += 4;
-    a:
-      for (int i = 0; i < sector.length; i++) {
-        if (sector[i] > sp) {
-          sp = sector[i];
-          break a;
+      if (keyCode == UP  ) {
+        //sp += 4;
+      a:
+        for (int i = 0; i < sector.length; i++) {
+          if (sector[i] > sp) {
+            sp = sector[i];
+            break a;
+          }
         }
       }
+      if (key == '_')sp = 0;
+    } else {
+      if (keyCode == LEFT  || key == '1')bp -= 1;
+      if (keyCode == RIGHT || key == '3')bp += 1;
     }
-    if (key == '_')sp = 0;
-
     if (key == '9') {
       grd_en = true;
       map.update();

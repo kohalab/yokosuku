@@ -86,6 +86,11 @@ void setblock(int mx, int my, int tsp, boolean s) {
     map.data[mx][my] = tsp;
   }
 }
+void setbg(int mx, int my, int tsp) {
+  if (mx >= 0 && mx < map.data.length && my >= 0 && my < map.data[0].length) {
+    map.bg_data[mx][my] = tsp;
+  }
+}
 
 int getblock(int mx, int my) {
   if (mx >= 0 && mx < map.data.length && my >= 0 && my < map.data[0].length) {

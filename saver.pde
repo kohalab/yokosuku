@@ -53,16 +53,17 @@ class map_saver {
       out[i] = header[i];
     }
     int name_len = 0;
-    for (int i = 0; i < 256; i += 2) {
-      out[256+i+1] = '.';
-    }
-    if (map.name != null) {
-      for (int i = 0; i < map.name.length(); i++) {
-        out[256+(i*2)+0] = byte(map.name.charAt(i)>>8);//up
-        out[256+(i*2)+1] = byte(map.name.charAt(i)>>0);//down
+    if (map.name == null) {
+      map.name = "";
+      for (int i = 0; i < 128; i++) {
+        map.name += ".";
       }
-      name_len = map.name.length();
     }
+    for (int i = 0; i < map.name.length(); i++) {
+      out[256+(i*2)+0] = byte(map.name.charAt(i)>>8);//up
+      out[256+(i*2)+1] = byte(map.name.charAt(i)>>0);//down
+    }
+    name_len = map.name.length();
     out[0xff] = (byte)name_len;
     for (int y = 0; y < h; y++) {
       for (int x = 0; x < w; x++) {
@@ -92,11 +93,11 @@ class map_saver {
   }
   map load(String path) {
     int v = loadversion(path);
-    if (v < 3) {
+    if (v <= 3) {
       return load_3(path);
     } else
-      if (v >= 3) {
-        return null;
+      if (v >= 4) {
+        return load_4(path);
       } else {
         return null;
       }

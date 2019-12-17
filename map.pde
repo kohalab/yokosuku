@@ -543,10 +543,18 @@ class map {
         data_old[x][y] = -1;
       }
     }
+    for (int y = 0; y < data[0].length; y++) {
+      for (int x = 0; x < data.length; x++) {
+        bg_data_old[x][y] = -1;
+      }
+    }
   }
 
   PImage get() {
     return map_buf.get();
+  }
+  PImage getbg() {
+    return bg_map_buf.get();
   }
 }
 
